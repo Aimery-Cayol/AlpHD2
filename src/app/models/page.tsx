@@ -15,6 +15,12 @@ import Polyhedron from './Polyhedron.jsx'
 import * as THREE from 'three'
 import { OrbitControls } from '@react-three/drei'
 
+import dynamic from 'next/dynamic';
+
+const IGNAlpsViewer = dynamic(() => import('@/components/IGNAlpsViewer'), {
+  ssr: false
+});
+
 export default function App() {
   const polyhedron = [
     new THREE.BoxGeometry(),
@@ -62,29 +68,7 @@ export default function App() {
           </div>
 
           <div className="relative h-[400px] sm:h-[500px] lg:h-[600px] bg-gray-50 rounded-lg overflow-hidden">
-            <Canvas camera={{ position: [0, 0, 3] }} className="w-full h-full">
-              <Polyhedron position={[-0.75, -0.75, 0]} polyhedron={polyhedron} />
-              <Polyhedron position={[0.75, -0.75, 0]} polyhedron={polyhedron} />
-              <Polyhedron position={[-0.75, 0.75, 0]} polyhedron={polyhedron} />
-              <Polyhedron position={[0.75, 0.75, 0]} polyhedron={polyhedron} />
-              <OrbitControls
-                enablePan={true}
-                enableZoom={true}
-                enableRotate={true}
-              />
-            </Canvas>
-          </div>
-
-          {/* Informations sur les contrôles */}
-          <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-            <h3 className="text-sm font-medium text-blue-900 mb-2">
-              Contrôles :
-            </h3>
-            <div className="text-xs sm:text-sm text-blue-800 space-y-1">
-              <p>• <strong>Rotation :</strong> Cliquer-glisser ou toucher-glisser</p>
-              <p>• <strong>Zoom :</strong> Molette souris ou pincer sur mobile</p>
-              <p>• <strong>Pan :</strong> Shift + cliquer-glisser</p>
-            </div>
+            <IGNAlpsViewer />
           </div>
         </div>
       </div>
