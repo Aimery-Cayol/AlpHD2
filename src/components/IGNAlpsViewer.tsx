@@ -15,29 +15,29 @@ const IGNAlpsViewer: React.FC = () => {
   useEffect(() => {
     // Load the Geoportal SDK script
     const script = document.createElement('script');
-    script.src = 'https://ignf.github.io/geoportal-sdk/latest/dist/3d/GpSDK3D.js';
+    script.src = 'https://ignf.github.io/geoportal-sdk/latest/dist/2d/GpSDK2D.js';
     script.onload = () => {
       // Once the script is loaded, initialize the map
       if (window.Gp) {
         window.Gp.Map.load(
           mapRef.current!,
           {
-            apiKey: "essentiels,altimetrie",
+            apiKey: "altimetrie",
             // , cartes, cartovecto, ortho, topographie
-            viewMode: "3d",
-            enginePath3d: "https://ignf.github.io/geoportal-sdk/latest/dist/3d/",
+            viewMode: "2d",
+            enginePath2d: "https://ignf.github.io/geoportal-sdk/latest/dist/2d/",
             zoom: 10,
             center: {
               x: 6.642212,
               y: 45.811339
             },
             layersOptions: {
-              "TRACES.RANDO.HIVERNALE": {},
+              "ELEVATION.CONTOUR.LINE": {format: "WFS", styleOptions: {}},
               "ORTHOIMAGERY.ORTHOPHOTOS": {},
-              "GEOGRAPHICALGRIDSYSTEMS.SLOPES.MOUNTAIN": {opacity : 0.5},
-              "ELEVATION.ELEVATIONGRIDCOVERAGE": {
-                type: "elevation"
-              }
+              // "ELEVATION.ELEVATIONGRIDCOVERAGE.HIGHRES.MNS": {type: "elevation"},
+              // "ELEVATION.ELEVATIONGRIDCOVERAGE.HIGHRES": {
+              //   type: "elevation"
+              // }
             },
             controlsOptions: {
               "layerSwitcher": {}
@@ -56,7 +56,7 @@ const IGNAlpsViewer: React.FC = () => {
     // Add CSS for the map
     const link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = 'https://ignf.github.io/geoportal-sdk/latest/dist/3d/GpSDK3D.css';
+    link.href = 'https://ignf.github.io/geoportal-sdk/latest/dist/2d/GpSDK2D.css';
     document.head.appendChild(link);
 
     return () => {

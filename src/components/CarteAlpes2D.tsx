@@ -50,7 +50,7 @@ const CarteAlpes2D: React.FC = () => {
           });
 
           const lyrSlopes = window.L.geoportalLayer.WMTS({
-            layer: "GEOGRAPHICALGRIDSYSTEMS.SLOPES.MOUNTAIN",
+            layer: "ELEVATION.ELEVATIONGRIDCOVERAGE.HIGHRES.MNS",
           }, {
             opacity: 0.7
           });

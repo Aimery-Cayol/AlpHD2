@@ -17,8 +17,8 @@ interface CacheStats {
 
 class GeometryCache {
   private cache = new Map<string, CacheEntry>();
-  private maxSize: number = 400 * 1024 * 1024; // 100MB par défaut
-  private maxEntries: number = 50;
+  private maxSize: number = 500 * 1024 * 1024; // 500MB par défaut
+  private maxEntries: number = 100;
   private hits: number = 0;
   private misses: number = 0;
 
@@ -46,12 +46,16 @@ class GeometryCache {
     // Taille des attributs de géométrie
     Object.values(geometry.attributes).forEach(attribute => {
       size += attribute.array.byteLength;
-      size += attribute.count * 3 * 4; // Index buffer approximatif
     });
 
-    // Taille des groupes
+    // Taille de l'index buffer si présent
+    if (geometry.index) {
+      size += geometry.index.array.byteLength;
+    }
+
+    // Taille des groupes (très petite)
     if (geometry.groups) {
-      size += geometry.groups.length * 32; // Taille approximative par groupe
+      size += geometry.groups.length * 16; // Taille approximative par groupe
     }
 
     return size;
@@ -80,7 +84,7 @@ class GeometryCache {
     const size = this.calculateSize(geometry);
 
     // Vérifier si on dépasse la taille maximale
-    if (size > this.maxSize * 0.1) { // Si la géométrie est > 10% du cache max
+    if (size > this.maxSize * 0.5) { // Si la géométrie est > 50% du cache max
       console.warn(`Géométrie trop volumineuse pour le cache: ${size} octets`);
       return;
     }

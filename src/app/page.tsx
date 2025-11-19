@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import dynamic from 'next/dynamic'
+import DropZone from '@/components/three/DropZone'
+import { createFileInfo, FileInfo } from '@/utils/fileUtils'
 
 // // Import dynamique du composant 3D pour éviter les problèmes SSR
 const ThreeScene = dynamic(() => import('@/components/three/ThreeScene'))
@@ -18,8 +20,10 @@ interface Model {
 export default function HomePage() {
   const [models, setModels] = useState<Model[]>([])
   const [selectedModels, setSelectedModels] = useState<string[]>([])
+  const [localFiles, setLocalFiles] = useState<Model[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string>('')
+  const [showDropZone, setShowDropZone] = useState(false)
 
   // Fonction pour récupérer la taille d'un fichier depuis S3
   const getFileSize = async (url: string): Promise<number> => {
@@ -68,6 +72,43 @@ export default function HomePage() {
   useEffect(() => {
     loadModels()
   }, [])
+
+  // Fonction pour gérer l'upload de fichiers
+  const handleFileUpload = (file: File) => {
+    try {
+      const fileInfo = createFileInfo(file)
+      
+      // Créer un nouveau modèle local
+      const newModel: Model = {
+        name: fileInfo.name.replace(/\.(final\.)?ply|\.(drc)/i, ''),
+        url: fileInfo.url,
+        format: fileInfo.format,
+        fileSize: fileInfo.size
+      }
+
+      // Ajouter le fichier local à la liste
+      setLocalFiles(prev => [...prev, newModel])
+      
+      // Afficher un message de succès
+      console.log(`✅ Fichier uploadé: ${newModel.name}`)
+      
+      // Sélectionner automatiquement le fichier uploadé
+      setSelectedModels(prev => [...prev, newModel.url])
+      
+    } catch (err) {
+      console.error('Erreur lors de l\'upload du fichier:', err)
+      setError('Erreur lors du traitement du fichier')
+    }
+  }
+
+  // Combiner les modèles distants et locaux
+  const allModels = [...models, ...localFiles]
+
+  // Fonction pour supprimer un fichier local
+  const removeLocalFile = (url: string) => {
+    setLocalFiles(prev => prev.filter(model => model.url !== url))
+    setSelectedModels(prev => prev.filter(selectedUrl => selectedUrl !== url))
+  }
 
   // Extraire les coordonnées du nom de fichier
   const extractCoordinates = (filename: string) => {
@@ -119,7 +160,7 @@ export default function HomePage() {
                   Sélectionner les modèles à afficher
                 </label>
                 <div className="space-y-2 max-h-64 sm:max-h-96 overflow-y-auto">
-                  {models.map((model) => (
+                  {allModels.map((model) => (
                     <label key={model.url} className="flex items-center space-x-2 p-2 rounded hover:bg-gray-50 transition-colors">
                       <input
                         type="checkbox"
@@ -135,7 +176,14 @@ export default function HomePage() {
                       />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between">
-                          <div className="font-medium text-sm truncate">{model.name}</div>
+                          <div className="font-medium text-sm truncate">
+                            {model.name}
+                            {localFiles.find(lf => lf.url === model.url) && (
+                              <span className="ml-2 text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded">
+                                Local
+                              </span>
+                            )}
+                          </div>
                           <div className="flex items-center space-x-2">
                             <span className={`text-xs px-2 py-1 rounded ${
                               model.format === 'drc'
@@ -144,6 +192,21 @@ export default function HomePage() {
                             }`}>
                               {model.format?.toUpperCase()}
                             </span>
+                            {localFiles.find(lf => lf.url === model.url) && (
+                              <button
+                                onClick={(e) => {
+                                  e.preventDefault()
+                                  e.stopPropagation()
+                                  removeLocalFile(model.url)
+                                }}
+                                className="text-red-500 hover:text-red-700 p-1"
+                                title="Supprimer le fichier local"
+                              >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                              </button>
+                            )}
                           </div>
                         </div>
                         <div className="flex justify-between items-center">
@@ -187,7 +250,10 @@ export default function HomePage() {
             <div className="mt-6 pt-4 border-t">
               <h3 className="font-medium mb-2">Statistiques</h3>
               <p className="text-sm text-gray-600">
-                {models.length} modèles disponibles
+                {models.length} modèles distants • {localFiles.length} modèles locaux
+              </p>
+              <p className="text-xs text-gray-500">
+                Total: {allModels.length} modèles
               </p>
             </div>
           </div>
@@ -199,6 +265,14 @@ export default function HomePage() {
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-4">
               <h2 className="text-lg sm:text-xl font-semibold">Visualiseur 3D</h2>
               <div className="flex space-x-2">
+                <button 
+                  onClick={() => setShowDropZone(!showDropZone)}
+                  className={`btn-secondary text-sm px-3 py-2 touch-manipulation ${
+                    showDropZone ? 'bg-blue-100 text-blue-700' : ''
+                  }`}
+                >
+                  {showDropZone ? 'Masquer' : 'Ajouter'} Fichier
+                </button>
                 <button className="btn-secondary text-sm px-3 py-2 touch-manipulation">
                   Contrôles
                 </button>
@@ -209,8 +283,13 @@ export default function HomePage() {
             </div>
 
             <div id="threejs-container" className="w-full h-[320px] sm:h-[420px] lg:h-[600px] bg-gray-50 rounded-lg overflow-hidden">
-              {selectedModels.length > 0 ? (
-                <ThreeScene models={models} selectedModels={selectedModels} />
+              {showDropZone ? (
+                <DropZone 
+                  onFileSelect={handleFileUpload}
+                  acceptedFormats={['drc', 'ply']}
+                />
+              ) : selectedModels.length > 0 ? (
+                <ThreeScene models={allModels} selectedModels={selectedModels} />
               ) : (
                 <div className="flex items-center justify-center h-full">
                   <div className="text-center px-4">
@@ -219,7 +298,7 @@ export default function HomePage() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
                       </svg>
                     </div>
-                    <p className="text-sm sm:text-base text-gray-400">Sélectionnez des modèles pour commencer la visualisation</p>
+                    <p className="text-sm sm:text-base text-gray-400">Sélectionnez des modèles ou ajoutez-en de nouveaux</p>
                   </div>
                 </div>
               )}

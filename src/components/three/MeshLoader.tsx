@@ -10,6 +10,7 @@ import { useSceneControls } from "./LevaUI";
 import BoundingBoxHelper from "./BoundingBoxHelper";
 import { geometryCache } from "./GeometryCache";
 import ModelOptimizer from "./ModelOptimizer";
+import { isLocalUrl, revokeBlobUrl } from "@/utils/fileUtils";
 
 import SlopeMaterialImpl from "./SlopeMaterial";
 import JEASINGS from "jeasings";
@@ -30,7 +31,7 @@ export default function MeshLoader({
   const [loading, setLoading] = useState(true);
   const [optimized, setOptimized] = useState(false);
   const [cacheStatus, setCacheStatus] = useState<
-    "loading" | "cache" | "network"
+    "loading" | "cache" | "network" | "local"
   >("loading");
   const meshRef = useRef<Mesh>(null);
   const controls = useSceneControls();
@@ -41,8 +42,12 @@ export default function MeshLoader({
       if (meshRef.current) {
         meshRef.current.geometry?.dispose();
       }
+      // Nettoyer les URLs blob locales
+      if (url && isLocalUrl(url)) {
+        revokeBlobUrl(url);
+      }
     };
-  }, []);
+  }, [url]);
 
   useEffect(() => {
     if (!url) {
@@ -68,13 +73,18 @@ export default function MeshLoader({
           return;
         }
 
-        // Sinon, charger depuis le réseau
-        console.log("🌐 Chargement depuis le réseau:", url, `(${format})`);
-        console.log(
-          "📊 Statistiques cache avant chargement:",
-          geometryCache.getStats()
-        );
-        setCacheStatus("network");
+        // Déterminer le type de source
+        if (isLocalUrl(url)) {
+          console.log("📁 Chargement du fichier local:", url, `(${format})`);
+          setCacheStatus("local");
+        } else {
+          console.log("🌐 Chargement depuis le réseau:", url, `(${format})`);
+          console.log(
+            "📊 Statistiques cache avant chargement:",
+            geometryCache.getStats()
+          );
+          setCacheStatus("network");
+        }
 
         let loader;
 
@@ -148,8 +158,11 @@ export default function MeshLoader({
   }, [url]);
 
   if (loading) {
-    // Couleur différente selon la source : vert pour cache, orange pour réseau
-    const loadingColor = cacheStatus === "cache" ? "#00ff00" : "#ffaa00";
+    // Couleur différente selon la source : vert pour cache, orange pour réseau, bleu pour local
+    const loadingColor = 
+      cacheStatus === "cache" ? "#00ff00" : 
+      cacheStatus === "local" ? "#0066cc" : 
+      "#ffaa00";
 
     return (
       <group>
@@ -249,15 +262,27 @@ export default function MeshLoader({
       {controls.showBoundingBoxes && geometry.boundingBox && (
         <BoundingBoxHelper
           box={geometry.boundingBox}
-          color={cacheStatus === "cache" ? "#16a34a" : "#ffff00"} // Vert foncé pour cache, jaune pour réseau
+          color={
+            cacheStatus === "cache" ? "#16a34a" : 
+            cacheStatus === "local" ? "#0066cc" : 
+            "#ffff00" // Vert foncé pour cache, bleu pour local, jaune pour réseau
+          }
         />
       )}
 
-      {/* Indicateur visuel subtil pour le cache */}
+      {/* Indicateur visuel pour la source du fichier */}
       {cacheStatus === "cache" && (
         <mesh position={[0, 1.5, 0]}>
           <sphereGeometry args={[0.05, 8, 8]} />
           <meshBasicMaterial color="#22c55e" />
+        </mesh>
+      )}
+      
+      {/* Indicateur pour les fichiers locaux */}
+      {cacheStatus === "local" && (
+        <mesh position={[0, 1.5, 0]}>
+          <sphereGeometry args={[0.05, 8, 8]} />
+          <meshBasicMaterial color="#0066cc" />
         </mesh>
       )}
 
