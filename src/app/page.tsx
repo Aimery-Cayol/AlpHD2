@@ -1,126 +1,168 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import dynamic from 'next/dynamic'
-import DropZone from '@/components/three/DropZone'
-import { createFileInfo, FileInfo } from '@/utils/fileUtils'
+import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import DropZone from "@/components/three/DropZone";
+import { createFileInfo, FileInfo } from "@/utils/fileUtils";
 
 // // Import dynamique du composant 3D pour éviter les problèmes SSR
-const ThreeScene = dynamic(() => import('@/components/three/ThreeScene'))
-
+const ThreeScene = dynamic(() => import("@/components/three/ThreeScene"));
 
 interface Model {
-  name: string
-  url: string
-  format?: 'ply' | 'drc'
-  coordinates?: { x: number; y: number }
-  fileSize?: number // Taille du fichier en octets
+  name: string;
+  url: string;
+  format?: "ply" | "drc";
+  coordinates?: { x: number; y: number };
+  fileSize?: number; // Taille du fichier en octets
 }
 
 export default function HomePage() {
-  const [models, setModels] = useState<Model[]>([])
-  const [selectedModels, setSelectedModels] = useState<string[]>([])
-  const [localFiles, setLocalFiles] = useState<Model[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string>('')
-  const [showDropZone, setShowDropZone] = useState(false)
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const [models, setModels] = useState<Model[]>([]);
+  const [selectedModels, setSelectedModels] = useState<string[]>([]);
+  const [localFiles, setLocalFiles] = useState<Model[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string>("");
+  const [showDropZone, setShowDropZone] = useState(false);
 
   // Fonction pour récupérer la taille d'un fichier depuis S3
   const getFileSize = async (url: string): Promise<number> => {
     try {
-      const response = await fetch(url, { method: 'HEAD' })
-      return parseInt(response.headers.get('content-length') || '0')
+      const response = await fetch(url, { method: "HEAD" });
+      return parseInt(response.headers.get("content-length") || "0");
     } catch {
-      return 0
+      return 0;
     }
-  }
+  };
 
   // Fonction pour recharger les modèles (utilisée par le bouton Réessayer)
   const loadModels = async () => {
     try {
-      setLoading(true)
-      const response = await fetch('/api/models')
-      if (!response.ok) throw new Error('Erreur lors du chargement des modèles')
+      setLoading(true);
+      const response = await fetch("/api/models");
+      if (!response.ok)
+        throw new Error("Erreur lors du chargement des modèles");
 
-      const modelsData = await response.json()
+      const modelsData = await response.json();
 
       // Récupérer les tailles des fichiers en parallèle
-      const modelPromises = modelsData.map(async (modelData: { url: string; format: string; key: string }) => {
-        const fileSize = await getFileSize(modelData.url)
-        const name = modelData.url.split('/').pop() || 'Modèle'
-        const nameWithoutExtension = name.replace('.final.ply', '').replace('.drc', '')
-        
-        return {
-          name: nameWithoutExtension,
-          url: modelData.url,
-          format: modelData.format as 'ply' | 'drc',
-          coordinates: extractCoordinates(modelData.url),
-          fileSize
-        }
-      })
+      const modelPromises = modelsData.map(
+        async (modelData: { url: string; format: string; key: string }) => {
+          const fileSize = await getFileSize(modelData.url);
+          const name = modelData.url.split("/").pop() || "Modèle";
+          const nameWithoutExtension = name
+            .replace(".final.ply", "")
+            .replace(".drc", "");
 
-      const modelList = await Promise.all(modelPromises)
-      setModels(modelList)
+          return {
+            name: nameWithoutExtension,
+            url: modelData.url,
+            format: modelData.format as "ply" | "drc",
+            coordinates: extractCoordinates(modelData.url),
+            fileSize,
+          };
+        }
+      );
+
+      const modelList = await Promise.all(modelPromises);
+      setModels(modelList);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erreur inconnue')
+      setError(err instanceof Error ? err.message : "Erreur inconnue");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   // Charger la liste des modèles depuis l'API
   useEffect(() => {
-    loadModels()
-  }, [])
+    loadModels();
+  }, []);
 
   // Fonction pour gérer l'upload de fichiers
   const handleFileUpload = (file: File) => {
     try {
-      const fileInfo = createFileInfo(file)
-      
+      const fileInfo = createFileInfo(file);
+
       // Créer un nouveau modèle local
       const newModel: Model = {
-        name: fileInfo.name.replace(/\.(final\.)?ply|\.(drc)/i, ''),
+        name: fileInfo.name.replace(/\.(final\.)?ply|\.(drc)/i, ""),
         url: fileInfo.url,
         format: fileInfo.format,
-        fileSize: fileInfo.size
-      }
+        fileSize: fileInfo.size,
+      };
 
       // Ajouter le fichier local à la liste
-      setLocalFiles(prev => [...prev, newModel])
-      
+      setLocalFiles((prev) => [...prev, newModel]);
+
       // Afficher un message de succès
-      console.log(`✅ Fichier uploadé: ${newModel.name}`)
-      
+      console.log(`✅ Fichier uploadé: ${newModel.name}`);
+
       // Sélectionner automatiquement le fichier uploadé
-      setSelectedModels(prev => [...prev, newModel.url])
-      
+      setSelectedModels((prev) => [...prev, newModel.url]);
     } catch (err) {
-      console.error('Erreur lors de l\'upload du fichier:', err)
-      setError('Erreur lors du traitement du fichier')
+      console.error("Erreur lors de l'upload du fichier:", err);
+      setError("Erreur lors du traitement du fichier");
     }
-  }
+  };
 
   // Combiner les modèles distants et locaux
-  const allModels = [...models, ...localFiles]
+  const allModels = [...models, ...localFiles];
 
   // Fonction pour supprimer un fichier local
   const removeLocalFile = (url: string) => {
-    setLocalFiles(prev => prev.filter(model => model.url !== url))
-    setSelectedModels(prev => prev.filter(selectedUrl => selectedUrl !== url))
-  }
+    setLocalFiles((prev) => prev.filter((model) => model.url !== url));
+    setSelectedModels((prev) =>
+      prev.filter((selectedUrl) => selectedUrl !== url)
+    );
+  };
 
   // Extraire les coordonnées du nom de fichier
   const extractCoordinates = (filename: string) => {
-    const match = filename.match(/(\d{4})_(\d{4})/)
+    const match = filename.match(/(\d{4})_(\d{4})/);
     if (match) {
       return {
         x: parseInt(match[1], 10),
-        y: parseInt(match[2], 10)
+        y: parseInt(match[2], 10),
+      };
+    }
+    return null;
+  };
+
+  //routage avec encodage des modeles selectionnes dans l'url
+  // Initialiser depuis l'URL au chargement
+  useEffect(() => {
+    if (models.length > 0) {
+      const encodedModels = searchParams.get("models");
+      if (encodedModels) {
+        try {
+          const decoded = JSON.parse(atob(decodeURIComponent(encodedModels)));
+          const validUrls = decoded.filter((url: string) =>
+            models.some((m) => m.url === url)
+          );
+          setSelectedModels(validUrls);
+        } catch (e) {
+          console.error("Erreur décodage:", e);
+        }
       }
     }
-    return null
-  }
+  }, [searchParams, models.length]);
+
+  // Mettre à jour l'URL quand la sélection change
+  useEffect(() => {
+    if (models.length > 0) {
+      let newUrl = pathname;
+
+      if (selectedModels.length > 0) {
+        const encoded = btoa(JSON.stringify(selectedModels));
+        newUrl = `${pathname}?models=${encodeURIComponent(encoded)}`;
+      }
+
+      router.replace(newUrl, { scroll: false });
+    }
+  }, [selectedModels, pathname, models.length]);
 
   if (loading) {
     return (
@@ -130,7 +172,7 @@ export default function HomePage() {
           <p className="mt-4 text-gray-600">Chargement...</p>
         </div>
       </div>
-    )
+    );
   }
 
   if (error) {
@@ -143,7 +185,7 @@ export default function HomePage() {
           </button>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -152,7 +194,9 @@ export default function HomePage() {
         {/* Panneau de contrôle */}
         <div className="lg:col-span-1 order-2 lg:order-1">
           <div className="card">
-            <h2 className="text-lg sm:text-xl font-semibold mb-4">Modèles LiDAR</h2>
+            <h2 className="text-lg sm:text-xl font-semibold mb-4">
+              Modèles LiDAR
+            </h2>
 
             <div className="space-y-4">
               <div>
@@ -161,15 +205,20 @@ export default function HomePage() {
                 </label>
                 <div className="space-y-2 max-h-64 sm:max-h-96 overflow-y-auto">
                   {allModels.map((model) => (
-                    <label key={model.url} className="flex items-center space-x-2 p-2 rounded hover:bg-gray-50 transition-colors">
+                    <label
+                      key={model.url}
+                      className="flex items-center space-x-2 p-2 rounded hover:bg-gray-50 transition-colors"
+                    >
                       <input
                         type="checkbox"
                         checked={selectedModels.includes(model.url)}
                         onChange={(e) => {
                           if (e.target.checked) {
-                            setSelectedModels(prev => [...prev, model.url]);
+                            setSelectedModels((prev) => [...prev, model.url]);
                           } else {
-                            setSelectedModels(prev => prev.filter(url => url !== model.url));
+                            setSelectedModels((prev) =>
+                              prev.filter((url) => url !== model.url)
+                            );
                           }
                         }}
                         className="w-4 h-4 sm:w-5 sm:h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
@@ -178,32 +227,44 @@ export default function HomePage() {
                         <div className="flex items-center justify-between">
                           <div className="font-medium text-sm truncate">
                             {model.name}
-                            {localFiles.find(lf => lf.url === model.url) && (
+                            {localFiles.find((lf) => lf.url === model.url) && (
                               <span className="ml-2 text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded">
                                 Local
                               </span>
                             )}
                           </div>
                           <div className="flex items-center space-x-2">
-                            <span className={`text-xs px-2 py-1 rounded ${
-                              model.format === 'drc'
-                                ? 'bg-green-100 text-green-800'
-                                : 'bg-blue-100 text-blue-800'
-                            }`}>
+                            <span
+                              className={`text-xs px-2 py-1 rounded ${
+                                model.format === "drc"
+                                  ? "bg-green-100 text-green-800"
+                                  : "bg-blue-100 text-blue-800"
+                              }`}
+                            >
                               {model.format?.toUpperCase()}
                             </span>
-                            {localFiles.find(lf => lf.url === model.url) && (
+                            {localFiles.find((lf) => lf.url === model.url) && (
                               <button
                                 onClick={(e) => {
-                                  e.preventDefault()
-                                  e.stopPropagation()
-                                  removeLocalFile(model.url)
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  removeLocalFile(model.url);
                                 }}
                                 className="text-red-500 hover:text-red-700 p-1"
                                 title="Supprimer le fichier local"
                               >
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                <svg
+                                  className="w-4 h-4"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                  />
                                 </svg>
                               </button>
                             )}
@@ -219,8 +280,7 @@ export default function HomePage() {
                             <div className="text-xs text-gray-600 font-mono">
                               {model.fileSize > 1024 * 1024
                                 ? `${Math.round(model.fileSize / (1024 * 1024))}MB`
-                                : `${Math.round(model.fileSize / 1024)}KB`
-                              }
+                                : `${Math.round(model.fileSize / 1024)}KB`}
                             </div>
                           )}
                         </div>
@@ -234,7 +294,9 @@ export default function HomePage() {
                 <div className="pt-4 border-t">
                   <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-2">
                     <span className="text-sm font-medium">
-                      {selectedModels.length} modèle{selectedModels.length > 1 ? 's' : ''} sélectionné{selectedModels.length > 1 ? 's' : ''}
+                      {selectedModels.length} modèle
+                      {selectedModels.length > 1 ? "s" : ""} sélectionné
+                      {selectedModels.length > 1 ? "s" : ""}
                     </span>
                     <button
                       onClick={() => setSelectedModels([])}
@@ -250,7 +312,8 @@ export default function HomePage() {
             <div className="mt-6 pt-4 border-t">
               <h3 className="font-medium mb-2">Statistiques</h3>
               <p className="text-sm text-gray-600">
-                {models.length} modèles distants • {localFiles.length} modèles locaux
+                {models.length} modèles distants • {localFiles.length} modèles
+                locaux
               </p>
               <p className="text-xs text-gray-500">
                 Total: {allModels.length} modèles
@@ -263,15 +326,17 @@ export default function HomePage() {
         <div className="lg:col-span-4 order-1 lg:order-2">
           <div className="card h-[400px] sm:h-[500px] lg:h-[700px]">
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-4">
-              <h2 className="text-lg sm:text-xl font-semibold">Visualiseur 3D</h2>
+              <h2 className="text-lg sm:text-xl font-semibold">
+                Visualiseur 3D
+              </h2>
               <div className="flex space-x-2">
-                <button 
+                <button
                   onClick={() => setShowDropZone(!showDropZone)}
                   className={`btn-secondary text-sm px-3 py-2 touch-manipulation ${
-                    showDropZone ? 'bg-blue-100 text-blue-700' : ''
+                    showDropZone ? "bg-blue-100 text-blue-700" : ""
                   }`}
                 >
-                  {showDropZone ? 'Masquer' : 'Ajouter'} Fichier
+                  {showDropZone ? "Masquer" : "Ajouter"} Fichier
                 </button>
                 <button className="btn-secondary text-sm px-3 py-2 touch-manipulation">
                   Contrôles
@@ -282,23 +347,41 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div id="threejs-container" className="w-full h-[320px] sm:h-[420px] lg:h-[600px] bg-gray-50 rounded-lg overflow-hidden">
+            <div
+              id="threejs-container"
+              className="w-full h-[320px] sm:h-[420px] lg:h-[600px] bg-gray-50 rounded-lg overflow-hidden"
+            >
               {showDropZone ? (
-                <DropZone 
+                <DropZone
                   onFileSelect={handleFileUpload}
-                  acceptedFormats={['drc', 'ply']}
+                  acceptedFormats={["drc", "ply"]}
                 />
               ) : selectedModels.length > 0 ? (
-                <ThreeScene models={allModels} selectedModels={selectedModels} />
+                <ThreeScene
+                  models={allModels}
+                  selectedModels={selectedModels}
+                />
               ) : (
                 <div className="flex items-center justify-center h-full">
                   <div className="text-center px-4">
                     <div className="animate-pulse text-gray-400 mb-4">
-                      <svg className="w-12 h-12 sm:w-16 sm:h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                      <svg
+                        className="w-12 h-12 sm:w-16 sm:h-16 mx-auto"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={1}
+                          d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
+                        />
                       </svg>
                     </div>
-                    <p className="text-sm sm:text-base text-gray-400">Sélectionnez des modèles ou ajoutez-en de nouveaux</p>
+                    <p className="text-sm sm:text-base text-gray-400">
+                      Sélectionnez des modèles ou ajoutez-en de nouveaux
+                    </p>
                   </div>
                 </div>
               )}
@@ -307,5 +390,5 @@ export default function HomePage() {
         </div>
       </div>
     </div>
-  )
+  );
 }
