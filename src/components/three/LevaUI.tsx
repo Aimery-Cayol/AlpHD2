@@ -72,7 +72,7 @@ function Params() {
       label: "Matériau",
     },
     meshColor: {
-      value: "#fff",
+      value: "#ffdec9",
       label: "Couleur du mesh",
       render: (get) => get("Aspect.material") == "standard",
     },
