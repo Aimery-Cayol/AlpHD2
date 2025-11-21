@@ -135,7 +135,7 @@ function HomePageContent() {
   //routage avec encodage des modeles selectionnes dans l'url
   // État pour contrôler l'initialisation
   const [isInitialized, setIsInitialized] = useState(false);
-  
+
   // Initialiser depuis l'URL au chargement
   useEffect(() => {
     if (models.length > 0 && !isInitialized) {
@@ -160,7 +160,7 @@ function HomePageContent() {
     if (isInitialized && models.length > 0) {
       const currentUrl = new URL(window.location.href);
       const currentModelsParam = currentUrl.searchParams.get("models");
-      
+
       // Créer la nouvelle URL
       const newUrl = new URL(window.location.href);
       if (selectedModels.length > 0) {
@@ -169,7 +169,7 @@ function HomePageContent() {
       } else {
         newUrl.searchParams.delete("models");
       }
-      
+
       // Mettre à jour seulement si l'URL a changé
       if (currentUrl.toString() !== newUrl.toString()) {
         window.history.replaceState({}, "", newUrl.toString());
@@ -351,12 +351,6 @@ function HomePageContent() {
                 >
                   {showDropZone ? "Masquer" : "Ajouter"} Fichier
                 </button>
-                <button className="btn-secondary text-sm px-3 py-2 touch-manipulation">
-                  Contrôles
-                </button>
-                <button className="btn-secondary text-sm px-3 py-2 touch-manipulation">
-                  Options
-                </button>
               </div>
             </div>
 
@@ -409,14 +403,16 @@ function HomePageContent() {
 // Composant principal avec Suspense
 export default function HomePage() {
   return (
-    <Suspense fallback={
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Chargement...</p>
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto"></div>
+            <p className="mt-4 text-gray-600">Chargement...</p>
+          </div>
         </div>
-      </div>
-    }>
+      }
+    >
       <HomePageContent />
     </Suspense>
   );

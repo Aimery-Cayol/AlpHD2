@@ -15,7 +15,7 @@ export default function About() {
       <div className="relative h-64 sm:h-80 lg:h-96 overflow-hidden">
         <div className="absolute inset-0">
           <img
-            src="https://raw.githubusercontent.com/Robou/LidarHD/main/images/moine5_ret.jpg"
+            src="https://raw.githubusercontent.com/Robou/LidarHD/main/images/2025-11-21_19-03.jpg"
             alt="Montagne 3D reconstruite en haute définition"
             className="h-full w-full object-cover"
           />

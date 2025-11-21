@@ -137,7 +137,7 @@ function Params() {
 
 const matrixTheme = {
   colors: {
-    elevation1: "rgba(0, 0, 0, 0.1)",
+    elevation1: "rgba(0, 0, 0, 0.5)",
     elevation2: "rgba(0, 0, 0, 0.2)",
     elevation3: "rgba(0, 0, 0, 0.3)",
     accent1: "#00ff00",

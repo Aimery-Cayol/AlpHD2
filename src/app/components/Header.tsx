@@ -26,18 +26,13 @@ export default function Header() {
             >
               Accueil
             </Link>
-            <Link
-              href="/models"
-              className="text-gray-500 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors"
-            >
-              Modèles
-            </Link>
-            <Link
+            {/* <Link
               href="/carte"
               className="text-gray-500 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors"
             >
               Carte
-            </Link>
+            </Link> */}
+           
             <Link
               href="/about"
               className="text-gray-500 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors"
