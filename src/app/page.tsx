@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import dynamic from "next/dynamic";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import DropZone from "@/components/three/DropZone";
@@ -17,7 +17,8 @@ interface Model {
   fileSize?: number; // Taille du fichier en octets
 }
 
-export default function HomePage() {
+// Composant interne qui utilise useSearchParams
+function HomePageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -132,9 +133,12 @@ export default function HomePage() {
   };
 
   //routage avec encodage des modeles selectionnes dans l'url
+  // État pour contrôler l'initialisation
+  const [isInitialized, setIsInitialized] = useState(false);
+  
   // Initialiser depuis l'URL au chargement
   useEffect(() => {
-    if (models.length > 0) {
+    if (models.length > 0 && !isInitialized) {
       const encodedModels = searchParams.get("models");
       if (encodedModels) {
         try {
@@ -147,22 +151,31 @@ export default function HomePage() {
           console.error("Erreur décodage:", e);
         }
       }
+      setIsInitialized(true);
     }
-  }, [searchParams, models.length]);
+  }, [searchParams, models.length, isInitialized]);
 
-  // Mettre à jour l'URL quand la sélection change
+  // Mettre à jour l'URL seulement après l'initialisation et évite les boucles
   useEffect(() => {
-    if (models.length > 0) {
-      let newUrl = pathname;
-
+    if (isInitialized && models.length > 0) {
+      const currentUrl = new URL(window.location.href);
+      const currentModelsParam = currentUrl.searchParams.get("models");
+      
+      // Créer la nouvelle URL
+      const newUrl = new URL(window.location.href);
       if (selectedModels.length > 0) {
         const encoded = btoa(JSON.stringify(selectedModels));
-        newUrl = `${pathname}?models=${encodeURIComponent(encoded)}`;
+        newUrl.searchParams.set("models", encoded);
+      } else {
+        newUrl.searchParams.delete("models");
       }
-
-      router.replace(newUrl, { scroll: false });
+      
+      // Mettre à jour seulement si l'URL a changé
+      if (currentUrl.toString() !== newUrl.toString()) {
+        window.history.replaceState({}, "", newUrl.toString());
+      }
     }
-  }, [selectedModels, pathname, models.length]);
+  }, [selectedModels, isInitialized, models.length]);
 
   if (loading) {
     return (
@@ -390,5 +403,21 @@ export default function HomePage() {
         </div>
       </div>
     </div>
+  );
+}
+
+// Composant principal avec Suspense
+export default function HomePage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Chargement...</p>
+        </div>
+      </div>
+    }>
+      <HomePageContent />
+    </Suspense>
   );
 }
