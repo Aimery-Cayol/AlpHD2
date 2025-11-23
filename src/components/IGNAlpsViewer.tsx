@@ -22,7 +22,7 @@ const IGNAlpsViewer: React.FC = () => {
         window.Gp.Map.load(
           mapRef.current!,
           {
-            apiKey: "altimetrie",
+            apiKey: "cartes,essentiels altimetrie",
             // , cartes, cartovecto, ortho, topographie
             viewMode: "2d",
             enginePath2d: "https://ignf.github.io/geoportal-sdk/latest/dist/2d/",
@@ -32,8 +32,7 @@ const IGNAlpsViewer: React.FC = () => {
               y: 45.811339
             },
             layersOptions: {
-              "ELEVATION.CONTOUR.LINE": {format: "WFS", styleOptions: {}},
-              "ORTHOIMAGERY.ORTHOPHOTOS": {},
+              "GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2": {},
               // "ELEVATION.ELEVATIONGRIDCOVERAGE.HIGHRES.MNS": {type: "elevation"},
               // "ELEVATION.ELEVATIONGRIDCOVERAGE.HIGHRES": {
               //   type: "elevation"

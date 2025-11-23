@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import Link from "next/link";
 import { useState } from "react";
@@ -13,7 +13,10 @@ export default function Header() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex items-center">
-            <Link href="/" className="text-xl font-semibold text-gray-900 hover:text-blue-600 transition-colors">
+            <Link
+              href="/"
+              className="text-xl font-semibold text-gray-900 hover:text-blue-600 transition-colors"
+            >
               🏔️ AlpHD
             </Link>
           </div>
@@ -26,13 +29,19 @@ export default function Header() {
             >
               Accueil
             </Link>
-            {/* <Link
+            <Link
               href="/carte"
               className="text-gray-500 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors"
             >
               Carte
+            </Link>
+            {/* <Link
+              href="/models"
+              className="text-gray-500 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors"
+            >
+              Modèles
             </Link> */}
-           
+
             <Link
               href="/about"
               className="text-gray-500 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors"

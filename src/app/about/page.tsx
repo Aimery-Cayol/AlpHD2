@@ -17,7 +17,7 @@ export default function About() {
           <img
             src="https://raw.githubusercontent.com/Robou/LidarHD/main/images/2025-11-21_19-03.jpg"
             alt="Montagne 3D reconstruite en haute définition"
-            className="h-full w-full object-cover"
+            className="h-full w-full object-cover contrast-125 saturate-125"
           />
           {/* Overlay avec gradient pour la lisibilité */}
           <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/40"></div>
