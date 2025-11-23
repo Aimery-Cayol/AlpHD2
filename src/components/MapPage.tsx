@@ -3,6 +3,8 @@
 import { useEffect, useRef } from "react";
 import type L from "leaflet";
 
+import { extractCoordinates } from "@/utils/fileUtils";
+
 export default function MapPage() {
   const mapRef = useRef<L.Map | null>(null);
   const layerGroupRef = useRef<L.LayerGroup | null>(null);
@@ -44,7 +46,6 @@ export default function MapPage() {
         const url = `${baseUrl}?${params.join("&")}`;
 
         console.log("URL WFS:", url);
-        console.log("Dalle LHD : ")
 
         try {
           const response = await fetch(url.toString());
@@ -53,10 +54,25 @@ export default function MapPage() {
           const geojson = await response.json();
           console.log("GeoJSON reçu:", geojson);
 
-          const message =
-            geojson.features?.length === 0
-              ? "Dalle non trouvée"
-              : `Dalle ${geojson.features[0].properties.name}`;
+          // const message =
+          //   geojson.features?.length === 0
+          //     ? "Dalle non trouvée"
+          //     : // : `Dalle ${geojson.features[0].properties.name}`;
+          //       (() => {
+          //         const coords = extractCoordinates(
+          //           geojson.features[0].properties.name
+          //         );
+          //         return coords
+          //           ? `Coords : X=${coords.x}, Y=${coords.y}`
+          //           : "Coords : Non disponibles";
+          //       })();
+
+          const coords = extractCoordinates(
+            geojson.features[0].properties.name
+          );
+          const message = coords
+            ? `Coordonnées de la dalle : <br>X_Y=${coords.x.toString().padStart(4, '0')}_${coords.y.toString().padStart(4, '0')}`
+            : "Dalle non trouvée";
 
           popupRef.current?.setLatLng(e.latlng).setContent(message).openOn(map);
 

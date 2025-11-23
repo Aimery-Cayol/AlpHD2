@@ -4,7 +4,7 @@ import { useState, useEffect, Suspense } from "react";
 import dynamic from "next/dynamic";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import DropZone from "@/components/three/DropZone";
-import { createFileInfo, FileInfo } from "@/utils/fileUtils";
+import { createFileInfo, FileInfo, extractCoordinates } from "@/utils/fileUtils";
 
 // // Import dynamique du composant 3D pour éviter les problèmes SSR
 const ThreeScene = dynamic(() => import("@/components/three/ThreeScene"));
@@ -16,6 +16,18 @@ interface Model {
   coordinates?: { x: number; y: number };
   fileSize?: number; // Taille du fichier en octets
 }
+
+// Fonction utilitaire pour encoder en base64 (compatible Node.js et navigateur)
+const encodeBase64 = (str: string): string => {
+  // Utilisation de Buffer.from pour la compatibilité Node.js
+  return Buffer.from(str, 'utf8').toString('base64');
+};
+
+// Fonction utilitaire pour décoder en base64 (compatible Node.js et navigateur)
+const decodeBase64 = (base64: string): string => {
+  // Utilisation de Buffer.from pour la compatibilité Node.js
+  return Buffer.from(base64, 'base64').toString('utf8');
+};
 
 // Composant interne qui utilise useSearchParams
 function HomePageContent() {
@@ -120,17 +132,7 @@ function HomePageContent() {
     );
   };
 
-  // Extraire les coordonnées du nom de fichier
-  const extractCoordinates = (filename: string) => {
-    const match = filename.match(/(\d{4})_(\d{4})/);
-    if (match) {
-      return {
-        x: parseInt(match[1], 10),
-        y: parseInt(match[2], 10),
-      };
-    }
-    return null;
-  };
+
 
   //routage avec encodage des modeles selectionnes dans l'url
   // État pour contrôler l'initialisation
@@ -142,7 +144,7 @@ function HomePageContent() {
       const encodedModels = searchParams.get("models");
       if (encodedModels) {
         try {
-          const decoded = JSON.parse(atob(decodeURIComponent(encodedModels)));
+          const decoded = JSON.parse(decodeBase64(decodeURIComponent(encodedModels)));
           const validUrls = decoded.filter((url: string) =>
             models.some((m) => m.url === url)
           );
@@ -164,7 +166,7 @@ function HomePageContent() {
       // Créer la nouvelle URL
       const newUrl = new URL(window.location.href);
       if (selectedModels.length > 0) {
-        const encoded = btoa(JSON.stringify(selectedModels));
+        const encoded = encodeBase64(JSON.stringify(selectedModels));
         newUrl.searchParams.set("models", encoded);
       } else {
         newUrl.searchParams.delete("models");

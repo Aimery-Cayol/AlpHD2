@@ -86,3 +86,19 @@ export function extractFilename(urlOrPath: string): string {
   const filename = parts[parts.length - 1];
   return filename.replace(/\.(final\.)?ply|\.(drc)/i, '') || 'model';
 }
+
+/**
+ * Extrait les coordonnées du nom de fichier (format: XXXX_YYYY)
+ * @param filename - Nom du fichier contenant les coordonnées au format XXXX_YYYY
+ * @returns Objet avec x et y ou null si les coordonnées ne peuvent pas être extraites
+ */
+export function extractCoordinates(filename: string): { x: number; y: number } | null {
+  const match = filename.match(/(\d{4})_(\d{4})/);
+  if (match) {
+    return {
+      x: parseInt(match[1], 10),
+      y: parseInt(match[2], 10),
+    };
+  }
+  return null;
+}
