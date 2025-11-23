@@ -27,7 +27,7 @@ export default function Header() {
               href="/"
               className="text-gray-900 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors"
             >
-              Accueil
+              Modèles HD
             </Link>
             <Link
               href="/carte"
@@ -35,12 +35,12 @@ export default function Header() {
             >
               Carte
             </Link>
-            {/* <Link
-              href="/models"
+            <Link
+              href="/relief+"
               className="text-gray-500 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors"
             >
-              Modèles
-            </Link> */}
+              Relief+
+            </Link>
 
             <Link
               href="/about"

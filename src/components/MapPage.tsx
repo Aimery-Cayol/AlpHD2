@@ -100,7 +100,7 @@ export default function MapPage() {
   return (
     <div className="flex flex-col h-screen">
       <p className="p-4 bg-gray-100">
-        Cliquez sur la carte pour récupérer la parcelle correspondante.
+        Cliquez sur la carte pour voir le numéro du modèle correspondant.
       </p>
       <div id="map" className="flex-1" />
     </div>
