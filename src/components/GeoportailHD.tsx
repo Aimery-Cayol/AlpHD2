@@ -13,7 +13,7 @@ const GeoportailHD = () => {
         link.id = "ign-sdk-css";
         link.rel = "stylesheet";
         link.href =
-          "http://ignf.github.io/geoportal-sdk/latest/dist/3d/GpSDK3D.css";
+          "https://ignf.github.io/geoportal-sdk/latest/dist/3d/GpSDK3D.css";
         document.head.appendChild(link);
       }
 
@@ -31,7 +31,7 @@ const GeoportailHD = () => {
         const script = document.createElement("script");
         script.id = "ign-sdk-js";
         script.src =
-          "http://ignf.github.io/geoportal-sdk/latest/dist/3d/GpSDK3D.js";
+          "https://ignf.github.io/geoportal-sdk/latest/dist/3d/GpSDK3D.js";
         script.async = true;
         script.onload = initMap;
         document.body.appendChild(script);
