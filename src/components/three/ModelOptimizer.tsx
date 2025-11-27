@@ -121,6 +121,7 @@ export class ModelOptimizer {
       console.warn(`Reason: ${checkResult.reason}`);
       console.warn(`Original triangles: ${checkResult.originalTriangles.toLocaleString()}`);
       
+      /* DECIMATION DÉSACTIVÉE POUR LA PRODUCTION
       try {
         const optimizedGeometry = this.decimateGeometry(geometry);
         const newCheck = this.checkOptimization(optimizedGeometry);
@@ -136,7 +137,9 @@ export class ModelOptimizer {
         console.error('Error during geometry optimization:', error);
         return geometry; // Retourner l'original en cas d'erreur
       }
+      */
     }
+    
 
     return geometry;
   }
