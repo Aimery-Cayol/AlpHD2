@@ -92,11 +92,15 @@ export default function MeshLoader({
         if (format === "drc") {
           console.log("🔧 Utilisation du DRACOLoader");
           loader = new DRACOLoader();
-          // Utiliser JavaScript au lieu de WASM pour éviter les problèmes mémoire
+          // Détecter le support WASM et utiliser le décodeur approprié
+          const supportsWasm = typeof WebAssembly === 'object' && WebAssembly.validate;
+          const decoderType = supportsWasm ? "wasm" : "js";
+          console.log(`🔧 Utilisation du décodeur ${decoderType.toUpperCase()} pour DRACO`);
+
           loader.setDecoderPath(
             "https://www.gstatic.com/draco/versioned/decoders/1.5.7/"
           );
-          loader.setDecoderConfig({ type: "js" }); // Utiliser JavaScript au lieu de WASM
+          loader.setDecoderConfig({ type: decoderType });
         } else {
           console.log("🔧 Utilisation du PLYLoader");
           loader = new PLYLoader();

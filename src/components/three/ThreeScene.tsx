@@ -2,7 +2,7 @@
 
 import * as THREE from "three";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import { Canvas, useFrame } from "@react-three/fiber";
 import {
@@ -36,6 +36,31 @@ function JEasings() {
   useFrame(() => {
     JEASINGS.update();
   });
+}
+
+// Composant de fallback pour les appareils sans WebGL
+function WebGLFallback() {
+  return (
+    <div className="flex items-center justify-center h-full bg-gray-100 rounded-lg">
+      <div className="text-center p-8">
+        <div className="text-6xl mb-4">🚫</div>
+        <h3 className="text-xl font-semibold text-gray-800 mb-2">
+          WebGL non supporté
+        </h3>
+        <p className="text-gray-600 mb-4">
+          Votre navigateur ou appareil ne supporte pas WebGL, nécessaire pour afficher les visualisations 3D.
+        </p>
+        <div className="text-sm text-gray-500">
+          <p>Essayez de :</p>
+          <ul className="list-disc list-inside mt-2 text-left">
+            <li>Mettre à jour votre navigateur</li>
+            <li>Activer l'accélération matérielle dans les paramètres</li>
+            <li>Utiliser un appareil plus récent</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 // Composant interne qui utilise les contrôles de scène
@@ -152,6 +177,41 @@ export default function ThreeScene({
   models,
   selectedModels,
 }: ThreeSceneProps) {
+  const [webglSupported, setWebglSupported] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    // Détecter le support WebGL
+    const detectWebGL = () => {
+      try {
+        const canvas = document.createElement('canvas');
+        const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+        setWebglSupported(!!gl);
+      } catch (error) {
+        console.warn('Erreur lors de la détection WebGL:', error);
+        setWebglSupported(false);
+      }
+    };
+
+    detectWebGL();
+  }, []);
+
+  // Afficher un indicateur de chargement pendant la détection
+  if (webglSupported === null) {
+    return (
+      <div className="flex items-center justify-center h-full bg-gray-100 rounded-lg">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-2 text-gray-600">Vérification WebGL...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Fallback si WebGL n'est pas supporté
+  if (!webglSupported) {
+    return <WebGLFallback />;
+  }
+
   return (
     <div className="relative w-full h-full">
       <MyLevaUI>
