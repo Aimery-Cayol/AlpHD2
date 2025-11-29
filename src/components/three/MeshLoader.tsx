@@ -93,9 +93,12 @@ export default function MeshLoader({
           console.log("🔧 Utilisation du DRACOLoader");
           loader = new DRACOLoader();
           // Détecter le support WASM et utiliser le décodeur approprié
-          const supportsWasm = typeof WebAssembly === 'object' && WebAssembly.validate;
+          const supportsWasm =
+            typeof WebAssembly === "object" && WebAssembly.validate;
           const decoderType = supportsWasm ? "wasm" : "js";
-          console.log(`🔧 Utilisation du décodeur ${decoderType.toUpperCase()} pour DRACO`);
+          console.log(
+            `🔧 Utilisation du décodeur ${decoderType.toUpperCase()} pour DRACO`
+          );
 
           loader.setDecoderPath(
             "https://www.gstatic.com/draco/versioned/decoders/1.5.7/"
@@ -163,10 +166,12 @@ export default function MeshLoader({
 
   if (loading) {
     // Couleur différente selon la source : vert pour cache, orange pour réseau, bleu pour local
-    const loadingColor = 
-      cacheStatus === "cache" ? "#00ff00" : 
-      cacheStatus === "local" ? "#0066cc" : 
-      "#ffaa00";
+    const loadingColor =
+      cacheStatus === "cache"
+        ? "#00ff00"
+        : cacheStatus === "local"
+          ? "#0066cc"
+          : "#ffaa00";
 
     return (
       <group>
@@ -267,9 +272,11 @@ export default function MeshLoader({
         <BoundingBoxHelper
           box={geometry.boundingBox}
           color={
-            cacheStatus === "cache" ? "#16a34a" : 
-            cacheStatus === "local" ? "#0066cc" : 
-            "#ffff00" // Vert foncé pour cache, bleu pour local, jaune pour réseau
+            cacheStatus === "cache"
+              ? "#16a34a"
+              : cacheStatus === "local"
+                ? "#0066cc"
+                : "#ffff00" // Vert foncé pour cache, bleu pour local, jaune pour réseau
           }
         />
       )}
@@ -281,7 +288,7 @@ export default function MeshLoader({
           <meshBasicMaterial color="#22c55e" />
         </mesh>
       )}
-      
+
       {/* Indicateur pour les fichiers locaux */}
       {cacheStatus === "local" && (
         <mesh position={[0, 1.5, 0]}>
