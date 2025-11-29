@@ -27,13 +27,13 @@ export default function Header() {
               href="/"
               className="text-gray-900 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors"
             >
-              Modèles HD
+              Accueil
             </Link>
             <Link
               href="/carte"
               className="text-gray-500 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors"
             >
-              Carte
+              Zones disponibles
             </Link>
             <Link
               href="/relief+"
@@ -72,11 +72,18 @@ export default function Header() {
                 Accueil
               </Link>
               <Link
-                href="/models"
+                href="/carte"
                 className="block px-3 py-2 text-base font-medium text-gray-500 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Modèles
+                Zones disponibles
+              </Link>
+              <Link
+                href="/relief+"
+                className="block px-3 py-2 text-base font-medium text-gray-500 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Relief+
               </Link>
               <Link
                 href="/about"

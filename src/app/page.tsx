@@ -41,6 +41,7 @@ function HomePageContent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
   const [showDropZone, setShowDropZone] = useState(false);
+  const [isPanelVisible, setIsPanelVisible] = useState(false);
 
   // Fonction pour récupérer la taille d'un fichier depuis S3
   const getFileSize = async (url: string): Promise<number> => {
@@ -214,9 +215,9 @@ function HomePageContent() {
 
   return (
     <div className="container mx-auto px-4 py-4 sm:py-8">
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 lg:gap-6">
+      <div className={`grid gap-4 lg:gap-6 ${isPanelVisible ? 'grid-cols-1 lg:grid-cols-5' : 'grid-cols-1'}`}>
         {/* Panneau de contrôle */}
-        <div className="lg:col-span-1 order-2 lg:order-1">
+        <div className={`lg:col-span-1 order-2 lg:order-1 ${isPanelVisible ? '' : 'hidden'}`}>
           <div className="card">
             <h2 className="text-lg sm:text-xl font-semibold mb-4">
               Modèles LiDAR
@@ -333,16 +334,6 @@ function HomePageContent() {
               )}
             </div>
 
-            <div className="mt-6 pt-4 border-t">
-              <h3 className="font-medium mb-2">Statistiques</h3>
-              <p className="text-sm text-gray-600">
-                {models.length} modèles distants • {localFiles.length} modèles
-                locaux
-              </p>
-              <p className="text-xs text-gray-500">
-                Total: {allModels.length} modèles
-              </p>
-            </div>
           </div>
         </div>
 
@@ -354,6 +345,14 @@ function HomePageContent() {
                 Visualiseur 3D
               </h2>
               <div className="flex space-x-2">
+                <button
+                  onClick={() => setIsPanelVisible(!isPanelVisible)}
+                  className={`btn-secondary text-sm px-3 py-2 touch-manipulation ${
+                    isPanelVisible ? "" : "bg-gray-100 text-gray-700"
+                  }`}
+                >
+                  {isPanelVisible ? "Masquer" : "Afficher"} Panneau
+                </button>
                 <button
                   onClick={() => setShowDropZone(!showDropZone)}
                   className={`btn-secondary text-sm px-3 py-2 touch-manipulation ${

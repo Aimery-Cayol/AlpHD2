@@ -271,7 +271,18 @@ export default function MapPage() {
           </button>
         )}
       </div>
+
       <div id="map" className="flex-1" />
+
+      <div className="p-2 bg-gray-100 border-t">
+        <h3 className="font-medium mb-1 text-sm">Statistiques</h3>
+        <p className="text-xs text-gray-600">
+          {availableModels.length} modèles distants • 0 modèles locaux
+        </p>
+        <p className="text-xs text-gray-500">
+          Total: {availableModels.length} modèles
+        </p>
+      </div>
     </div>
   );
 }
