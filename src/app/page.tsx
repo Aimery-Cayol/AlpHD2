@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import DropZone from "@/components/three/DropZone";
 import { createFileInfo, FileInfo, extractCoordinates } from "@/utils/fileUtils";
+import { useAppContext } from "@/contexts/AppContext";
 
 // // Import dynamique du composant 3D pour éviter les problèmes SSR
 const ThreeScene = dynamic(() => import("@/components/three/ThreeScene"));
@@ -34,8 +35,8 @@ function HomePageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
+  const { selectedModels, setSelectedModels, availableModels, setAvailableModels } = useAppContext();
   const [models, setModels] = useState<Model[]>([]);
-  const [selectedModels, setSelectedModels] = useState<string[]>([]);
   const [localFiles, setLocalFiles] = useState<Model[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
@@ -82,6 +83,7 @@ function HomePageContent() {
 
       const modelList = await Promise.all(modelPromises);
       setModels(modelList);
+      setAvailableModels(modelList); // Synchroniser avec le contexte global
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erreur inconnue");
     } finally {
@@ -138,10 +140,12 @@ function HomePageContent() {
   // État pour contrôler l'initialisation
   const [isInitialized, setIsInitialized] = useState(false);
 
-  // Initialiser depuis l'URL au chargement
+  // Initialiser depuis l'URL au chargement (pour compatibilité avec anciens liens)
   useEffect(() => {
     if (models.length > 0 && !isInitialized) {
       const encodedModels = searchParams.get("models");
+
+      // Gérer les modèles existants depuis l'URL (pour compatibilité)
       if (encodedModels) {
         try {
           const decoded = JSON.parse(decodeBase64(decodeURIComponent(encodedModels)));
@@ -153,9 +157,10 @@ function HomePageContent() {
           console.error("Erreur décodage:", e);
         }
       }
+
       setIsInitialized(true);
     }
-  }, [searchParams, models.length, isInitialized]);
+  }, [searchParams, models.length, isInitialized, setSelectedModels, models]);
 
   // Mettre à jour l'URL seulement après l'initialisation et évite les boucles
   useEffect(() => {
@@ -171,6 +176,10 @@ function HomePageContent() {
       } else {
         newUrl.searchParams.delete("models");
       }
+
+      // Supprimer les paramètres addModel et addModels s'ils existent
+      newUrl.searchParams.delete("addModel");
+      newUrl.searchParams.delete("addModels");
 
       // Mettre à jour seulement si l'URL a changé
       if (currentUrl.toString() !== newUrl.toString()) {

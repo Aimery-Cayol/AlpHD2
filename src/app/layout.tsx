@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "./components/Header";
 import { Amplify } from 'aws-amplify';
 import outputs from '../../amplify_outputs.json';
+import { AppProvider } from '../contexts/AppContext';
 
 Amplify.configure(outputs);
 
@@ -23,10 +24,12 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body className={inter.className}>
-        <div className="min-h-screen bg-gray-50">
-          <Header />
-          <main className="flex-1">{children}</main>
-        </div>
+        <AppProvider>
+          <div className="min-h-screen bg-gray-50">
+            <Header />
+            <main className="flex-1">{children}</main>
+          </div>
+        </AppProvider>
       </body>
     </html>
   );
