@@ -68,7 +68,7 @@ function Params() {
       render: (get) => get("Éclairages.showDirectionalLight"),
     },
     sunElevation: {
-      value: 35,
+      value: 55,
       min: 0,
       max: 90,
       step: 1,
