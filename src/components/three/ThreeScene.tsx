@@ -4,7 +4,7 @@ import * as THREE from "three";
 
 import React, { useEffect, useRef, useState } from "react";
 
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import {
   PerspectiveCamera,
   Stats,
@@ -67,6 +67,7 @@ function WebGLFallback() {
 // Composant interne qui utilise les contrôles de scène
 function SceneContent({ models, selectedModels }: ThreeSceneProps) {
   const controls = useSceneControls();
+  const { scene } = useThree();
 
   //JEasing
   const orbitControlsRef = useRef<any>(null);
@@ -79,6 +80,38 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
         .start();
     }
   };
+
+  // Recentrer la caméra sur la bounding box des selectedModels
+  useEffect(() => {
+    if (selectedModels.length === 0) return;
+
+    const timer = setTimeout(() => {
+      const worldBox = new THREE.Box3();
+      let hasMeshes = false;
+
+      scene.traverse((object) => {
+        if (
+          object instanceof THREE.Mesh &&
+          object.userData.url &&
+          selectedModels.includes(object.userData.url)
+        ) {
+          if (object.geometry && object.geometry.boundingBox) {
+            const localBox = object.geometry.boundingBox.clone();
+            localBox.applyMatrix4(object.matrixWorld);
+            worldBox.union(localBox);
+            hasMeshes = true;
+          }
+        }
+      });
+
+      if (hasMeshes && orbitControlsRef.current) {
+        const center = worldBox.getCenter(new THREE.Vector3());
+        orbitControlsRef.current.target.copy(center);
+      }
+    }, 1000); // Délai pour permettre le chargement des mesh
+
+    return () => clearTimeout(timer);
+  }, [selectedModels, scene]);
 
   // Conversion sphérique → cartésien
   const getSunDirection = (
@@ -109,7 +142,7 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
       <JEasingsComponent />
       <PerspectiveCamera
         makeDefault
-        position={[0, 5, 3]}
+        position={[0, 5, 3]} // 2ème coord = hauteur 3ème coord = recul
         fov={controls.fov}
         near={0.001}
       />
@@ -121,7 +154,7 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
         minDistance={0}
         maxDistance={50}
         maxPolarAngle={Math.PI}
-        target={[0, 0, 0]}
+        target={[0, 3, 0]}
         dampingFactor={0.13}
         autoRotate={controls.autoRotate}
       />

@@ -223,7 +223,7 @@ export default function MeshLoader({
 
   return (
     <group>
-      <mesh ref={meshRef} geometry={geometry} castShadow receiveShadow>
+      <mesh ref={meshRef} geometry={geometry} castShadow receiveShadow userData={{ url }}>
         {controls.material === "normal" && (
           <meshNormalMaterial side={THREE.DoubleSide} />
         )}

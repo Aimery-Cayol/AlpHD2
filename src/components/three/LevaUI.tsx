@@ -28,7 +28,16 @@ function Params() {
       value: false,
       label: "Rotation auto",
     },
+    // position: {
+    //   value: [1,1,1],
+    //   min: 0,
+    //   max: 10,
+    //   step: 1,
+    //   label: "Position caméra",
+    // },
   });
+
+  
 
 
   const lightControls = useControls("Éclairages", {
