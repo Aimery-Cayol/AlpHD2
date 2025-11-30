@@ -2,6 +2,7 @@
 
 import React from "react";
 import { useMemo } from "react";
+import * as THREE from "three";
 import MeshLoader from "./MeshLoader";
 
 interface Model {
@@ -15,12 +16,14 @@ interface ModelPositionerProps {
   models: Model[];
   selectedModels: string[];
   onMeshDoubleClick?: (event: any) => void;
+  lightDirection?: THREE.Vector3;
 }
 
 export default function ModelPositioner({
   models,
   selectedModels,
   onMeshDoubleClick,
+  lightDirection,
 }: ModelPositionerProps) {
   // Calculer les positions relatives avec le premier modèle au centre
   const positionedModels = useMemo(() => {
@@ -49,6 +52,7 @@ export default function ModelPositioner({
             url={model.url}
             format={model.format}
             onDoubleClick={onMeshDoubleClick}
+            lightDirection={lightDirection}
           />
         </group>
       ))}

@@ -48,7 +48,8 @@ function WebGLFallback() {
           WebGL non supporté
         </h3>
         <p className="text-gray-600 mb-4">
-          Votre navigateur ou appareil ne supporte pas WebGL, nécessaire pour afficher les visualisations 3D.
+          Votre navigateur ou appareil ne supporte pas WebGL, nécessaire pour
+          afficher les visualisations 3D.
         </p>
         <div className="text-sm text-gray-500">
           <p>Essayez de :</p>
@@ -80,7 +81,7 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
   };
 
   // Conversion sphérique → cartésien
-  const getSunPosition = (
+  const getSunDirection = (
     azimuth: number,
     elevation: number,
     distance = 10
@@ -91,14 +92,17 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
     return [
       distance * Math.cos(elRad) * Math.sin(azRad),
       distance * Math.sin(elRad),
-      distance * Math.cos(elRad) * Math.cos(azRad),
+      -distance * Math.cos(elRad) * Math.cos(azRad), // Inversion nord/sud
     ] as [number, number, number];
   };
 
-  const sunPosition = getSunPosition(
+  const sunPosition = getSunDirection(
     controls.sunAzimuth,
     controls.sunElevation
   );
+
+  // Calcul de la direction de la lumière pour le shader (direction vers la surface)
+  const lightDirection = new THREE.Vector3(...sunPosition).normalize();
 
   return (
     <>
@@ -118,7 +122,10 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
         maxDistance={50}
         maxPolarAngle={Math.PI}
         target={[0, 0, 0]}
+        dampingFactor={0.13}
+        autoRotate={controls.autoRotate}
       />
+
       {controls.showGrid && <gridHelper args={[10, 10]} />}
       {controls.showAxes && <axesHelper args={[2]} />}
       {controls.showStats && <Stats />}
@@ -145,7 +152,7 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
 
       <Sky
         distance={450000}
-        sunPosition={[0, 1, 0]}
+        sunPosition={sunPosition}
         inclination={0}
         azimuth={0.25}
       />
@@ -168,7 +175,12 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
         </Clouds>
       )}
       {/* Positionneur automatique de modèles */}
-      <ModelPositioner models={models} selectedModels={selectedModels} onMeshDoubleClick={handleMeshDoubleClick}/>
+      <ModelPositioner
+        models={models}
+        selectedModels={selectedModels}
+        onMeshDoubleClick={handleMeshDoubleClick}
+        lightDirection={lightDirection}
+      />
     </>
   );
 }
@@ -183,11 +195,12 @@ export default function ThreeScene({
     // Détecter le support WebGL
     const detectWebGL = () => {
       try {
-        const canvas = document.createElement('canvas');
-        const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+        const canvas = document.createElement("canvas");
+        const gl =
+          canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
         setWebglSupported(!!gl);
       } catch (error) {
-        console.warn('Erreur lors de la détection WebGL:', error);
+        console.warn("Erreur lors de la détection WebGL:", error);
         setWebglSupported(false);
       }
     };

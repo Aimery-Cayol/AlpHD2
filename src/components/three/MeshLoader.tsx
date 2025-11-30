@@ -19,12 +19,14 @@ interface MeshLoaderProps {
   url: string;
   format?: "ply" | "drc";
   onDoubleClick?: (event: any) => void;
+  lightDirection?: THREE.Vector3;
 }
 
 export default function MeshLoader({
   url,
   format,
   onDoubleClick,
+  lightDirection,
 }: MeshLoaderProps) {
   const [geometry, setGeometry] = useState<BufferGeometry | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -242,6 +244,8 @@ export default function MeshLoader({
             rockColor={controls.rockColor}
             slopeThreshold={controls.slopeThreshold}
             smoothness={controls.smoothness}
+            lightDirection={lightDirection || new THREE.Vector3(1, 1, 1).normalize()}
+            ambientIntensity={controls.ambientIntensity}
           />
         )}
       </mesh>

@@ -191,7 +191,7 @@ export default function About() {
                     LidarTerrainMesh
                   </a>
                   <p className="text-sm text-gray-600 mt-1">
-                    Outil spécialisé pour la reconstruction de terrains à partir de données LiDAR
+                    Outil spécialisé pour la reconstruction de terrains à partir de données LiDAR, utilisant l'algorithme Poisson Recon
                   </p>
                 </div>
               </div>

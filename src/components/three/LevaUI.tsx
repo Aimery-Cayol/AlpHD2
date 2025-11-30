@@ -24,7 +24,12 @@ function Params() {
       step: 1,
       label: "Largeur de champ",
     },
+    autoRotate: {
+      value: false,
+      label: "Rotation auto",
+    },
   });
+
 
   const lightControls = useControls("Éclairages", {
     showAmbientLight: { value: true, label: "Lumière ambiante" },
@@ -46,7 +51,7 @@ function Params() {
       render: (get) => get("Éclairages.showDirectionalLight"),
     },
     sunAzimuth: {
-      value: 120,
+      value: 180,
       min: 0,
       max: 360,
       step: 1,
@@ -54,7 +59,7 @@ function Params() {
       render: (get) => get("Éclairages.showDirectionalLight"),
     },
     sunElevation: {
-      value: 45,
+      value: 35,
       min: 0,
       max: 90,
       step: 1,
@@ -67,7 +72,7 @@ function Params() {
     nuages: { value: true, label: "Nuages" },
 
     material: {
-      value: "standard",
+      value: "slope",
       options: ["standard", "slope", "normal"],
       label: "Matériau",
     },
