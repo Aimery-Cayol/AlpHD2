@@ -9,6 +9,7 @@ import {
   PerspectiveCamera,
   Stats,
   OrbitControls,
+  MapControls,
   Clouds,
   Cloud,
   Sky,
@@ -70,11 +71,11 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
   const { scene } = useThree();
 
   //JEasing
-  const orbitControlsRef = useRef<any>(null);
+  const cameraControlsRef = useRef<any>(null);
   const handleMeshDoubleClick = (event: any) => {
     event.stopPropagation();
-    if (orbitControlsRef.current && event.point) {
-      new JEASINGS.JEasing(orbitControlsRef.current.target)
+    if (cameraControlsRef.current && event.point) {
+      new JEASINGS.JEasing(cameraControlsRef.current.target)
         .to({ x: event.point.x, y: event.point.y, z: event.point.z }, 500)
         .easing(JEASINGS.Cubic.Out)
         .start();
@@ -104,9 +105,9 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
         }
       });
 
-      if (hasMeshes && orbitControlsRef.current) {
+      if (hasMeshes && cameraControlsRef.current) {
         const center = worldBox.getCenter(new THREE.Vector3());
-        orbitControlsRef.current.target.copy(center);
+        cameraControlsRef.current.target.copy(center);
       }
     }, 1000); // Délai pour permettre le chargement des mesh
 
@@ -146,8 +147,21 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
         fov={controls.fov}
         near={0.001}
       />
-      <OrbitControls
+      {/* <OrbitControls
         ref={orbitControlsRef}
+        enablePan={true}
+        enableZoom={true}
+        enableRotate={true}
+        minDistance={0}
+        maxDistance={50}
+        maxPolarAngle={Math.PI}
+        target={[0, 3, 0]}
+        dampingFactor={0.13}
+        autoRotate={controls.autoRotate}
+      /> */}
+
+      <MapControls
+        ref={cameraControlsRef}
         enablePan={true}
         enableZoom={true}
         enableRotate={true}
