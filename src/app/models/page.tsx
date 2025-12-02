@@ -1,20 +1,6 @@
-// export default function ModelsList() {
-//     return ( <div className="flex items-center justify-center min-h-screen">
-//         <div className="text-center">
-//             <p>Liste des modèles disponibles...</p>
-//             <p>Page en construction</p>
-          
-//         </div>
-//       </div>)
-// }
-
 'use client'
 
-import { Canvas } from '@react-three/fiber'
-import Polyhedron from './Polyhedron.jsx'
 import * as THREE from 'three'
-import { OrbitControls } from '@react-three/drei'
-
 import dynamic from 'next/dynamic';
 
 const IGNAlpsViewer = dynamic(() => import('@/components/IGNAlpsViewer'), {

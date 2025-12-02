@@ -1,12 +1,12 @@
 "use client";
 
-import GeoportailHD from "@/components/GeoportailHD";
-// import "leaflet/dist/leaflet.css";
+import "leaflet/dist/leaflet.css";
+import ZonesDispos from "@/components/ZonesDispos";
 
 export default function Carte() {
   return (
     <div className="w-full h-screen">
-      <GeoportailHD />
+      <ZonesDispos />
     </div>
   );
 }
