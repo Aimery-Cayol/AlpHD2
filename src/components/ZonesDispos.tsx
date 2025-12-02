@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-
+import { useRouter } from "next/navigation";
 import { extractCoordinates } from "@/utils/fileUtils";
 import { useAppContext } from "@/contexts/AppContext";
 
@@ -111,7 +111,8 @@ const loadTilesLayer = async (map: any, L: any, selectedTiles: string[], setSele
 };
 
 export default function MapPage() {
-  const { selectedTiles, setSelectedTiles } = useAppContext();
+  const router = useRouter();
+  const { selectedTiles, setSelectedTiles, selectedModels, setSelectedModels, availableModels } = useAppContext();
   const mapRef = useRef<L.Map | null>(null);
   const layerGroupRef = useRef<L.LayerGroup | null>(null);
   const popupRef = useRef<L.Popup | null>(null);
@@ -127,6 +128,13 @@ export default function MapPage() {
     // Import dynamique de Leaflet
     import("leaflet").then((L) => {
       if (mapRef.current) return;
+
+      // Vérifier que le conteneur DOM existe avant de créer la carte
+      const mapContainer = document.getElementById("map");
+      if (!mapContainer) {
+        console.warn("Map container not found, will retry...");
+        return;
+      }
 
       const map = L.map("map").setView([45.23, 6.5], 8);
       mapRef.current = map;
@@ -229,8 +237,6 @@ export default function MapPage() {
     );
   }
 
-  const { selectedModels, setSelectedModels, availableModels } = useAppContext();
-
   const handleLoadSelectedTiles = () => {
     if (selectedTiles.length === 0) return;
 
@@ -245,13 +251,17 @@ export default function MapPage() {
       return prev;
     });
 
-    // Rediriger vers la page principale
-    window.location.href = '/';
+    // Utiliser un petit délai pour s'assurer que l'état est mis à jour avant la navigation
+    // Dans React, les mises à jour d'état sont asynchrones, donc un délai minimal est nécessaire
+    setTimeout(() => {
+      // Naviguer vers la page principale
+      router.push('/');
+    }, 100);
   };
 
   return (
     <div className="flex flex-col h-screen">
-      <div className="p-4 bg-gray-100 flex justify-between items-center">
+      <div className="p-4 bg-white border-b flex justify-between items-center">
         <p>
           Carte interactive : Les tuiles disponibles sont affichées en <span className="text-green-600 font-semibold">vert</span>.
           Cliquez sur une tuile pour la sélectionner (elle devient <span className="text-red-600 font-semibold">rouge</span>).
@@ -263,18 +273,41 @@ export default function MapPage() {
           )}
         </p>
         {selectedTiles.length > 0 && (
-          <button
-            onClick={handleLoadSelectedTiles}
-            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors"
-          >
-            Charger {selectedTiles.length} tuile{selectedTiles.length > 1 ? 's' : ''} en 3D
-          </button>
+          <div className="flex space-x-2">
+            <button
+              onClick={handleLoadSelectedTiles}
+              className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors"
+            >
+              Charger {selectedTiles.length} tuile{selectedTiles.length > 1 ? 's' : ''} en 3D
+            </button>
+            <button
+              onClick={() => {
+                // Mettre à jour uniquement les tuiles actuellement sélectionnées
+                if (tilesLayerRef.current) {
+                  selectedTiles.forEach(url => {
+                    tilesLayerRef.current?.eachLayer((layer: any) => {
+                      if (layer.feature && layer.feature.properties?.url === url) {
+                        // Réinitialiser l'état de sélection et le style
+                        (layer as any)._isSelected = false;
+                        layer.setStyle(baseStyle);
+                      }
+                    });
+                  });
+                }
+                // Réinitialiser la sélection
+                setSelectedTiles([]);
+              }}
+              className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors"
+            >
+              Tout désélectionner
+            </button>
+          </div>
         )}
       </div>
 
       <div id="map" className="flex-1" />
 
-      <div className="p-2 bg-gray-100 border-t">
+      <div className="p-2 bg-white border-t">
         <h3 className="font-medium mb-1 text-sm">Statistiques</h3>
         <p className="text-xs text-gray-600">
           {availableModels.length} modèles distants • 0 modèles locaux

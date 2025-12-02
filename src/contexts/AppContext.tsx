@@ -48,29 +48,29 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   // Liste complète des modèles disponibles
   const [availableModels, setAvailableModels] = useState<Model[]>([]);
 
-  // Charger depuis localStorage au démarrage
-  useEffect(() => {
-    const savedSelectedModels = localStorage.getItem('selectedModels');
-    const savedSelectedTiles = localStorage.getItem('selectedTiles');
+  // Ne plus charger depuis localStorage au démarrage pour éviter de recharger les anciens modèles
+  // useEffect(() => {
+  //   const savedSelectedModels = localStorage.getItem('selectedModels');
+  //   const savedSelectedTiles = localStorage.getItem('selectedTiles');
 
-    if (savedSelectedModels) {
-      try {
-        const models = JSON.parse(savedSelectedModels);
-        setSelectedModels(models);
-      } catch (e) {
-        console.error('Erreur chargement selectedModels:', e);
-      }
-    }
+  //   if (savedSelectedModels) {
+  //     try {
+  //       const models = JSON.parse(savedSelectedModels);
+  //       setSelectedModels(models);
+  //     } catch (e) {
+  //       console.error('Erreur chargement selectedModels:', e);
+  //     }
+  //   }
 
-    if (savedSelectedTiles) {
-      try {
-        const tiles = JSON.parse(savedSelectedTiles);
-        setSelectedTiles(tiles);
-      } catch (e) {
-        console.error('Erreur chargement selectedTiles:', e);
-      }
-    }
-  }, []);
+  //   if (savedSelectedTiles) {
+  //     try {
+  //       const tiles = JSON.parse(savedSelectedTiles);
+  //       setSelectedTiles(tiles);
+  //     } catch (e) {
+  //       console.error('Erreur chargement selectedTiles:', e);
+  //     }
+  //   }
+  // }, []);
 
   // Sauvegarder dans localStorage quand l'état change
   useEffect(() => {

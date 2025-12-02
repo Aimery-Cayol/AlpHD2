@@ -30,7 +30,7 @@ export default function Header() {
               Accueil
             </Link>
             <Link
-              href="/carte"
+              href="/zonesdispos"
               className="text-gray-500 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors"
             >
               Zones disponibles
@@ -72,7 +72,7 @@ export default function Header() {
                 Accueil
               </Link>
               <Link
-                href="/carte"
+                href="/zonesdispos"
                 className="block px-3 py-2 text-base font-medium text-gray-500 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >

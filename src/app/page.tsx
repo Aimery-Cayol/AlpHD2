@@ -42,6 +42,7 @@ function HomePageContent() {
   const [error, setError] = useState<string>("");
   const [showDropZone, setShowDropZone] = useState(false);
   const [isPanelVisible, setIsPanelVisible] = useState(false);
+  const [isSharing, setIsSharing] = useState(false);
 
   // Fonction pour récupérer la taille d'un fichier depuis S3
   const getFileSize = async (url: string): Promise<number> => {
@@ -126,14 +127,38 @@ function HomePageContent() {
 
   // Combiner les modèles distants et locaux
   const allModels = [...models, ...localFiles];
+// Fonction pour supprimer un fichier local
+const removeLocalFile = (url: string) => {
+  setLocalFiles((prev) => prev.filter((model) => model.url !== url));
+  setSelectedModels((prev) =>
+    prev.filter((selectedUrl) => selectedUrl !== url)
+  );
+};
 
-  // Fonction pour supprimer un fichier local
-  const removeLocalFile = (url: string) => {
-    setLocalFiles((prev) => prev.filter((model) => model.url !== url));
-    setSelectedModels((prev) =>
-      prev.filter((selectedUrl) => selectedUrl !== url)
-    );
-  };
+// Fonction pour gérer le partage
+const handleShareClick = () => {
+  if (selectedModels.length === 0) {
+    alert("Veuillez sélectionner au moins un modèle à partager");
+    return;
+  }
+
+  // Générer l'URL de partage
+  const shareUrl = new URL(window.location.href);
+  const encoded = encodeBase64(JSON.stringify(selectedModels));
+  shareUrl.searchParams.set("models", encoded);
+
+  // Copier dans le presse-papiers
+  navigator.clipboard.writeText(shareUrl.toString())
+    .then(() => {
+      setIsSharing(true);
+      setTimeout(() => setIsSharing(false), 2000);
+      alert("Lien de partage copié dans le presse-papiers !");
+    })
+    .catch(() => {
+      alert("Impossible de copier dans le presse-papiers. Voici le lien :\n" + shareUrl.toString());
+    });
+};
+
 
 
 
@@ -163,31 +188,20 @@ function HomePageContent() {
     }
   }, [searchParams, models.length, isInitialized, setSelectedModels, models]);
 
-  // Mettre à jour l'URL seulement après l'initialisation et évite les boucles
+  // Supprimer l'URL de partage après le chargement initial
   useEffect(() => {
     if (isInitialized && models.length > 0) {
+      // Vérifier si nous avons chargé des modèles depuis l'URL
       const currentUrl = new URL(window.location.href);
-      const currentModelsParam = currentUrl.searchParams.get("models");
+      const hasModelsParam = currentUrl.searchParams.has("models");
 
-      // Créer la nouvelle URL
-      const newUrl = new URL(window.location.href);
-      if (selectedModels.length > 0) {
-        const encoded = encodeBase64(JSON.stringify(selectedModels));
-        newUrl.searchParams.set("models", encoded);
-      } else {
-        newUrl.searchParams.delete("models");
-      }
-
-      // Supprimer les paramètres addModel et addModels s'ils existent
-      newUrl.searchParams.delete("addModel");
-      newUrl.searchParams.delete("addModels");
-
-      // Mettre à jour seulement si l'URL a changé
-      if (currentUrl.toString() !== newUrl.toString()) {
-        window.history.replaceState({}, "", newUrl.toString());
+      if (hasModelsParam) {
+        // Supprimer le paramètre models de l'URL après chargement
+        currentUrl.searchParams.delete("models");
+        window.history.replaceState({}, "", currentUrl.toString());
       }
     }
-  }, [selectedModels, isInitialized, models.length]);
+  }, [isInitialized, models.length]);
 
   if (loading) {
     return (
@@ -217,7 +231,7 @@ function HomePageContent() {
     <div className="container mx-auto px-4 py-4 sm:py-8">
       <div className={`grid gap-4 lg:gap-6 ${isPanelVisible ? 'grid-cols-1 lg:grid-cols-5' : 'grid-cols-1'}`}>
         {/* Panneau de contrôle */}
-        <div className={`lg:col-span-1 order-2 lg:order-1 ${isPanelVisible ? '' : 'hidden'}`}>
+        <div className={`lg:col-span-1 order-2 lg:order-1 ${isPanelVisible ? 'block' : 'hidden lg:hidden'}`}>
           <div className="card">
             <h2 className="text-lg sm:text-xl font-semibold mb-4">
               Modèles LiDAR
@@ -361,12 +375,18 @@ function HomePageContent() {
                 >
                   {showDropZone ? "Masquer" : "Ajouter"} Fichier
                 </button>
+                <button
+                  onClick={handleShareClick}
+                  className="btn-secondary text-sm px-3 py-2 touch-manipulation"
+                >
+                  Partager
+                </button>
               </div>
             </div>
 
             <div
               id="threejs-container"
-              className="w-full h-[320px] sm:h-[420px] lg:h-[600px] bg-gray-50 rounded-lg overflow-hidden"
+              className="w-full h-[40vh] sm:h-[50vh] lg:h-[70vh] min-h-[350px] bg-gray-50 rounded-lg overflow-hidden"
             >
               {showDropZone ? (
                 <DropZone
