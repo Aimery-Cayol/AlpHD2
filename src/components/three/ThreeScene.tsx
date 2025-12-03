@@ -221,6 +221,8 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
           />
         </Clouds>
       )}
+
+      
       {/* Positionneur automatique de modèles */}
       <ModelPositioner
         models={models}

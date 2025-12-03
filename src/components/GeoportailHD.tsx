@@ -1,5 +1,11 @@
 import { useEffect, useRef } from "react";
 
+declare global {
+  interface Window {
+    Gp: any;
+  }
+}
+
 const GeoportailHD = () => {
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
