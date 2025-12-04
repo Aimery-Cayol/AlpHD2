@@ -37,9 +37,6 @@ function Params() {
     // },
   });
 
-  
-
-
   const lightControls = useControls("Éclairages", {
     showAmbientLight: { value: true, label: "Lumière ambiante" },
     ambientIntensity: {
@@ -78,8 +75,6 @@ function Params() {
   });
 
   const aspectControls = useControls("Aspect", {
-    nuages: { value: true, label: "Nuages" },
-
     material: {
       value: "slope",
       options: ["standard", "slope", "normal"],
@@ -134,6 +129,80 @@ function Params() {
     },
   });
 
+  const cloudControls = useControls("Nuages", {
+    nuages: { value: true, label: "Nuages" },
+cloudAltitude: {
+      value: 3,
+      min: 0,
+      max: 10,
+      step: 0.05,
+      label: "Altitude",
+      render: (get) => get("Nuages.nuages"),
+    },
+    cloudHeight: {
+      value: 0.1,
+      min: 0,
+      max: 3,
+      step: 0.01,
+      label: "Hauteur",
+      render: (get) => get("Nuages.nuages"),
+    },
+    cloudEtendue: {
+      value: 2,
+      min: 0,
+      max: 10,
+      step: 0.1,
+      label: "Étendue",
+      render: (get) => get("Nuages.nuages"),
+    },
+
+    cloudFade: {
+      value: 10,
+      min: 0,
+      max: 50,
+      step: 1,
+      label: "Fondu",
+      render: (get) => get("Nuages.nuages"),
+    },
+    cloudVolume: {
+      value: 1,
+      min: 0,
+      max: 5,
+      step: 0.1,
+      label: "Volume",
+      render: (get) => get("Nuages.nuages"),
+    },
+    cloudOpacity: {
+      value: 1,
+      min: 0,
+      max: 1,
+      step: 0.01,
+      label: "Opacité",
+      render: (get) => get("Nuages.nuages"),
+    },
+    cloudSpeed: {
+      value: 0.1,
+      min: 0,
+      max: 1,
+      step: 0.01,
+      label: "Vitesse",
+      render: (get) => get("Nuages.nuages"),
+    },
+    cloudGrowth: {
+      value: 0.1,
+      min: 0,
+      max: 1,
+      step: 0.01,
+      label: "Croissance",
+      render: (get) => get("Nuages.nuages"),
+    },
+    
+    
+
+    
+    
+  });
+
   const debugControls = useControls("Debug", {
     showGrid: { value: true, label: "Grille" },
     showAxes: { value: false, label: "Axes" },
@@ -146,6 +215,7 @@ function Params() {
     ...debugControls,
     ...lightControls,
     ...aspectControls,
+    ...cloudControls,
   };
 }
 
@@ -205,7 +275,7 @@ export default function MyLevaUI({ children }: { children: React.ReactNode }) {
           top: 5px !important;
           left: 5px !important;
           right: auto !important;
-          max-height: calc(50vh - 20px) !important;
+          max-height: calc(60vh - 20px) !important;
           overflow-y: auto !important;
           backdrop-filter: blur(10px);
         }

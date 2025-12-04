@@ -2,7 +2,7 @@
 
 import * as THREE from "three";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import {
@@ -17,6 +17,7 @@ import {
 import ModelPositioner from "./ModelPositioner";
 import SceneUI from "./SceneUI";
 import MyLevaUI, { useSceneControls } from "./LevaUI";
+import { FaExpand, FaCompress } from "react-icons/fa";
 
 import JEASINGS from "jeasings";
 import JEasingsComponent from "./JEasings";
@@ -165,7 +166,7 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
         enablePan={true}
         enableZoom={true}
         enableRotate={true}
-        minDistance={0}
+        minDistance={0.03}
         maxDistance={50}
         maxPolarAngle={Math.PI}
         target={[0, 3, 0]}
@@ -210,14 +211,14 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
       {controls.nuages && (
         <Clouds limit={400} material={THREE.MeshLambertMaterial}>
           <Cloud
-            seed={10 + 1}
-            fade={10}
-            position={[0, 3, 0]}
-            speed={0.1}
-            growth={0.1}
-            volume={1}
-            opacity={1}
-            bounds={[2, 0.1, 2]}
+            seed={10}
+            fade={controls.cloudFade}
+            position={[0, controls.cloudAltitude, 0]}
+            speed={controls.cloudSpeed}
+            growth={controls.cloudGrowth}
+            volume={controls.cloudVolume}
+            opacity={controls.cloudOpacity}
+            bounds={[controls.cloudEtendue, controls.cloudHeight, controls.cloudEtendue]}
           />
         </Clouds>
       )}
@@ -239,6 +240,35 @@ export default function ThreeScene({
   selectedModels,
 }: ThreeSceneProps) {
   const [webglSupported, setWebglSupported] = useState<boolean | null>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Fonction pour basculer en plein écran
+  const toggleFullscreen = useCallback(() => {
+    if (containerRef.current) {
+      if (!document.fullscreenElement) {
+        // Entrer en plein écran sur le conteneur
+        containerRef.current.requestFullscreen().catch(err => {
+          console.error('Erreur lors du passage en plein écran:', err);
+        });
+      } else {
+        // Quitter le plein écran
+        document.exitFullscreen();
+      }
+    }
+  }, []);
+
+  // Écouteur d'événement pour détecter les changements de mode plein écran
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    };
+  }, []);
 
   useEffect(() => {
     // Détecter le support WebGL
@@ -275,14 +305,27 @@ export default function ThreeScene({
   }
 
   return (
-    <div className="relative w-full h-full">
+    <div ref={containerRef} className="relative w-full h-full">
       <MyLevaUI>
-        <Canvas>
+        <Canvas className="w-full h-full">
           <SceneContent models={models} selectedModels={selectedModels} />
         </Canvas>
 
         {/* Interface utilisateur overlay */}
         <SceneUI models={models} selectedModels={selectedModels} />
+
+        {/* Bouton plein écran dans le coin supérieur droit */}
+        <button
+          onClick={toggleFullscreen}
+          className="absolute top-4 right-4 z-50 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full shadow-lg border flex items-center justify-center hover:bg-white/95 transition-all duration-200"
+          title={isFullscreen ? "Quitter le plein écran" : "Passer en plein écran"}
+        >
+          {isFullscreen ? (
+            <FaCompress className="w-4 h-4 text-gray-600" />
+          ) : (
+            <FaExpand className="w-4 h-4 text-gray-600" />
+          )}
+        </button>
       </MyLevaUI>
     </div>
   );
