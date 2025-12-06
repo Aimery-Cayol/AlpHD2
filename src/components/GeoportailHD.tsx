@@ -65,7 +65,9 @@ const GeoportailHD = () => {
         // Couches à afficher
         layersOptions: {
           "GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2": {visibility: false},
-          "ORTHOIMAGERY.ORTHOPHOTOS": {},
+          "IGNF_LIDAR-HD_MNT_ELEVATION.ELEVATIONGRIDCOVERAGE.SHADOW":{  },
+          "IGNF_LIDAR-HD_MNS_ELEVATION.ELEVATIONGRIDCOVERAGE.SHADOW":{  },
+          "ORTHOIMAGERY.ORTHOPHOTOS": {visibility: false},
           "GEOGRAPHICALGRIDSYSTEMS.SLOPES.MOUNTAIN": { visibility: false, opacity: 0.3 },
           "ELEVATION.CONTOUR.LINE":{visibility: false},
           "ELEVATION.ELEVATIONGRIDCOVERAGE.HIGHRES.MNS": { type: "elevation" },
