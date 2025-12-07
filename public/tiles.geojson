@@ -14,6 +14,614 @@
         "coordinates": [
           [
             [
+              5.324427031941028,
+              43.207175845851616
+            ],
+            [
+              5.324789017695453,
+              43.21616698450408
+            ],
+            [
+              5.337082325313804,
+              43.21590149281036
+            ],
+            [
+              5.336718427636079,
+              43.20691039739592
+            ],
+            [
+              5.324427031941028,
+              43.207175845851616
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "889000_6238000",
+        "x": 889000,
+        "y": 6238000,
+        "url": "https://amplify-d17uxdu2napxpc-ma-amplifyalphdmeshesbucket-4rknaslwb6z4.s3.eu-west-3.amazonaws.com/meshes/0889_6238.drc",
+        "format": "drc",
+        "name": "0889_6238"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              5.336718427636079,
+              43.20691039739592
+            ],
+            [
+              5.337082325313804,
+              43.21590149281036
+            ],
+            [
+              5.3493755196078885,
+              43.21563460139203
+            ],
+            [
+              5.349009710059759,
+              43.20664354944336
+            ],
+            [
+              5.336718427636079,
+              43.20691039739592
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "890000_6238000",
+        "x": 890000,
+        "y": 6238000,
+        "url": "https://amplify-d17uxdu2napxpc-ma-amplifyalphdmeshesbucket-4rknaslwb6z4.s3.eu-west-3.amazonaws.com/meshes/0890_6238.drc",
+        "format": "drc",
+        "name": "0890_6238"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              5.337082325313804,
+              43.21590149281036
+            ],
+            [
+              5.337446336315801,
+              43.224892651633375
+            ],
+            [
+              5.3497414430746275,
+              43.22462571674192
+            ],
+            [
+              5.3493755196078885,
+              43.21563460139203
+            ],
+            [
+              5.337082325313804,
+              43.21590149281036
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "890000_6239000",
+        "x": 890000,
+        "y": 6239000,
+        "url": "https://amplify-d17uxdu2napxpc-ma-amplifyalphdmeshesbucket-4rknaslwb6z4.s3.eu-west-3.amazonaws.com/meshes/0890_6239.drc",
+        "format": "drc",
+        "name": "0890_6239"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              5.337446336315801,
+              43.224892651633375
+            ],
+            [
+              5.337810460695,
+              43.233883873656055
+            ],
+            [
+              5.350107480513182,
+              43.23361689528414
+            ],
+            [
+              5.3497414430746275,
+              43.22462571674192
+            ],
+            [
+              5.337446336315801,
+              43.224892651633375
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "890000_6240000",
+        "x": 890000,
+        "y": 6240000,
+        "url": "https://amplify-d17uxdu2napxpc-ma-amplifyalphdmeshesbucket-4rknaslwb6z4.s3.eu-west-3.amazonaws.com/meshes/0890_6240.drc",
+        "format": "drc",
+        "name": "0890_6240"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              5.349009710059759,
+              43.20664354944336
+            ],
+            [
+              5.3493755196078885,
+              43.21563460139203
+            ],
+            [
+              5.361668599983368,
+              43.2153663102694
+            ],
+            [
+              5.3613008786180085,
+              43.20637530201425
+            ],
+            [
+              5.349009710059759,
+              43.20664354944336
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "891000_6238000",
+        "x": 891000,
+        "y": 6238000,
+        "url": "https://amplify-d17uxdu2napxpc-ma-amplifyalphdmeshesbucket-4rknaslwb6z4.s3.eu-west-3.amazonaws.com/meshes/0891_6238.drc",
+        "format": "drc",
+        "name": "0891_6238"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              5.3493755196078885,
+              43.21563460139203
+            ],
+            [
+              5.3497414430746275,
+              43.22462571674192
+            ],
+            [
+              5.362036435861643,
+              43.224357381918374
+            ],
+            [
+              5.361668599983368,
+              43.2153663102694
+            ],
+            [
+              5.3493755196078885,
+              43.21563460139203
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "891000_6239000",
+        "x": 891000,
+        "y": 6239000,
+        "url": "https://amplify-d17uxdu2napxpc-ma-amplifyalphdmeshesbucket-4rknaslwb6z4.s3.eu-west-3.amazonaws.com/meshes/0891_6239.drc",
+        "format": "drc",
+        "name": "0891_6239"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              5.3497414430746275,
+              43.22462571674192
+            ],
+            [
+              5.350107480513182,
+              43.23361689528414
+            ],
+            [
+              5.362404386306315,
+              43.2333485167523
+            ],
+            [
+              5.362036435861643,
+              43.224357381918374
+            ],
+            [
+              5.3497414430746275,
+              43.22462571674192
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "891000_6240000",
+        "x": 891000,
+        "y": 6240000,
+        "url": "https://amplify-d17uxdu2napxpc-ma-amplifyalphdmeshesbucket-4rknaslwb6z4.s3.eu-west-3.amazonaws.com/meshes/0891_6240.drc",
+        "format": "drc",
+        "name": "0891_6240"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              5.3613008786180085,
+              43.20637530201425
+            ],
+            [
+              5.361668599983368,
+              43.2153663102694
+            ],
+            [
+              5.373961565845939,
+              43.21509661946286
+            ],
+            [
+              5.3735919327168,
+              43.206105655128994
+            ],
+            [
+              5.3613008786180085,
+              43.20637530201425
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "892000_6238000",
+        "x": 892000,
+        "y": 6238000,
+        "url": "https://amplify-d17uxdu2napxpc-ma-amplifyalphdmeshesbucket-4rknaslwb6z4.s3.eu-west-3.amazonaws.com/meshes/0892_6238.drc",
+        "format": "drc",
+        "name": "0892_6238"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              5.361668599983368,
+              43.2153663102694
+            ],
+            [
+              5.362036435861643,
+              43.224357381918374
+            ],
+            [
+              5.374331314082265,
+              43.224087647183175
+            ],
+            [
+              5.373961565845939,
+              43.21509661946286
+            ],
+            [
+              5.361668599983368,
+              43.2153663102694
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "892000_6239000",
+        "x": 892000,
+        "y": 6239000,
+        "url": "https://amplify-d17uxdu2napxpc-ma-amplifyalphdmeshesbucket-4rknaslwb6z4.s3.eu-west-3.amazonaws.com/meshes/0892_6239.drc",
+        "format": "drc",
+        "name": "0892_6239"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              5.362036435861643,
+              43.224357381918374
+            ],
+            [
+              5.362404386306315,
+              43.2333485167523
+            ],
+            [
+              5.374701177479537,
+              43.233078738080984
+            ],
+            [
+              5.374331314082265,
+              43.224087647183175
+            ],
+            [
+              5.362036435861643,
+              43.224357381918374
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "892000_6240000",
+        "x": 892000,
+        "y": 6240000,
+        "url": "https://amplify-d17uxdu2napxpc-ma-amplifyalphdmeshesbucket-4rknaslwb6z4.s3.eu-west-3.amazonaws.com/meshes/0892_6240.drc",
+        "format": "drc",
+        "name": "0892_6240"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              5.3735919327168,
+              43.206105655128994
+            ],
+            [
+              5.373961565845939,
+              43.21509661946286
+            ],
+            [
+              5.386254416601331,
+              43.21482552899298
+            ],
+            [
+              5.385882871762138,
+              43.20583460880809
+            ],
+            [
+              5.3735919327168,
+              43.206105655128994
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "893000_6238000",
+        "x": 893000,
+        "y": 6238000,
+        "url": "https://amplify-d17uxdu2napxpc-ma-amplifyalphdmeshesbucket-4rknaslwb6z4.s3.eu-west-3.amazonaws.com/meshes/0893_6238.drc",
+        "format": "drc",
+        "name": "0893_6238"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              5.373961565845939,
+              43.21509661946286
+            ],
+            [
+              5.374331314082265,
+              43.224087647183175
+            ],
+            [
+              5.386626077141948,
+              43.22381651255684
+            ],
+            [
+              5.386254416601331,
+              43.21482552899298
+            ],
+            [
+              5.373961565845939,
+              43.21509661946286
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "893000_6239000",
+        "x": 893000,
+        "y": 6239000,
+        "url": "https://amplify-d17uxdu2napxpc-ma-amplifyalphdmeshesbucket-4rknaslwb6z4.s3.eu-west-3.amazonaws.com/meshes/0893_6239.drc",
+        "format": "drc",
+        "name": "0893_6239"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              5.374331314082265,
+              43.224087647183175
+            ],
+            [
+              5.374701177479537,
+              43.233078738080984
+            ],
+            [
+              5.386997853438025,
+              43.23280755929074
+            ],
+            [
+              5.386626077141948,
+              43.22381651255684
+            ],
+            [
+              5.374331314082265,
+              43.224087647183175
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "893000_6240000",
+        "x": 893000,
+        "y": 6240000,
+        "url": "https://amplify-d17uxdu2napxpc-ma-amplifyalphdmeshesbucket-4rknaslwb6z4.s3.eu-west-3.amazonaws.com/meshes/0893_6240.drc",
+        "format": "drc",
+        "name": "0893_6240"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              5.385882871762138,
+              43.20583460880809
+            ],
+            [
+              5.386254416601331,
+              43.21482552899298
+            ],
+            [
+              5.398547151655304,
+              43.21455303888035
+            ],
+            [
+              5.39817369516006,
+              43.20556216307216
+            ],
+            [
+              5.385882871762138,
+              43.20583460880809
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "894000_6238000",
+        "x": 894000,
+        "y": 6238000,
+        "url": "https://amplify-d17uxdu2napxpc-ma-amplifyalphdmeshesbucket-4rknaslwb6z4.s3.eu-west-3.amazonaws.com/meshes/0894_6238.drc",
+        "format": "drc",
+        "name": "0894_6238"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              5.386254416601331,
+              43.21482552899298
+            ],
+            [
+              5.386626077141948,
+              43.22381651255684
+            ],
+            [
+              5.398920724446175,
+              43.22354397805999
+            ],
+            [
+              5.398547151655304,
+              43.21455303888035
+            ],
+            [
+              5.386254416601331,
+              43.21482552899298
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "894000_6239000",
+        "x": 894000,
+        "y": 6239000,
+        "url": "https://amplify-d17uxdu2napxpc-ma-amplifyalphdmeshesbucket-4rknaslwb6z4.s3.eu-west-3.amazonaws.com/meshes/0894_6239.drc",
+        "format": "drc",
+        "name": "0894_6239"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              5.386626077141948,
+              43.22381651255684
+            ],
+            [
+              5.386997853438025,
+              43.23280755929074
+            ],
+            [
+              5.399294413586988,
+              43.23253498040216
+            ],
+            [
+              5.398920724446175,
+              43.22354397805999
+            ],
+            [
+              5.386626077141948,
+              43.22381651255684
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "894000_6240000",
+        "x": 894000,
+        "y": 6240000,
+        "url": "https://amplify-d17uxdu2napxpc-ma-amplifyalphdmeshesbucket-4rknaslwb6z4.s3.eu-west-3.amazonaws.com/meshes/0894_6240.drc",
+        "format": "drc",
+        "name": "0894_6240"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
               5.39817369516006,
               43.20556216307216
             ],
@@ -128,6 +736,44 @@
         "coordinates": [
           [
             [
+              5.410839770413655,
+              43.214279149145696
+            ],
+            [
+              5.4112152554004656,
+              43.22327004371338
+            ],
+            [
+              5.4235096694103735,
+              43.22299470953785
+            ],
+            [
+              5.423132272282213,
+              43.21400385980988
+            ],
+            [
+              5.410839770413655,
+              43.214279149145696
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "896000_6239000",
+        "x": 896000,
+        "y": 6239000,
+        "url": "https://amplify-d17uxdu2napxpc-ma-amplifyalphdmeshesbucket-4rknaslwb6z4.s3.eu-west-3.amazonaws.com/meshes/0896_6239.drc",
+        "format": "drc",
+        "name": "0896_6239"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
               5.422377830422863,
               43.19602235063188
             ],
@@ -233,6 +879,44 @@
         "url": "https://amplify-d17uxdu2napxpc-ma-amplifyalphdmeshesbucket-4rknaslwb6z4.s3.eu-west-3.amazonaws.com/meshes/0897_6239.drc",
         "format": "drc",
         "name": "0897_6239"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              5.434666392416559,
+              43.19574575182791
+            ],
+            [
+              5.435045465530237,
+              43.20473642958206
+            ],
+            [
+              5.447335820399566,
+              43.20445838639439
+            ],
+            [
+              5.44695483644241,
+              43.19546775392012
+            ],
+            [
+              5.434666392416559,
+              43.19574575182791
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "898000_6237000",
+        "x": 898000,
+        "y": 6237000,
+        "url": "https://amplify-d17uxdu2napxpc-ma-amplifyalphdmeshesbucket-4rknaslwb6z4.s3.eu-west-3.amazonaws.com/meshes/0898_6237.drc",
+        "format": "drc",
+        "name": "0898_6237"
       }
     },
     {
@@ -432,6 +1116,44 @@
         "coordinates": [
           [
             [
+              5.448098144219419,
+              43.22243984178392
+            ],
+            [
+              5.448479484192926,
+              43.231430664281355
+            ],
+            [
+              5.460775456373566,
+              43.231151085214584
+            ],
+            [
+              5.460392203829834,
+              43.22216030824776
+            ],
+            [
+              5.448098144219419,
+              43.22243984178392
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "899000_6240000",
+        "x": 899000,
+        "y": 6240000,
+        "url": "https://amplify-d17uxdu2napxpc-ma-amplifyalphdmeshesbucket-4rknaslwb6z4.s3.eu-west-3.amazonaws.com/meshes/0899_6240.drc",
+        "format": "drc",
+        "name": "0899_6240"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
               5.459626056652181,
               43.20417894389639
             ],
@@ -508,6 +1230,44 @@
         "coordinates": [
           [
             [
+              5.460392203829834,
+              43.22216030824776
+            ],
+            [
+              5.460775456373566,
+              43.231151085214584
+            ],
+            [
+              5.473071309176644,
+              43.23087010617558
+            ],
+            [
+              5.472686144118417,
+              43.22187937496713
+            ],
+            [
+              5.460392203829834,
+              43.22216030824776
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "900000_6240000",
+        "x": 900000,
+        "y": 6240000,
+        "url": "https://amplify-d17uxdu2napxpc-ma-amplifyalphdmeshesbucket-4rknaslwb6z4.s3.eu-west-3.amazonaws.com/meshes/0900_6240.drc",
+        "format": "drc",
+        "name": "0900_6240"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
               5.471916173694326,
               43.20389810210933
             ],
@@ -575,6 +1335,44 @@
         "url": "https://amplify-d17uxdu2napxpc-ma-amplifyalphdmeshesbucket-4rknaslwb6z4.s3.eu-west-3.amazonaws.com/meshes/0901_6239.drc",
         "format": "drc",
         "name": "0901_6239"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              5.472686144118417,
+              43.22187937496713
+            ],
+            [
+              5.473071309176644,
+              43.23087010617558
+            ],
+            [
+              5.485367042007606,
+              43.230587727185714
+            ],
+            [
+              5.484979964490894,
+              43.22159704196341
+            ],
+            [
+              5.472686144118417,
+              43.22187937496713
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "901000_6240000",
+        "x": 901000,
+        "y": 6240000,
+        "url": "https://amplify-d17uxdu2napxpc-ma-amplifyalphdmeshesbucket-4rknaslwb6z4.s3.eu-west-3.amazonaws.com/meshes/0901_6240.drc",
+        "format": "drc",
+        "name": "0901_6240"
       }
     },
     {
@@ -698,6 +1496,44 @@
         "coordinates": [
           [
             [
+              5.484979964490894,
+              43.22159704196341
+            ],
+            [
+              5.485367042007606,
+              43.230587727185714
+            ],
+            [
+              5.497662654271935,
+              43.230303948266496
+            ],
+            [
+              5.497273664353024,
+              43.221313309258065
+            ],
+            [
+              5.484979964490894,
+              43.22159704196341
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "902000_6240000",
+        "x": 902000,
+        "y": 6240000,
+        "url": "https://amplify-d17uxdu2napxpc-ma-amplifyalphdmeshesbucket-4rknaslwb6z4.s3.eu-west-3.amazonaws.com/meshes/0902_6240.drc",
+        "format": "drc",
+        "name": "0902_6240"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
               5.49610742099757,
               43.19434177167532
             ],
@@ -774,6 +1610,82 @@
         "coordinates": [
           [
             [
+              5.496884795538674,
+              43.212322733350774
+            ],
+            [
+              5.497273664353024,
+              43.221313309258065
+            ],
+            [
+              5.5095672431106015,
+              43.2210281768727
+            ],
+            [
+              5.509176462544785,
+              43.21203764739918
+            ],
+            [
+              5.496884795538674,
+              43.212322733350774
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "903000_6239000",
+        "x": 903000,
+        "y": 6239000,
+        "url": "https://amplify-d17uxdu2napxpc-ma-amplifyalphdmeshesbucket-4rknaslwb6z4.s3.eu-west-3.amazonaws.com/meshes/0903_6239.drc",
+        "format": "drc",
+        "name": "0903_6239"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              5.497273664353024,
+              43.221313309258065
+            ],
+            [
+              5.497662654271935,
+              43.230303948266496
+            ],
+            [
+              5.509958145375148,
+              43.23001876943952
+            ],
+            [
+              5.5095672431106015,
+              43.2210281768727
+            ],
+            [
+              5.497273664353024,
+              43.221313309258065
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "903000_6240000",
+        "x": 903000,
+        "y": 6240000,
+        "url": "https://amplify-d17uxdu2napxpc-ma-amplifyalphdmeshesbucket-4rknaslwb6z4.s3.eu-west-3.amazonaws.com/meshes/0903_6240.drc",
+        "format": "drc",
+        "name": "0903_6240"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
               5.508395266282157,
               43.194056778567735
             ],
@@ -841,6 +1753,82 @@
         "url": "https://amplify-d17uxdu2napxpc-ma-amplifyalphdmeshesbucket-4rknaslwb6z4.s3.eu-west-3.amazonaws.com/meshes/0904_6238.drc",
         "format": "drc",
         "name": "0904_6238"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              5.509176462544785,
+              43.21203764739918
+            ],
+            [
+              5.5095672431106015,
+              43.2210281768727
+            ],
+            [
+              5.521860700169455,
+              43.220741644829005
+            ],
+            [
+              5.521468007908976,
+              43.21175116201697
+            ],
+            [
+              5.509176462544785,
+              43.21203764739918
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "904000_6239000",
+        "x": 904000,
+        "y": 6239000,
+        "url": "https://amplify-d17uxdu2napxpc-ma-amplifyalphdmeshesbucket-4rknaslwb6z4.s3.eu-west-3.amazonaws.com/meshes/0904_6239.drc",
+        "format": "drc",
+        "name": "0904_6239"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              5.5095672431106015,
+              43.2210281768727
+            ],
+            [
+              5.509958145375148,
+              43.23001876943952
+            ],
+            [
+              5.522253514722797,
+              43.22973219072649
+            ],
+            [
+              5.521860700169455,
+              43.220741644829005
+            ],
+            [
+              5.5095672431106015,
+              43.2210281768727
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "id": "904000_6240000",
+        "x": 904000,
+        "y": 6240000,
+        "url": "https://amplify-d17uxdu2napxpc-ma-amplifyalphdmeshesbucket-4rknaslwb6z4.s3.eu-west-3.amazonaws.com/meshes/0904_6240.drc",
+        "format": "drc",
+        "name": "0904_6240"
       }
     },
     {
