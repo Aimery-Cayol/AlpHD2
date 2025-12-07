@@ -111,6 +111,8 @@ function Params() {
       label: "Couleur roche",
       render: (get) => get("Aspect.material") === "slope",
     },
+
+    // preset CALANQUES : neige #bfcfa3   rocher #f3efdc
     slopeThreshold: {
       value: 0.55,
       min: 0,
