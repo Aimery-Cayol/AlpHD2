@@ -218,12 +218,15 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
             growth={controls.cloudGrowth}
             volume={controls.cloudVolume}
             opacity={controls.cloudOpacity}
-            bounds={[controls.cloudEtendue, controls.cloudHeight, controls.cloudEtendue]}
+            bounds={[
+              controls.cloudEtendue,
+              controls.cloudHeight,
+              controls.cloudEtendue,
+            ]}
           />
         </Clouds>
       )}
 
-      
       {/* Positionneur automatique de modèles */}
       <ModelPositioner
         models={models}
@@ -248,8 +251,8 @@ export default function ThreeScene({
     if (containerRef.current) {
       if (!document.fullscreenElement) {
         // Entrer en plein écran sur le conteneur
-        containerRef.current.requestFullscreen().catch(err => {
-          console.error('Erreur lors du passage en plein écran:', err);
+        containerRef.current.requestFullscreen().catch((err) => {
+          console.error("Erreur lors du passage en plein écran:", err);
         });
       } else {
         // Quitter le plein écran
@@ -264,9 +267,9 @@ export default function ThreeScene({
       setIsFullscreen(!!document.fullscreenElement);
     };
 
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
     return () => {
-      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
     };
   }, []);
 
@@ -307,7 +310,7 @@ export default function ThreeScene({
   return (
     <div ref={containerRef} className="relative w-full h-full">
       <MyLevaUI>
-        <Canvas className="w-full h-full">
+        <Canvas className="w-full h-full" frameloop="demand">
           <SceneContent models={models} selectedModels={selectedModels} />
         </Canvas>
 
@@ -318,7 +321,9 @@ export default function ThreeScene({
         <button
           onClick={toggleFullscreen}
           className="absolute top-4 right-4 z-50 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full shadow-lg border flex items-center justify-center hover:bg-white/95 transition-all duration-200"
-          title={isFullscreen ? "Quitter le plein écran" : "Passer en plein écran"}
+          title={
+            isFullscreen ? "Quitter le plein écran" : "Passer en plein écran"
+          }
         >
           {isFullscreen ? (
             <FaCompress className="w-4 h-4 text-gray-600" />
