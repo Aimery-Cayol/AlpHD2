@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "NEXT_PUBLIC_ENV=sandbox next dev --turbopack",
+    "dev:prod": "next dev --turbopack",
+    "sandbox": "npx ampx sandbox",
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "eslint",

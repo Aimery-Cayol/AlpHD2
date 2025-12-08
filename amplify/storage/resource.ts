@@ -1,4 +1,5 @@
 import { defineStorage } from "@aws-amplify/backend";
+import { updateGeoJson } from './update-geojson/resource';
 
 export const storage = defineStorage({
   name: "amplifyAlpHDmeshes",
@@ -9,4 +10,7 @@ export const storage = defineStorage({
     ],
 
   }),
+  triggers: {
+    onUpload: updateGeoJson
+  }
 });
