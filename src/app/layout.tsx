@@ -4,12 +4,12 @@ import "./globals.css";
 import Header from "./components/Header";
 import { Amplify } from 'aws-amplify';
 import outputs from '../../amplify_outputs.json';
-import sandboxOutputs from '../../amplify_outputs.sandbox.json';
+// import sandboxOutputs from '../../amplify_outputs.sandbox.json';
 import { AppProvider } from '../contexts/AppContext';
 
 
-const isSandbox = process.env.NEXT_PUBLIC_ENV === 'sandbox';
-Amplify.configure(isSandbox ? sandboxOutputs : outputs);
+// const isSandbox = process.env.NEXT_PUBLIC_ENV === 'sandbox';
+// Amplify.configure(isSandbox ? sandboxOutputs : outputs);
 
 Amplify.configure(outputs);
 
