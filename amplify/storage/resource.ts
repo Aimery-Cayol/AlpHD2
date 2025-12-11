@@ -9,6 +9,10 @@ export const storage = defineStorage({
       allow.entity('identity').to(['read', 'write', 'delete']),
       allow.resource(updateGeoJson).to(['read', 'write', 'delete'])
     ],
+    "tiles/*": [
+      allow.guest.to(["read"]),
+      allow.resource(updateGeoJson).to(['read', 'write'])
+    ],
 
   }),
   triggers: {

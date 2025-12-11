@@ -25,7 +25,7 @@ const selectedStyle = {
 // Fonction pour charger et afficher la couche des tuiles
 const loadTilesLayer = async (map: any, L: any, selectedTiles: string[], setSelectedTiles: (tiles: string[] | ((prev: string[]) => string[])) => void) => {
   try {
-    const response = await fetch('/tiles.geojson');
+    const response = await fetch('/api/tiles');
     if (!response.ok) {
       console.error('Erreur chargement GeoJSON:', response.status);
       return;
