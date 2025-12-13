@@ -65,13 +65,42 @@ function Params() {
       render: (get) => get("Éclairages.showDirectionalLight"),
     },
     sunElevation: {
-      value: 55,
+      value: 40,
       min: 0,
       max: 90,
       step: 1,
       label: "Élévation (°)",
       render: (get) => get("Éclairages.showDirectionalLight"),
     },
+  });
+
+  const postProcessControls = useControls("Post-traitement", {
+    enableBloom: { value: false, label: "Bloom" },
+    // bloomIntensity: {
+    //   value: 0.1,
+    //   min: 0,
+    //   max: 3,
+    //   step: 0.02,
+    //   label: "Intensité du bloom",
+    //   render: (get) => get("Post-traitement.enableBloom"),
+    // },
+    // bloomThreshold: {
+    //   value: 0.9,
+    //   min: 0,
+    //   max: 1,
+    //   step: 0.01,
+    //   label: "Seuil du bloom",
+    //   render: (get) => get("Post-traitement.enableBloom"),
+    // },
+    // bloomLuminanceSmoothing: {
+    //   value: 0.4,
+    //   min: 0,
+    //   max: 1,
+    //   step: 0.01,
+    //   label: "Rayon du bloom",
+    //   render: (get) => get("Post-traitement.enableBloom"),
+    // },
+
   });
 
   const aspectControls = useControls("Aspect", {
@@ -107,7 +136,7 @@ function Params() {
       render: (get) => get("Aspect.material") === "slope",
     },
     rockColor: {
-      value: "#9c725a",
+      value: "#cf9e82",
       label: "Couleur roche",
       render: (get) => get("Aspect.material") === "slope",
     },
@@ -132,8 +161,8 @@ function Params() {
   });
 
   const cloudControls = useControls("Nuages", {
-    nuages: { value: true, label: "Nuages" },
-cloudAltitude: {
+    nuages: { value: false, label: "Nuages" },
+    cloudAltitude: {
       value: 3,
       min: 0,
       max: 10,
@@ -198,11 +227,6 @@ cloudAltitude: {
       label: "Croissance",
       render: (get) => get("Nuages.nuages"),
     },
-    
-    
-
-    
-    
   });
 
   const debugControls = useControls("Debug", {
@@ -218,6 +242,7 @@ cloudAltitude: {
     ...lightControls,
     ...aspectControls,
     ...cloudControls,
+    ...postProcessControls,
   };
 }
 

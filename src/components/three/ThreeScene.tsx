@@ -14,6 +14,7 @@ import {
   Cloud,
   Sky,
 } from "@react-three/drei";
+import { Bloom, EffectComposer, SSAO } from "@react-three/postprocessing";
 import ModelPositioner from "./ModelPositioner";
 import SceneUI from "./SceneUI";
 import MyLevaUI, { useSceneControls } from "./LevaUI";
@@ -142,6 +143,29 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
   return (
     <>
       <JEasingsComponent />
+      <EffectComposer enableNormalPass={false}>
+        {controls.enableBloom && (
+          <Bloom
+            luminanceThreshold={controls.bloomThreshold}
+            luminanceSmoothing={controls.bloomLuminanceSmoothing}
+            intensity={controls.bloomIntensity}
+          />
+        )}
+
+        {controls.enableSSAO && (
+          <SSAO
+            samples={30} // amount of samples per pixel (shouldn't be a multiple of the ring count)
+            rings={4} // amount of rings in the occlusion sampling pattern
+            distanceThreshold={1.0} // global distance threshold at which the occlusion effect starts to fade out. min: 0, max: 1
+            distanceFalloff={0.0} // distance falloff. min: 0, max: 1
+            rangeThreshold={0.5} // local occlusion range threshold at which the occlusion starts to fade out. min: 0, max: 1
+            rangeFalloff={0.1} // occlusion range falloff. min: 0, max: 1
+            luminanceInfluence={0.9} // how much the luminance of the scene influences the ambient occlusion
+            radius={20} // occlusion sampling radius
+            bias={0.5} // occlusion bias
+          />
+        )}
+      </EffectComposer>
       <PerspectiveCamera
         makeDefault
         position={[0, 5, 3]} // 2ème coord = hauteur 3ème coord = recul
@@ -204,6 +228,9 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
         inclination={0}
         azimuth={0.25}
       />
+
+      {/* <fog attach='fog' args={['grey', 1, 100]} /> // Add fog to the scene */}
+      {/* <fogExp2 attach="fog" args={["white",0.1]} /> */}
 
       <pointLight position={[-5, -5, -3]} intensity={0.5} />
       {/* <Environment preset="sunset" /> */}
