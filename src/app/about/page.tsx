@@ -138,7 +138,7 @@ export default function About() {
             </div>
 
             {/* Lien GitHub */}
-            <div className="pt-6 text-center sm:text-left">
+            {/* <div className="pt-6 text-center sm:text-left">
               <a
                 href="https://github.com/Robou/alphd"
                 target="_blank"
@@ -153,7 +153,7 @@ export default function About() {
                   Voir le code source sur GitHub
                 </span>
               </a>
-            </div>
+            </div> */}
           </div>
 
           {/* Section Sources */}
