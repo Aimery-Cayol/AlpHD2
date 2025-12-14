@@ -76,30 +76,30 @@ function Params() {
 
   const postProcessControls = useControls("Post-traitement", {
     enableBloom: { value: false, label: "Bloom" },
-    // bloomIntensity: {
-    //   value: 0.1,
-    //   min: 0,
-    //   max: 3,
-    //   step: 0.02,
-    //   label: "Intensité du bloom",
-    //   render: (get) => get("Post-traitement.enableBloom"),
-    // },
-    // bloomThreshold: {
-    //   value: 0.9,
-    //   min: 0,
-    //   max: 1,
-    //   step: 0.01,
-    //   label: "Seuil du bloom",
-    //   render: (get) => get("Post-traitement.enableBloom"),
-    // },
-    // bloomLuminanceSmoothing: {
-    //   value: 0.4,
-    //   min: 0,
-    //   max: 1,
-    //   step: 0.01,
-    //   label: "Rayon du bloom",
-    //   render: (get) => get("Post-traitement.enableBloom"),
-    // },
+    bloomIntensity: {
+      value: 0.1,
+      min: 0,
+      max: 3,
+      step: 0.02,
+      label: "Intensité du bloom",
+      render: (get) => get("Post-traitement.enableBloom"),
+    },
+    bloomThreshold: {
+      value: 0.9,
+      min: 0,
+      max: 1,
+      step: 0.01,
+      label: "Seuil du bloom",
+      render: (get) => get("Post-traitement.enableBloom"),
+    },
+    bloomLuminanceSmoothing: {
+      value: 0.4,
+      min: 0,
+      max: 1,
+      step: 0.01,
+      label: "Rayon du bloom",
+      render: (get) => get("Post-traitement.enableBloom"),
+    },
 
   });
 
@@ -160,7 +160,10 @@ function Params() {
     },
   });
 
-  const cloudControls = useControls("Nuages", {
+  const environmentControls = useControls("Environnement", {
+    water: { value: false, label: "Mer" },
+
+
     nuages: { value: false, label: "Nuages" },
     cloudAltitude: {
       value: 3,
@@ -241,7 +244,7 @@ function Params() {
     ...debugControls,
     ...lightControls,
     ...aspectControls,
-    ...cloudControls,
+    ...environmentControls,
     ...postProcessControls,
   };
 }

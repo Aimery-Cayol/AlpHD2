@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "./components/Header";
+import DisableMiddleMouseScroll from "../components/DisableMiddleMouseScroll";
 import { Amplify } from 'aws-amplify';
 import outputs from '../../amplify_outputs.json';
 // import sandboxOutputs from '../../amplify_outputs.sandbox.json';
@@ -29,6 +30,7 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body className={inter.className}>
+        <DisableMiddleMouseScroll />
         <AppProvider>
           <div className="min-h-screen bg-gray-50">
             <Header />

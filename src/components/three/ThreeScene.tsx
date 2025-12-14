@@ -7,8 +7,11 @@ import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import {
   PerspectiveCamera,
+  Grid,
   Stats,
   OrbitControls,
+  CameraControls,
+  CameraControlsImpl,
   MapControls,
   Clouds,
   Cloud,
@@ -71,50 +74,51 @@ function WebGLFallback() {
 function SceneContent({ models, selectedModels }: ThreeSceneProps) {
   const controls = useSceneControls();
   const { scene } = useThree();
+  const { ACTION } = CameraControlsImpl;
 
   //JEasing
-  const cameraControlsRef = useRef<any>(null);
-  const handleMeshDoubleClick = (event: any) => {
-    event.stopPropagation();
-    if (cameraControlsRef.current && event.point) {
-      new JEASINGS.JEasing(cameraControlsRef.current.target)
-        .to({ x: event.point.x, y: event.point.y, z: event.point.z }, 500)
-        .easing(JEASINGS.Cubic.Out)
-        .start();
-    }
-  };
+  // const cameraControlsRef = useRef<any>(null);
+  // const handleMeshDoubleClick = (event: any) => {
+  //   event.stopPropagation();
+  //   if (cameraControlsRef.current && event.point) {
+  //     new JEASINGS.JEasing(cameraControlsRef.current.target)
+  //       .to({ x: event.point.x, y: event.point.y, z: event.point.z }, 500)
+  //       .easing(JEASINGS.Cubic.Out)
+  //       .start();
+  //   }
+  // };
 
   // Recentrer la caméra sur la bounding box des selectedModels
-  useEffect(() => {
-    if (selectedModels.length === 0) return;
+  // useEffect(() => {
+  //   if (selectedModels.length === 0) return;
 
-    const timer = setTimeout(() => {
-      const worldBox = new THREE.Box3();
-      let hasMeshes = false;
+  //   const timer = setTimeout(() => {
+  //     const worldBox = new THREE.Box3();
+  //     let hasMeshes = false;
 
-      scene.traverse((object) => {
-        if (
-          object instanceof THREE.Mesh &&
-          object.userData.url &&
-          selectedModels.includes(object.userData.url)
-        ) {
-          if (object.geometry && object.geometry.boundingBox) {
-            const localBox = object.geometry.boundingBox.clone();
-            localBox.applyMatrix4(object.matrixWorld);
-            worldBox.union(localBox);
-            hasMeshes = true;
-          }
-        }
-      });
+  //     scene.traverse((object) => {
+  //       if (
+  //         object instanceof THREE.Mesh &&
+  //         object.userData.url &&
+  //         selectedModels.includes(object.userData.url)
+  //       ) {
+  //         if (object.geometry && object.geometry.boundingBox) {
+  //           const localBox = object.geometry.boundingBox.clone();
+  //           localBox.applyMatrix4(object.matrixWorld);
+  //           worldBox.union(localBox);
+  //           hasMeshes = true;
+  //         }
+  //       }
+  //     });
 
-      if (hasMeshes && cameraControlsRef.current) {
-        const center = worldBox.getCenter(new THREE.Vector3());
-        cameraControlsRef.current.target.copy(center);
-      }
-    }, 1000); // Délai pour permettre le chargement des mesh
+  //     if (hasMeshes && cameraControlsRef.current) {
+  //       const center = worldBox.getCenter(new THREE.Vector3());
+  //       cameraControlsRef.current.target.copy(center);
+  //     }
+  //   }, 1000); // Délai pour permettre le chargement des mesh
 
-    return () => clearTimeout(timer);
-  }, [selectedModels, scene]);
+  //   return () => clearTimeout(timer);
+  // }, [selectedModels, scene]);
 
   // Conversion sphérique → cartésien
   const getSunDirection = (
@@ -139,6 +143,24 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
 
   // Calcul de la direction de la lumière pour le shader (direction vers la surface)
   const lightDirection = new THREE.Vector3(...sunPosition).normalize();
+
+  function Ground() {
+    const gridConfig = {
+      cellSize: 0.2,
+      cellThickness: 0.5,
+      cellColor: "#6f6f6f",
+      sectionSize: 1,
+      sectionThickness: 1,
+      sectionColor: "#9d4b4b",
+      fadeDistance: 30,
+      fadeStrength: 2,
+      followCamera: false,
+      infiniteGrid: true,
+    };
+    return (
+      <Grid position={[0, -0.01, 0]} args={[10.5, 10.5]} {...gridConfig} />
+    );
+  }
 
   return (
     <>
@@ -173,9 +195,11 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
         near={0.001}
       />
       {/* <OrbitControls
-        ref={orbitControlsRef}
+        ref={cameraControlsRef}
         enablePan={true}
+        screenSpacePanning={false}
         enableZoom={true}
+        zoomToCursor={true}
         enableRotate={true}
         minDistance={0}
         maxDistance={50}
@@ -183,9 +207,25 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
         target={[0, 3, 0]}
         dampingFactor={0.13}
         autoRotate={controls.autoRotate}
+        // mouseButtons={LEFT:THREE.MOUSE.PAN}
       /> */}
 
-      <MapControls
+      <CameraControls
+        // ref={cameraControlsRef}
+        mouseButtons={{
+          left: ACTION.SCREEN_PAN,
+          middle: ACTION.TRUCK,
+          right: ACTION.ROTATE,
+          wheel: ACTION.DOLLY,
+        }}
+        dollyToCursor={true}
+        minDistance={0.03}
+        // infinityDolly={true}
+        // autoRotate={controls.autoRotate}
+        // dampingFactor={0.13}
+      />
+
+      {/* <MapControls
         ref={cameraControlsRef}
         enablePan={true}
         enableZoom={true}
@@ -196,9 +236,10 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
         target={[0, 3, 0]}
         dampingFactor={0.13}
         autoRotate={controls.autoRotate}
-      />
+      /> */}
 
-      {controls.showGrid && <gridHelper args={[10, 10]} />}
+      {/* {controls.showGrid && <gridHelper args={[10, 10]} />} */}
+      {controls.showGrid && <Ground />}
       {controls.showAxes && <axesHelper args={[2]} />}
       {controls.showStats && <Stats />}
 
@@ -254,11 +295,21 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
         </Clouds>
       )}
 
+      {/* Mer */}
+      {controls.water && (
+      <mesh position={[0,0.0005,0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[50, 50]} />
+        <meshStandardMaterial color='lightblue' roughness={0.6}
+            metalness={0.8} />
+        
+      </mesh>
+      )}
+
       {/* Positionneur automatique de modèles */}
       <ModelPositioner
         models={models}
         selectedModels={selectedModels}
-        onMeshDoubleClick={handleMeshDoubleClick}
+        // onMeshDoubleClick={handleMeshDoubleClick}
         lightDirection={lightDirection}
       />
     </>

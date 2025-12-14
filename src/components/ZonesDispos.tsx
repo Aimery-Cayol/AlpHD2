@@ -22,6 +22,8 @@ const selectedStyle = {
   fillOpacity: 0.3,
 };
 
+const maxSelectedTiles = 20;
+
 // Fonction pour charger et afficher la couche des tuiles
 const loadTilesLayer = async (map: any, L: any, selectedTiles: string[], setSelectedTiles: (tiles: string[] | ((prev: string[]) => string[])) => void) => {
   try {
@@ -61,7 +63,7 @@ const loadTilesLayer = async (map: any, L: any, selectedTiles: string[], setSele
               (layer as any)._isSelected = false;
               layer.setStyle(baseStyle);
               return prev.filter(url => url !== props.url);
-            } else if (prev.length < 8) {
+            } else if (prev.length < maxSelectedTiles) {
               // Sélectionner
               (layer as any)._isSelected = true;
               layer.setStyle(selectedStyle);
@@ -270,7 +272,7 @@ export default function MapPage() {
         <p className="text-sm sm:text-base mb-2 sm:mb-0">
           Carte interactive : Les tuiles disponibles sont affichées en <span className="text-green-600 font-semibold">vert</span>.
           Cliquez sur une tuile pour la sélectionner (elle devient <span className="text-red-600 font-semibold">rouge</span>).
-          Maximum 8 tuiles.
+          Maximum {maxSelectedTiles} tuiles.
           {selectedTiles.length > 0 && (
             <span className="ml-2 font-semibold text-blue-600">
               {selectedTiles.length} tuile{selectedTiles.length > 1 ? 's' : ''} sélectionnée{selectedTiles.length > 1 ? 's' : ''}
