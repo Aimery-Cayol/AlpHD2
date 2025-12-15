@@ -219,8 +219,13 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
           wheel: ACTION.DOLLY,
         }}
         dollyToCursor={true}
-        minDistance={0.03}
-        // infinityDolly={true}
+        // minDistance={0.03}
+        minDistance={0.1}
+        infinityDolly={true}
+        dollySpeed={0.5}
+        truckSpeed={0.8}
+        azimuthRotateSpeed={0.5}
+        polarRotateSpeed={0.5}
         // autoRotate={controls.autoRotate}
         // dampingFactor={0.13}
       />
