@@ -9,15 +9,23 @@ import {
   PerspectiveCamera,
   Grid,
   Stats,
-  OrbitControls,
   CameraControls,
   CameraControlsImpl,
-  MapControls,
-  Clouds,
-  Cloud,
   Sky,
+  AccumulativeShadows,
+  RandomizedLight,
 } from "@react-three/drei";
-import { Bloom, EffectComposer, SSAO } from "@react-three/postprocessing";
+import {
+  Bloom,
+  BrightnessContrast,
+  DepthOfField,
+  EffectComposer,
+  SMAA,
+  SSAO,
+  ToneMapping,
+  Vignette,
+} from "@react-three/postprocessing";
+import { BlendFunction } from "postprocessing";
 import ModelPositioner from "./ModelPositioner";
 import SceneUI from "./SceneUI";
 import MyLevaUI, { useSceneControls } from "./LevaUI";
@@ -165,7 +173,30 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
   return (
     <>
       <JEasingsComponent />
-      <EffectComposer enableNormalPass={false}>
+      <EffectComposer enableNormalPass={true}>
+        {/* <SMAA /> */}
+
+        <Vignette
+          offset={0.3} // vignette offset
+          darkness={0.4} // vignette darkness
+          eskil={false} // Eskil's vignette technique
+          blendFunction={BlendFunction.NORMAL} // blend mode
+        />
+        <BrightnessContrast
+          brightness={0.1} // brightness. min: -1, max: 1
+          contrast={0.1} // contrast: min -1, max: 1
+        />
+
+        <ToneMapping
+          blendFunction={BlendFunction.NORMAL} // blend mode
+          adaptive={true} // toggle adaptive luminance map usage
+          resolution={256} // texture resolution of the luminance map
+          middleGrey={0.9} // middle grey factor
+          maxLuminance={16.0} // maximum luminance
+          averageLuminance={1.0} // average luminance
+          adaptationRate={1.0} // luminance adaptation rate
+        />
+
         {controls.enableBloom && (
           <Bloom
             luminanceThreshold={controls.bloomThreshold}
@@ -174,44 +205,32 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
           />
         )}
 
-        {controls.enableSSAO && (
+        
+
+        {/* {controls.enableSSAO && (
           <SSAO
             samples={30} // amount of samples per pixel (shouldn't be a multiple of the ring count)
             rings={4} // amount of rings in the occlusion sampling pattern
-            distanceThreshold={1.0} // global distance threshold at which the occlusion effect starts to fade out. min: 0, max: 1
+            distanceThreshold={10.0} // global distance threshold at which the occlusion effect starts to fade out. min: 0, max: 1
             distanceFalloff={0.0} // distance falloff. min: 0, max: 1
-            rangeThreshold={0.5} // local occlusion range threshold at which the occlusion starts to fade out. min: 0, max: 1
+            rangeThreshold={0.05} // local occlusion range threshold at which the occlusion starts to fade out. min: 0, max: 1
             rangeFalloff={0.1} // occlusion range falloff. min: 0, max: 1
             luminanceInfluence={0.9} // how much the luminance of the scene influences the ambient occlusion
-            radius={20} // occlusion sampling radius
+            radius={10} // occlusion sampling radius
             bias={0.5} // occlusion bias
           />
-        )}
+        )} */}
       </EffectComposer>
+
       <PerspectiveCamera
         makeDefault
         position={[0, 5, 3]} // 2ème coord = hauteur 3ème coord = recul
+        
         fov={controls.fov}
         near={0.001}
       />
-      {/* <OrbitControls
-        ref={cameraControlsRef}
-        enablePan={true}
-        screenSpacePanning={false}
-        enableZoom={true}
-        zoomToCursor={true}
-        enableRotate={true}
-        minDistance={0}
-        maxDistance={50}
-        maxPolarAngle={Math.PI}
-        target={[0, 3, 0]}
-        dampingFactor={0.13}
-        autoRotate={controls.autoRotate}
-        // mouseButtons={LEFT:THREE.MOUSE.PAN}
-      /> */}
 
       <CameraControls
-        // ref={cameraControlsRef}
         mouseButtons={{
           left: ACTION.SCREEN_PAN,
           middle: ACTION.TRUCK,
@@ -221,9 +240,9 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
         dollyToCursor={true}
         // minDistance={0.03}
         minDistance={0.1}
-        maxDistance={3}
+        maxDistance={1}
         infinityDolly={true}
-        dollySpeed={0.5}
+        dollySpeed={0.8}
         truckSpeed={0.8}
         azimuthRotateSpeed={0.5}
         polarRotateSpeed={0.5}
@@ -231,28 +250,15 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
         // dampingFactor={0.13}
       />
 
-      {/* <MapControls
-        ref={cameraControlsRef}
-        enablePan={true}
-        enableZoom={true}
-        enableRotate={true}
-        minDistance={0.03}
-        maxDistance={50}
-        maxPolarAngle={Math.PI}
-        target={[0, 3, 0]}
-        dampingFactor={0.13}
-        autoRotate={controls.autoRotate}
-      /> */}
-
       {/* {controls.showGrid && <gridHelper args={[10, 10]} />} */}
       {controls.showGrid && <Ground />}
       {controls.showAxes && <axesHelper args={[2]} />}
       {controls.showStats && <Stats />}
 
-      {/* Éclairage adapté aux unités normales */}
       {controls.showAmbientLight && (
         <ambientLight intensity={controls.ambientIntensity} />
       )}
+
       {controls.showDirectionalLight && (
         <directionalLight
           // position={[5, 5, 3]}
@@ -269,46 +275,29 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
         />
       )}
 
+    
+
       <Sky
         distance={450000}
         sunPosition={sunPosition}
-        inclination={0}
-        azimuth={0.25}
+        turbidity={2}
+        rayleigh={3}
+        mieCoefficient={0.005}
+        mieDirectionalG={0.8}
       />
 
-      {/* <fog attach='fog' args={['grey', 1, 100]} /> // Add fog to the scene */}
-      {/* <fogExp2 attach="fog" args={["white",0.1]} /> */}
-
-      <pointLight position={[-5, -5, -3]} intensity={0.5} />
-      {/* <Environment preset="sunset" /> */}
-      {/* Nuages contrôlés par Leva */}
-      {controls.nuages && (
-        <Clouds limit={400} material={THREE.MeshLambertMaterial}>
-          <Cloud
-            seed={10}
-            fade={controls.cloudFade}
-            position={[0, controls.cloudAltitude, 0]}
-            speed={controls.cloudSpeed}
-            growth={controls.cloudGrowth}
-            volume={controls.cloudVolume}
-            opacity={controls.cloudOpacity}
-            bounds={[
-              controls.cloudEtendue,
-              controls.cloudHeight,
-              controls.cloudEtendue,
-            ]}
-          />
-        </Clouds>
-      )}
+      {/* <pointLight position={[-5, -5, -3]} intensity={0.5} /> */}
 
       {/* Mer */}
       {controls.water && (
-      <mesh position={[0,0.0005,0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[50, 50]} />
-        <meshStandardMaterial color='lightblue' roughness={0.6}
-            metalness={0.8} />
-        
-      </mesh>
+        <mesh position={[0, 0.0005, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+          <planeGeometry args={[50, 50]} />
+          <meshStandardMaterial
+            color="lightblue"
+            roughness={0.6}
+            metalness={0.8}
+          />
+        </mesh>
       )}
 
       {/* Positionneur automatique de modèles */}

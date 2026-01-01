@@ -75,6 +75,7 @@ function Params() {
   });
 
   const postProcessControls = useControls("Post-traitement", {
+    enableSSAO: { value: false, label: "SSAO" },
     enableBloom: { value: false, label: "Bloom" },
     bloomIntensity: {
       value: 0.1,
@@ -104,15 +105,16 @@ function Params() {
   });
 
   const aspectControls = useControls("Aspect", {
+    
     material: {
-      value: "slope",
-      options: ["standard", "slope", "normal"],
+      value: "HauteMontagne",
+      options: ["Standard", "HauteMontagne", "Normales", "BasseMontagne"],
       label: "Matériau",
     },
     meshColor: {
       value: "#ffdec9",
       label: "Couleur du mesh",
-      render: (get) => get("Aspect.material") == "standard",
+      render: (get) => get("Aspect.material") == "Standard",
     },
     roughness: {
       value: 0.5,
@@ -120,7 +122,7 @@ function Params() {
       max: 1,
       step: 0.05,
       label: "Rugosité",
-      render: (get) => get("Aspect.material") == "standard",
+      render: (get) => get("Aspect.material") == "Standard",
     },
     metalness: {
       value: 0.5,
@@ -128,27 +130,27 @@ function Params() {
       max: 1,
       step: 0.05,
       label: "Métallicité",
-      render: (get) => get("Aspect.material") == "standard",
+      render: (get) => get("Aspect.material") == "Standard",
     },
+
+    // preset HAUTE MONTAGNE :
     snowColor: {
       value: "#f1fbff",
       label: "Couleur neige",
-      render: (get) => get("Aspect.material") === "slope",
+      render: (get) => get("Aspect.material") === "HauteMontagne",
     },
     rockColor: {
       value: "#cf9e82",
       label: "Couleur roche",
-      render: (get) => get("Aspect.material") === "slope",
+      render: (get) => get("Aspect.material") === "HauteMontagne",
     },
-
-    // preset CALANQUES : neige #bfcfa3   rocher #f3efdc
     slopeThreshold: {
       value: 0.55,
       min: 0,
       max: 1,
       step: 0.01,
       label: "Seuil de pente",
-      render: (get) => get("Aspect.material") === "slope",
+      render: (get) => get("Aspect.material") === "HauteMontagne",
     },
     smoothness: {
       value: 0.3,
@@ -156,9 +158,39 @@ function Params() {
       max: 0.5,
       step: 0.01,
       label: "Douceur transition",
-      render: (get) => get("Aspect.material") === "slope",
+      render: (get) => get("Aspect.material") === "HauteMontagne",
+    },
+
+    // preset BASSE MONTAGNE :
+    snowColorBM: {
+      value: "#bfcfa3",
+      label: "Végétation",
+      render: (get) => get("Aspect.material") === "BasseMontagne",
+    },
+    rockColorBM: {
+      value: "#f3efdc",
+      label: "Falaises",
+      render: (get) => get("Aspect.material") === "BasseMontagne",
+    },
+    slopeThresholdBM: {
+      value: 0.55,
+      min: 0,
+      max: 1,
+      step: 0.01,
+      label: "Seuil de pente",
+      render: (get) => get("Aspect.material") === "BasseMontagne",
+    },
+    smoothnessBM: {
+      value: 0.3,
+      min: 0,
+      max: 0.5,
+      step: 0.01,
+      label: "Douceur transition",
+      render: (get) => get("Aspect.material") === "BasseMontagne",
     },
   });
+
+
 
   const environmentControls = useControls("Environnement", {
     water: { value: false, label: "Mer" },

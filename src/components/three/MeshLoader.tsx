@@ -12,8 +12,8 @@ import { geometryCache } from "./GeometryCache";
 import ModelOptimizer from "./ModelOptimizer";
 import { isLocalUrl, revokeBlobUrl } from "@/utils/fileUtils";
 
-import SlopeMaterialImpl from "./SlopeMaterial";
-import JEASINGS from "jeasings";
+import HauteMontagne from "./HauteMontagneShader";
+import BasseMontagne from "./BasseMontagneShader";
 
 interface MeshLoaderProps {
   url: string;
@@ -224,10 +224,16 @@ export default function MeshLoader({
   return (
     <group>
       <mesh ref={meshRef} geometry={geometry} castShadow receiveShadow userData={{ url }}>
-        {controls.material === "normal" && (
+        {controls.material === "Normales" && (
           <meshNormalMaterial side={THREE.DoubleSide} />
         )}
-        {controls.material === "standard" && (
+
+
+
+        
+
+
+        {controls.material === "Standard" && (
           <meshStandardMaterial
             side={THREE.DoubleSide}
             color={controls.meshColor}
@@ -235,9 +241,10 @@ export default function MeshLoader({
             metalness={controls.metalness}
           />
         )}
-        {controls.material === "slope" && (
+
+        {controls.material === "HauteMontagne" && (
           <primitive
-            object={new SlopeMaterialImpl()}
+            object={new HauteMontagne()}
             attach="material"
             side={THREE.DoubleSide}
             snowColor={controls.snowColor}
@@ -248,7 +255,25 @@ export default function MeshLoader({
             ambientIntensity={controls.ambientIntensity}
           />
         )}
+
+        {controls.material === "BasseMontagne" && (
+          <primitive
+            object={new BasseMontagne()}
+            attach="material"
+            side={THREE.DoubleSide}
+            snowColor={controls.snowColorBM}
+            rockColor={controls.rockColorBM}
+            slopeThreshold={controls.slopeThresholdBM}
+            smoothness={controls.smoothnessBM}
+            lightDirection={lightDirection || new THREE.Vector3(1, 1, 1).normalize()}
+            ambientIntensity={controls.ambientIntensity}
+          />
+        )}
+
       </mesh>
+
+
+
       {/* Mesh invisible simplifié pour les clics */}
       {geometry.boundingBox && onDoubleClick && (
         <mesh
@@ -271,6 +296,7 @@ export default function MeshLoader({
         </mesh>
       )}
 
+
       {/* Bounding box du mesh chargé */}
       {controls.showBoundingBoxes && geometry.boundingBox && (
         <BoundingBoxHelper
@@ -285,6 +311,7 @@ export default function MeshLoader({
         />
       )}
 
+
       {/* Indicateur visuel pour la source du fichier */}
       {cacheStatus === "cache" && (
         <mesh position={[0, 1.5, 0]}>
@@ -293,6 +320,7 @@ export default function MeshLoader({
         </mesh>
       )}
 
+
       {/* Indicateur pour les fichiers locaux */}
       {cacheStatus === "local" && (
         <mesh position={[0, 1.5, 0]}>
@@ -300,6 +328,7 @@ export default function MeshLoader({
           <meshBasicMaterial color="#0066cc" />
         </mesh>
       )}
+
 
       {/* Indicateur pour les modèles optimisés */}
       {optimized && (
