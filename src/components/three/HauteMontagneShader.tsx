@@ -11,9 +11,7 @@ const HauteMontagne = shaderMaterial(
     smoothness: 0.2,
     lightDirection: new THREE.Vector3(1, 1, 1).normalize(),
     ambientIntensity: 0.3,
-    fogColor: new THREE.Color('#22C223'),
-
-    // fogColor: new THREE.Color('#87CEEB'),
+    fogColor: new THREE.Color('#c5c5c5'),
     fogDensity: 0.2,
   },
   // Vertex Shader

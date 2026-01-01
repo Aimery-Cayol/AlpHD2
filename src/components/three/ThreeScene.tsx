@@ -239,8 +239,8 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
         }}
         dollyToCursor={true}
         // minDistance={0.03}
-        minDistance={0.1}
-        maxDistance={1}
+        minDistance={0.2}
+        maxDistance={3}
         infinityDolly={true}
         dollySpeed={0.8}
         truckSpeed={0.8}
