@@ -12,6 +12,9 @@ import { geometryCache } from "./GeometryCache";
 import ModelOptimizer from "./ModelOptimizer";
 import { isLocalUrl, revokeBlobUrl } from "@/utils/fileUtils";
 
+import { useGLTF } from '@react-three/drei'
+useGLTF.setDecoderPath('/draco/')
+
 import HauteMontagne from "./HauteMontagneShader";
 import BasseMontagne from "./BasseMontagneShader";
 
@@ -102,9 +105,8 @@ export default function MeshLoader({
             `🔧 Utilisation du décodeur ${decoderType.toUpperCase()} pour DRACO`
           );
 
-          loader.setDecoderPath(
-            "https://www.gstatic.com/draco/versioned/decoders/1.5.7/"
-          );
+          // loader.setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.5.7/");
+          loader.setDecoderPath('/draco/'); // Chemin local vers les décodeurs DRACO
           loader.setDecoderConfig({ type: decoderType });
         } else {
           console.log("🔧 Utilisation du PLYLoader");
@@ -117,11 +119,22 @@ export default function MeshLoader({
           url,
           (geometry: BufferGeometry) => {
             // Préparer la géométrie
-            geometry.computeBoundingBox();
+
+            // Calculer les bounding boxes et normales
+            
+            // Calculer les normales si elles ne sont pas présentes
+            console.log("🔄 Calcul des normales des sommets");
             geometry.computeVertexNormals();
+            console.log("fin des normales");
+
+            console.log("📊 Calcul de la bounding box");
+            geometry.computeBoundingBox();
+            console.log("fin de la bounding box");
 
             // Vérifier si la géométrie nécessite une optimisation
+            console.log("📊 Début Vérification des performances de la géométrie");
             const perfInfo = ModelOptimizer.getPerformanceInfo(geometry);
+            console.log("fin de la vérification des performances");
             console.log(`📊 Performance info for ${url}:`, perfInfo);
 
             // Optimiser si nécessaire
