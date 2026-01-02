@@ -173,21 +173,26 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
   return (
     <>
       <JEasingsComponent />
-      <EffectComposer enableNormalPass={true}>
+      <EffectComposer enabled={controls.enablePostProcess} enableNormalPass={true}>
         {/* <SMAA /> */}
 
-        <Vignette
+        {controls.enableVignette && (
+          <Vignette
           offset={0.3} // vignette offset
           darkness={0.4} // vignette darkness
           eskil={false} // Eskil's vignette technique
           blendFunction={BlendFunction.NORMAL} // blend mode
-        />
-        <BrightnessContrast
+        />)}
+        
+        
+        {controls.enableBrightnessContrast && (
+          <BrightnessContrast
           brightness={0.1} // brightness. min: -1, max: 1
           contrast={0.1} // contrast: min -1, max: 1
-        />
+        />)}
 
-        <ToneMapping
+        {controls.enableToneMapping && (
+          <ToneMapping
           blendFunction={BlendFunction.NORMAL} // blend mode
           adaptive={true} // toggle adaptive luminance map usage
           resolution={256} // texture resolution of the luminance map
@@ -195,7 +200,7 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
           maxLuminance={16.0} // maximum luminance
           averageLuminance={1.0} // average luminance
           adaptationRate={1.0} // luminance adaptation rate
-        />
+        />)}
 
         {controls.enableBloom && (
           <Bloom
@@ -286,7 +291,6 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
         mieDirectionalG={0.8}
       />
 
-      {/* <pointLight position={[-5, -5, -3]} intensity={0.5} /> */}
 
       {/* Mer */}
       {controls.water && (

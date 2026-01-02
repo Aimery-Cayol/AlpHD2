@@ -3,7 +3,6 @@ import { Leva, useControls, folder } from "leva";
 
 // Création du Context pour partager l'état des contrôles
 export const SceneControlsContext = createContext<{
-  nuages: boolean;
   showBoundingBoxes: boolean;
   material: string;
   fov: number;
@@ -18,7 +17,7 @@ export const SceneControlsContext = createContext<{
 function Params() {
   const cameraControls = useControls("Caméra", {
     fov: {
-      value: 75,
+      value: 70,
       min: 10,
       max: 110,
       step: 1,
@@ -37,75 +36,7 @@ function Params() {
     // },
   });
 
-  const lightControls = useControls("Éclairages", {
-    showAmbientLight: { value: true, label: "Lumière ambiante" },
-    ambientIntensity: {
-      value: 0.3,
-      min: 0,
-      max: 1.5,
-      step: 0.01,
-      label: "Intensité ambiante",
-      render: (get) => get("Éclairages.showAmbientLight"),
-    },
-    showDirectionalLight: { value: true, label: "Lumière directionnelle" },
-    directionalIntensity: {
-      value: 1.2,
-      min: 0,
-      max: 1.7,
-      step: 0.01,
-      label: "Intensité directionnelle",
-      render: (get) => get("Éclairages.showDirectionalLight"),
-    },
-    sunAzimuth: {
-      value: 180,
-      min: 0,
-      max: 360,
-      step: 1,
-      label: "Azimuth (°)",
-      render: (get) => get("Éclairages.showDirectionalLight"),
-    },
-    sunElevation: {
-      value: 40,
-      min: 0,
-      max: 90,
-      step: 1,
-      label: "Élévation (°)",
-      render: (get) => get("Éclairages.showDirectionalLight"),
-    },
-  });
-
-  const postProcessControls = useControls("Post-traitement", {
-    enableSSAO: { value: false, label: "SSAO" },
-    enableBloom: { value: false, label: "Bloom" },
-    bloomIntensity: {
-      value: 0.1,
-      min: 0,
-      max: 3,
-      step: 0.02,
-      label: "Intensité du bloom",
-      render: (get) => get("Post-traitement.enableBloom"),
-    },
-    bloomThreshold: {
-      value: 0.9,
-      min: 0,
-      max: 1,
-      step: 0.01,
-      label: "Seuil du bloom",
-      render: (get) => get("Post-traitement.enableBloom"),
-    },
-    bloomLuminanceSmoothing: {
-      value: 0.4,
-      min: 0,
-      max: 1,
-      step: 0.01,
-      label: "Rayon du bloom",
-      render: (get) => get("Post-traitement.enableBloom"),
-    },
-
-  });
-
   const aspectControls = useControls("Aspect", {
-    
     material: {
       value: "HauteMontagne",
       options: ["Standard", "HauteMontagne", "Normales", "BasseMontagne"],
@@ -190,78 +121,45 @@ function Params() {
     },
   });
 
-
+  const lightControls = useControls("Éclairages", {
+    showAmbientLight: { value: true, label: "Lumière ambiante" },
+    ambientIntensity: {
+      value: 0.3,
+      min: 0,
+      max: 1.5,
+      step: 0.01,
+      label: "Intensité ambiante",
+      render: (get) => get("Éclairages.showAmbientLight"),
+    },
+    showDirectionalLight: { value: true, label: "Lumière directionnelle" },
+    directionalIntensity: {
+      value: 1.2,
+      min: 0,
+      max: 1.7,
+      step: 0.01,
+      label: "Intensité directionnelle",
+      render: (get) => get("Éclairages.showDirectionalLight"),
+    },
+    sunAzimuth: {
+      value: 180,
+      min: 0,
+      max: 360,
+      step: 1,
+      label: "Azimuth (°)",
+      render: (get) => get("Éclairages.showDirectionalLight"),
+    },
+    sunElevation: {
+      value: 35,
+      min: 0,
+      max: 90,
+      step: 0.5,
+      label: "Élévation (°)",
+      render: (get) => get("Éclairages.showDirectionalLight"),
+    },
+  });
 
   const environmentControls = useControls("Environnement", {
     water: { value: false, label: "Mer" },
-
-
-    nuages: { value: false, label: "Nuages" },
-    cloudAltitude: {
-      value: 3,
-      min: 0,
-      max: 10,
-      step: 0.05,
-      label: "Altitude",
-      render: (get) => get("Nuages.nuages"),
-    },
-    cloudHeight: {
-      value: 0.1,
-      min: 0,
-      max: 3,
-      step: 0.01,
-      label: "Hauteur",
-      render: (get) => get("Nuages.nuages"),
-    },
-    cloudEtendue: {
-      value: 2,
-      min: 0,
-      max: 10,
-      step: 0.1,
-      label: "Étendue",
-      render: (get) => get("Nuages.nuages"),
-    },
-
-    cloudFade: {
-      value: 10,
-      min: 0,
-      max: 50,
-      step: 1,
-      label: "Fondu",
-      render: (get) => get("Nuages.nuages"),
-    },
-    cloudVolume: {
-      value: 1,
-      min: 0,
-      max: 5,
-      step: 0.1,
-      label: "Volume",
-      render: (get) => get("Nuages.nuages"),
-    },
-    cloudOpacity: {
-      value: 1,
-      min: 0,
-      max: 1,
-      step: 0.01,
-      label: "Opacité",
-      render: (get) => get("Nuages.nuages"),
-    },
-    cloudSpeed: {
-      value: 0.1,
-      min: 0,
-      max: 1,
-      step: 0.01,
-      label: "Vitesse",
-      render: (get) => get("Nuages.nuages"),
-    },
-    cloudGrowth: {
-      value: 0.1,
-      min: 0,
-      max: 1,
-      step: 0.01,
-      label: "Croissance",
-      render: (get) => get("Nuages.nuages"),
-    },
   });
 
   const debugControls = useControls("Debug", {
@@ -269,6 +167,57 @@ function Params() {
     showAxes: { value: false, label: "Axes" },
     showBoundingBoxes: { value: false, label: "Boîtes englobantes" },
     showStats: { value: false, label: "Statistiques" },
+  });
+
+  const postProcessControls = useControls("Expérimental", {
+    enablePostProcess: { value: false, label: "Post-traitement" },
+    enableVignette: {
+      value: false,
+      label: "Vignette",
+      render: (get) => get("Expérimental.enablePostProcess"),
+    },
+    enableBrightnessContrast: {
+      value: false,
+      label: "Luminosité/Contraste",
+      render: (get) => get("Expérimental.enablePostProcess"),
+    },
+    enableToneMapping: {
+      value: false,
+      label: "Correction de gamma",
+      render: (get) => get("Expérimental.enablePostProcess"),
+    },
+
+    // enableSSAO: { value: false, label: "SSAO", render: (get) => get("Post-traitement.enablePostProcess"), },
+
+    enableBloom: {
+      value: false,
+      label: "Bloom",
+      render: (get) => get("Expérimental.enablePostProcess"),
+    },
+    bloomIntensity: {
+      value: 0.1,
+      min: 0,
+      max: 3,
+      step: 0.02,
+      label: "Intensité du bloom",
+      render: (get) => get("Expérimental.enableBloom"),
+    },
+    bloomThreshold: {
+      value: 0.9,
+      min: 0,
+      max: 1,
+      step: 0.01,
+      label: "Seuil du bloom",
+      render: (get) => get("Expérimental.enableBloom"),
+    },
+    bloomLuminanceSmoothing: {
+      value: 0.4,
+      min: 0,
+      max: 1,
+      step: 0.01,
+      label: "Rayon du bloom",
+      render: (get) => get("Expérimental.enableBloom"),
+    },
   });
 
   return {
@@ -310,6 +259,26 @@ const matrixTheme = {
   },
 };
 
+const lightTheme = {
+  colors: {
+    elevation1: "#ffffff80",
+    elevation2: "#f5f5f580",
+    elevation3: "#cccccc80",
+    accent1: "#0066DC",
+    accent2: "#007BFF",
+    accent3: "#3C93FF",
+    highlight1: "#666666",
+    highlight2: "#333333",
+    highlight3: "#000000",
+    vivid1: "#ffcc00",
+  },
+  radii: {
+    xs: "2px",
+    sm: "3px",
+    lg: "10px",
+  },
+};
+
 export default function MyLevaUI({ children }: { children: React.ReactNode }) {
   const controlsValue = Params();
 
@@ -317,14 +286,15 @@ export default function MyLevaUI({ children }: { children: React.ReactNode }) {
     <>
       <SceneControlsContext.Provider value={controlsValue}>
         <Leva
-          theme={matrixTheme}
+          theme={lightTheme}
           hideCopyButton={true}
-          flat={true}
+          flat={false}
           collapsed={true}
+          oneLineLabels={false}
           titleBar={{
             // Configure title bar options
             title: "Paramètres", // Custom title
-            drag: true, // Enable dragging
+            drag: false, // Enable dragging
             filter: false, // Enable filter/search
             position: { x: 0, y: 0 }, // Initial position (when drag is enabled)
             onDrag: (position) => {}, // Callback when dragged
@@ -337,7 +307,8 @@ export default function MyLevaUI({ children }: { children: React.ReactNode }) {
           top: 5px !important;
           left: 5px !important;
           right: auto !important;
-          max-height: calc(60vh - 20px) !important;
+          // bottom: 5px !important;
+          max-height: calc(60vh - 5px) !important;
           overflow-y: auto !important;
           backdrop-filter: blur(10px);
         }
