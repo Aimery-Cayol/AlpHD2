@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { FaBars, FaTimes } from "react-icons/fa";
+import { Mountain } from "lucide-react";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -13,11 +14,11 @@ export default function Header() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex items-center">
-            <Link
-              href="/"
-              className="text-xl font-semibold text-gray-900 hover:text-blue-600 transition-colors"
-            >
-              🏔️ AlpHD
+            <Link href="/" className="flex items-center gap-2 group">
+              <Mountain className="h-6 w-6 text-blue-600 transition-transform group-hover:scale-110" />
+              <span className="text-xl font-bold tracking-tight text-gray-900">
+                Alp<span className="text-blue-600">HD</span>
+              </span>
             </Link>
           </div>
 
