@@ -1,72 +1,89 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3'
-import amplifyOutputs from '../../../../amplify_outputs.json'
+import { NextRequest, NextResponse } from "next/server";
+import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
+import amplifyOutputs from "../../../../amplify_outputs.json";
 
 // Configuration S3
 const createS3Client = () => {
   return new S3Client({
-    region: amplifyOutputs.storage.aws_region,
-  })
-}
+    region: AWS_REGION,
+    credentials: process.env.AWS_ACCESS_KEY_ID
+      ? {
+          accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+          secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+        }
+      : undefined,
+  });
+};
 
-const s3Client = createS3Client()
-const BUCKET_NAME = amplifyOutputs.storage.bucket_name
+const s3Client = createS3Client();
+const BUCKET_NAME =
+  process.env.AWS_BUCKET_NAME || amplifyOutputs.storage.bucket_name;
+const AWS_REGION = process.env.AWS_REGION || amplifyOutputs.storage.aws_region;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function GET(_request: NextRequest) {
   try {
-    console.log('=== API Route - Récupération GeoJSON des tuiles depuis S3 ===')
+    console.log(
+      "=== API Route - Récupération GeoJSON des tuiles depuis S3 ==="
+    );
 
     // Récupérer le fichier tiles.geojson depuis S3
     const command = new GetObjectCommand({
       Bucket: BUCKET_NAME,
-      Key: 'tiles/tiles.geojson'
-    })
+      Key: "tiles/tiles.geojson",
+    });
 
-    const response = await s3Client.send(command)
+    const response = await s3Client.send(command);
 
     if (!response.Body) {
-      console.warn('Fichier tiles.geojson non trouvé dans S3, retour GeoJSON vide')
-      return NextResponse.json({
-        type: 'FeatureCollection',
-        features: []
-      }, {
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'GET, OPTIONS',
-          'Access-Control-Allow-Headers': 'Content-Type',
-          'Cache-Control': 'public, max-age=300' // Cache 5 minutes
+      console.warn(
+        "Fichier tiles.geojson non trouvé dans S3, retour GeoJSON vide"
+      );
+      return NextResponse.json(
+        {
+          type: "FeatureCollection",
+          features: [],
+        },
+        {
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET, OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type",
+            "Cache-Control": "public, max-age=300", // Cache 5 minutes
+          },
         }
-      })
+      );
     }
 
     // Convertir le stream en string
-    const bodyContents = await response.Body.transformToString()
-    const geoJson = JSON.parse(bodyContents)
+    const bodyContents = await response.Body.transformToString();
+    const geoJson = JSON.parse(bodyContents);
 
     return NextResponse.json(geoJson, {
       headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type',
-        'Cache-Control': 'public, max-age=300' // Cache 5 minutes
-      }
-    })
-
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Cache-Control": "public, max-age=300", // Cache 5 minutes
+      },
+    });
   } catch (error) {
-    console.error('Erreur lors de la récupération du GeoJSON:', error)
+    console.error("Erreur lors de la récupération du GeoJSON:", error);
     // En cas d'erreur, retourner un GeoJSON vide au lieu d'une erreur 500
-    return NextResponse.json({
-      type: 'FeatureCollection',
-      features: []
-    }, {
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type',
-        'Cache-Control': 'public, max-age=300' // Cache 5 minutes
+    return NextResponse.json(
+      {
+        type: "FeatureCollection",
+        features: [],
+      },
+      {
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET, OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type",
+          "Cache-Control": "public, max-age=300", // Cache 5 minutes
+        },
       }
-    })
+    );
   }
 }
 
@@ -75,9 +92,9 @@ export async function OPTIONS() {
   return new NextResponse(null, {
     status: 200,
     headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type'
-    }
-  })
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type",
+    },
+  });
 }
