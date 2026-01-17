@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import { useLoader } from "@react-three/fiber";
 import { PLYLoader } from "three-stdlib";
 import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
@@ -11,9 +11,6 @@ import BoundingBoxHelper from "./BoundingBoxHelper";
 import { geometryCache } from "./GeometryCache";
 import ModelOptimizer from "./ModelOptimizer";
 import { isLocalUrl, revokeBlobUrl } from "@/utils/fileUtils";
-
-import { useGLTF } from '@react-three/drei'
-useGLTF.setDecoderPath('/draco/')
 
 import HauteMontagne from "./HauteMontagneShader";
 import BasseMontagne from "./BasseMontagneShader";
@@ -35,24 +32,133 @@ export default function MeshLoader({
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [optimized, setOptimized] = useState(false);
-  const [cacheStatus, setCacheStatus] = useState<
-    "loading" | "cache" | "network" | "local"
+  const [cacheStatus, setCacheStatus] = useState < "loading" | "cache" | "network" | "local"
   >("loading");
   const meshRef = useRef<Mesh>(null);
   const controls = useSceneControls();
 
+  // 🎯 OPTIMISATION 1: Créer TOUS les matériaux une seule fois
+  const materials = useMemo(() => {
+    return {
+      normal: new THREE.MeshNormalMaterial({ side: THREE.DoubleSide }),
+      standard: new THREE.MeshStandardMaterial({ 
+        side: THREE.DoubleSide,
+        color: controls.meshColor,
+        roughness: controls.roughness,
+        metalness: controls.metalness,
+      }),
+      hauteMontagne: new HauteMontagne(),
+      basseMontagne: new BasseMontagne(),
+    };
+  }, []); // ✅ Créé UNE SEULE FOIS
+
+  // 🎯 OPTIMISATION 2: Sélectionner le matériau actif sans le recréer
+  const activeMaterial = useMemo(() => {
+    switch (controls.material) {
+      case "Normales":
+        return materials.normal;
+      case "Standard":
+        return materials.standard;
+      case "HauteMontagne":
+        return materials.hauteMontagne;
+      case "BasseMontagne":
+        return materials.basseMontagne;
+      default:
+        return materials.standard;
+    }
+  }, [controls.material, materials]);
+
+  // 🎯 OPTIMISATION 3: Mettre à jour les uniforms/propriétés selon le matériau actif
   useEffect(() => {
-    // Cleanup function pour éviter les fuites mémoire
+    if (!activeMaterial) return;
+
+    if (controls.material === "Standard") {
+      const mat = activeMaterial as THREE.MeshStandardMaterial;
+      mat.color.set(controls.meshColor);
+      mat.roughness = controls.roughness;
+      mat.metalness = controls.metalness;
+      mat.needsUpdate = true;
+    }
+
+    if (controls.material === "HauteMontagne") {
+      const mat = activeMaterial as any;
+      mat.uniforms.snowColor.value.set(controls.snowColor);
+      mat.uniforms.rockColor.value.set(controls.rockColor);
+      mat.uniforms.slopeThreshold.value = controls.slopeThreshold;
+      mat.uniforms.smoothness.value = controls.smoothness;
+      mat.uniforms.lightDirection.value.copy(
+        lightDirection || new THREE.Vector3(1, 1, 1).normalize()
+      );
+      mat.uniforms.ambientIntensity.value = controls.ambientIntensity;
+    }
+
+    if (controls.material === "BasseMontagne") {
+      const mat = activeMaterial as any;
+      mat.uniforms.snowColor.value.set(controls.snowColorBM);
+      mat.uniforms.rockColor.value.set(controls.rockColorBM);
+      mat.uniforms.slopeThreshold.value = controls.slopeThresholdBM;
+      mat.uniforms.smoothness.value = controls.smoothnessBM;
+      mat.uniforms.lightDirection.value.copy(
+        lightDirection || new THREE.Vector3(1, 1, 1).normalize()
+      );
+      mat.uniforms.ambientIntensity.value = controls.ambientIntensity;
+    }
+  }, [
+    activeMaterial,
+    controls.material,
+    controls.meshColor,
+    controls.roughness,
+    controls.metalness,
+    controls.snowColor,
+    controls.rockColor,
+    controls.slopeThreshold,
+    controls.smoothness,
+    controls.snowColorBM,
+    controls.rockColorBM,
+    controls.slopeThresholdBM,
+    controls.smoothnessBM,
+    controls.ambientIntensity,
+    lightDirection,
+  ]);
+
+  // 🎯 OPTIMISATION 4: Cleanup des matériaux à l'unmount
+  useEffect(() => {
     return () => {
-      if (meshRef.current) {
-        meshRef.current.geometry?.dispose();
+      // Dispose de TOUS les matériaux
+      Object.values(materials).forEach(mat => mat.dispose());
+      
+      // Ne dispose la géométrie QUE si elle n'est pas en cache
+      if (meshRef.current?.geometry && !geometryCache.has(url)) {
+        meshRef.current.geometry.dispose();
       }
+      
       // Nettoyer les URLs blob locales
       if (url && isLocalUrl(url)) {
         revokeBlobUrl(url);
       }
     };
-  }, [url]);
+  }, [materials, url]);
+
+  // 🎯 OPTIMISATION 5: Mémoriser les calculs de bounding box
+  const boundingCenter = useMemo(() => {
+    if (!geometry?.boundingBox) return [0, 0, 0] as const;
+    const box = geometry.boundingBox;
+    return [
+      (box.max.x + box.min.x) / 2,
+      (box.max.y + box.min.y) / 2,
+      (box.max.z + box.min.z) / 2,
+    ] as const;
+  }, [geometry]);
+
+  const boundingSize = useMemo(() => {
+    if (!geometry?.boundingBox) return [1, 1, 1];
+    const box = geometry.boundingBox;
+    return [
+      box.max.x - box.min.x,
+      box.max.y - box.min.y,
+      box.max.z - box.min.z,
+    ];
+  }, [geometry]);
 
   useEffect(() => {
     if (!url) {
@@ -61,55 +167,44 @@ export default function MeshLoader({
       return;
     }
 
+    // 🎯 OPTIMISATION 6: Flag pour annuler les opérations async
+    let cancelled = false;
+
     const loadGeometry = async () => {
       setLoading(true);
       setError(null);
 
       try {
-        // Vérifier d'abord le cache
+        // Vérifier le cache
         const cachedGeometry = geometryCache.get(url);
 
         if (cachedGeometry) {
-          console.log("✅ Géométrie chargée depuis le cache:", url);
-          console.log("📊 Statistiques cache:", geometryCache.getStats());
+          if (process.env.NODE_ENV === 'development') {
+            console.log("✅ Géométrie depuis cache:", url);
+          }
           setCacheStatus("cache");
           setGeometry(cachedGeometry);
           setLoading(false);
           return;
         }
 
-        // Déterminer le type de source
+        // Déterminer la source
         if (isLocalUrl(url)) {
-          console.log("📁 Chargement du fichier local:", url, `(${format})`);
           setCacheStatus("local");
         } else {
-          console.log("🌐 Chargement depuis le réseau:", url, `(${format})`);
-          console.log(
-            "📊 Statistiques cache avant chargement:",
-            geometryCache.getStats()
-          );
           setCacheStatus("network");
         }
 
         let loader;
 
-        // Créer le loader approprié selon le format
         if (format === "drc") {
-          console.log("🔧 Utilisation du DRACOLoader");
           loader = new DRACOLoader();
-          // Détecter le support WASM et utiliser le décodeur approprié
           const supportsWasm =
             typeof WebAssembly === "object" && WebAssembly.validate;
           const decoderType = supportsWasm ? "wasm" : "js";
-          console.log(
-            `🔧 Utilisation du décodeur ${decoderType.toUpperCase()} pour DRACO`
-          );
-
-          // loader.setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.5.7/");
-          loader.setDecoderPath('/draco/'); // Chemin local vers les décodeurs DRACO
+          loader.setDecoderPath('/draco/');
           loader.setDecoderConfig({ type: decoderType });
         } else {
-          console.log("🔧 Utilisation du PLYLoader");
           loader = new PLYLoader();
         }
 
@@ -117,70 +212,67 @@ export default function MeshLoader({
 
         loader.load(
           url,
-          (geometry: BufferGeometry) => {
-            // Préparer la géométrie
+          async (geometry: BufferGeometry) => {
+            if (cancelled) return; // ✅ Éviter les updates après unmount
 
-            // Calculer les bounding boxes et normales
+            // 🎯 OPTIMISATION 7: Calculs asynchrones découplés
+            await new Promise(resolve => setTimeout(resolve, 0));
+            if (cancelled) return;
             
-            // Calculer les normales si elles ne sont pas présentes
-            console.log("🔄 Calcul des normales des sommets");
             geometry.computeVertexNormals();
-            console.log("fin des normales");
-
-            console.log("📊 Calcul de la bounding box");
+            
+            await new Promise(resolve => setTimeout(resolve, 0));
+            if (cancelled) return;
+            
             geometry.computeBoundingBox();
-            console.log("fin de la bounding box");
 
-            // Vérifier si la géométrie nécessite une optimisation
-            console.log("📊 Début Vérification des performances de la géométrie");
+            await new Promise(resolve => setTimeout(resolve, 0));
+            if (cancelled) return;
+            
             const perfInfo = ModelOptimizer.getPerformanceInfo(geometry);
-            console.log("fin de la vérification des performances");
-            console.log(`📊 Performance info for ${url}:`, perfInfo);
+            
+            if (process.env.NODE_ENV === 'development') {
+              console.log(`📊 Performance info:`, perfInfo);
+            }
 
-            // Optimiser si nécessaire
             const optimizedGeometry = ModelOptimizer.optimizeIfNeeded(geometry);
             const wasOptimized = optimizedGeometry !== geometry;
+            
+            if (cancelled) return;
+            
             setOptimized(wasOptimized);
-
-            const finalGeometry =
-              ModelOptimizer.getPerformanceInfo(optimizedGeometry);
-            console.log(`✅ Final geometry info:`, finalGeometry);
-
-            // Stocker dans le cache pour les prochaines fois
             geometryCache.set(url, optimizedGeometry);
-
             setGeometry(optimizedGeometry);
             setLoading(false);
           },
           (progress) => {
-            console.log(
-              "Chargement:",
-              (progress.loaded / progress.total) * 100 + "%"
-            );
+            if (process.env.NODE_ENV === 'development') {
+              console.log("Chargement:", (progress.loaded / progress.total) * 100 + "%");
+            }
           },
           (error) => {
-            console.error(
-              `Erreur lors du chargement du ${format?.toUpperCase()}:`,
-              error
-            );
-            setError(
-              `Erreur lors du chargement du modèle ${format?.toUpperCase()}`
-            );
+            if (cancelled) return;
+            console.error(`Erreur chargement ${format?.toUpperCase()}:`, error);
+            setError(`Erreur chargement ${format?.toUpperCase()}`);
             setLoading(false);
           }
         );
       } catch (err) {
-        console.error("Erreur lors du chargement:", err);
-        setError("Erreur lors du chargement du modèle");
+        if (cancelled) return;
+        console.error("Erreur:", err);
+        setError("Erreur chargement");
         setLoading(false);
       }
     };
 
     loadGeometry();
-  }, [url]);
+
+    return () => {
+      cancelled = true; // ✅ Annuler les opérations en cours
+    };
+  }, [url, format]);
 
   if (loading) {
-    // Couleur différente selon la source : vert pour cache, orange pour réseau, bleu pour local
     const loadingColor =
       cacheStatus === "cache"
         ? "#00ff00"
@@ -194,7 +286,6 @@ export default function MeshLoader({
           <boxGeometry args={[1, 1, 1]} />
           <meshStandardMaterial color={loadingColor} wireframe />
         </mesh>
-        {/* Bounding box du cube de chargement */}
         {controls.showBoundingBoxes && (
           <BoundingBoxHelper
             box={
@@ -217,8 +308,6 @@ export default function MeshLoader({
           <sphereGeometry args={[0.5, 8, 8]} />
           <meshStandardMaterial color="red" />
         </mesh>
-        {/* Bounding box de la sphère d'erreur */}
-
         {controls.showBoundingBoxes && (
           <BoundingBoxHelper
             box={
@@ -236,81 +325,29 @@ export default function MeshLoader({
 
   return (
     <group>
-      <mesh ref={meshRef} geometry={geometry} castShadow receiveShadow userData={{ url }}>
-        {controls.material === "Normales" && (
-          <meshNormalMaterial side={THREE.DoubleSide} />
-        )}
+      {/* ✅ Un seul mesh avec le matériau actif */}
+      <mesh 
+        ref={meshRef} 
+        geometry={geometry} 
+        material={activeMaterial}
+        castShadow 
+        receiveShadow 
+        userData={{ url }}
+      />
 
-
-
-        
-
-
-        {controls.material === "Standard" && (
-          <meshStandardMaterial
-            side={THREE.DoubleSide}
-            color={controls.meshColor}
-            roughness={controls.roughness}
-            metalness={controls.metalness}
-          />
-        )}
-
-        {controls.material === "HauteMontagne" && (
-          <primitive
-            object={new HauteMontagne()}
-            attach="material"
-            side={THREE.DoubleSide}
-            snowColor={controls.snowColor}
-            rockColor={controls.rockColor}
-            slopeThreshold={controls.slopeThreshold}
-            smoothness={controls.smoothness}
-            lightDirection={lightDirection || new THREE.Vector3(1, 1, 1).normalize()}
-            ambientIntensity={controls.ambientIntensity}
-          />
-        )}
-
-        {controls.material === "BasseMontagne" && (
-          <primitive
-            object={new BasseMontagne()}
-            attach="material"
-            side={THREE.DoubleSide}
-            snowColor={controls.snowColorBM}
-            rockColor={controls.rockColorBM}
-            slopeThreshold={controls.slopeThresholdBM}
-            smoothness={controls.smoothnessBM}
-            lightDirection={lightDirection || new THREE.Vector3(1, 1, 1).normalize()}
-            ambientIntensity={controls.ambientIntensity}
-          />
-        )}
-
-      </mesh>
-
-
-
-      {/* Mesh invisible simplifié pour les clics */}
+      {/* Mesh invisible pour les clics - utilise les valeurs mémorisées */}
       {geometry.boundingBox && onDoubleClick && (
         <mesh
           onDoubleClick={onDoubleClick}
           visible={false}
-          position={[
-            (geometry.boundingBox.max.x + geometry.boundingBox.min.x) / 2,
-            (geometry.boundingBox.max.y + geometry.boundingBox.min.y) / 2,
-            (geometry.boundingBox.max.z + geometry.boundingBox.min.z) / 2,
-          ]}
+          position={boundingCenter}
         >
-          <boxGeometry
-            args={[
-              geometry.boundingBox.max.x - geometry.boundingBox.min.x,
-              geometry.boundingBox.max.y - geometry.boundingBox.min.y,
-              geometry.boundingBox.max.z - geometry.boundingBox.min.z,
-            ]}
-          />
+          <boxGeometry args={boundingSize as [number, number, number]} />
           <meshBasicMaterial transparent opacity={0} />
         </mesh>
       )}
 
-
-      {/* Bounding box du mesh chargé */}
+      {/* Bounding box */}
       {controls.showBoundingBoxes && geometry.boundingBox && (
         <BoundingBoxHelper
           box={geometry.boundingBox}
@@ -319,13 +356,12 @@ export default function MeshLoader({
               ? "#16a34a"
               : cacheStatus === "local"
                 ? "#0066cc"
-                : "#ffff00" // Vert foncé pour cache, bleu pour local, jaune pour réseau
+                : "#ffff00"
           }
         />
       )}
 
-
-      {/* Indicateur visuel pour la source du fichier */}
+      {/* Indicateurs visuels */}
       {cacheStatus === "cache" && (
         <mesh position={[0, 1.5, 0]}>
           <sphereGeometry args={[0.05, 8, 8]} />
@@ -333,8 +369,6 @@ export default function MeshLoader({
         </mesh>
       )}
 
-
-      {/* Indicateur pour les fichiers locaux */}
       {cacheStatus === "local" && (
         <mesh position={[0, 1.5, 0]}>
           <sphereGeometry args={[0.05, 8, 8]} />
@@ -342,8 +376,6 @@ export default function MeshLoader({
         </mesh>
       )}
 
-
-      {/* Indicateur pour les modèles optimisés */}
       {optimized && (
         <mesh position={[0, 1.2, 0]}>
           <sphereGeometry args={[0.03, 8, 8]} />
