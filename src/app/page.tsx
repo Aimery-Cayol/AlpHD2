@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import DropZone from "@/components/three/DropZone";
 import { createFileInfo, FileInfo, extractCoordinates } from "@/utils/fileUtils";
+import { detectAndLogCapabilities } from "@/utils/deviceCapabilities";
 import { useAppContext } from "@/contexts/AppContext";
 
 // // Import dynamique du composant 3D pour éviter les problèmes SSR
@@ -96,6 +97,11 @@ function HomePageContent() {
   // Charger la liste des modèles depuis l'API
   useEffect(() => {
     loadModels();
+  }, []);
+
+  // Détecter les capacités du client au chargement
+  useEffect(() => {
+    detectAndLogCapabilities();
   }, []);
 
   // Fonction pour gérer l'upload de fichiers

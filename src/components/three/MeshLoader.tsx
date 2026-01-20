@@ -229,10 +229,16 @@ export default function MeshLoader({
             if (cancelled) return;
             
             const perfInfo = GeometryInspector.getPerformanceInfo(geometry);
+            const meshName = url.split('/').pop() || 'mesh';
             
-            if (process.env.NODE_ENV === 'development') {
-              console.log(`📊 Performance info:`, perfInfo);
+            console.log(`📊 Mesh chargé: ${meshName}`);
+            console.log(`  └─ Vertices: ${perfInfo.vertices.toLocaleString()}`);
+            if (perfInfo.indexed) {
+              console.log(`  └─ Indices: ${perfInfo.indices.toLocaleString()}`);
             }
+            console.log(`  └─ Triangles: ${Math.floor(perfInfo.triangles).toLocaleString()}`);
+            console.log(`  └─ Mémoire: ${(perfInfo.memoryUsage / (1024 * 1024)).toFixed(2)} MB`);
+            console.log(`  └─ Type: ${perfInfo.indexed ? 'Indexé' : 'Non-indexé'}`);
             
             if (cancelled) return;
             
