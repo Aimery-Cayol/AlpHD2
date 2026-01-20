@@ -44,5 +44,12 @@ next-env.d.ts
 .amplify
 amplify_outputs*
 amplifyconfiguration*
+<<<<<<< HEAD
 .kilocode/rules/TSL.md
 .kilocode/rules/mon-appli.md
+=======
+
+#AI
+.kilocode
+.kilocode/*
+>>>>>>> 2425ac5 (feat: add .kilocode to .gitignore for AI-related files)
