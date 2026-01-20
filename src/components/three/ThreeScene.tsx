@@ -30,6 +30,7 @@ import ModelPositioner from "./ModelPositioner";
 import SceneUI from "./SceneUI";
 import MyLevaUI, { useSceneControls } from "./LevaUI";
 import { FaExpand, FaCompress } from "react-icons/fa";
+import CameraTargetDebug from "./CameraTargetDebug";
 
 import JEASINGS from "jeasings";
 import JEasingsComponent from "./JEasings";
@@ -83,6 +84,7 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
   const controls = useSceneControls();
   const { scene } = useThree();
   const { ACTION } = CameraControlsImpl;
+  const cameraControlsRef = useRef<CameraControlsImpl | null>(null);
 
   //JEasing
   // const cameraControlsRef = useRef<any>(null);
@@ -236,6 +238,7 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
       />
 
       <CameraControls
+        ref={cameraControlsRef}
         mouseButtons={{
           left: ACTION.SCREEN_PAN,
           middle: ACTION.TRUCK,
@@ -254,6 +257,11 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
         // autoRotate={controls.autoRotate}
         // dampingFactor={0.13}
       />
+
+      {/* Cube de debug pour la cible de la caméra */}
+      {controls.showCameraTarget && (
+        <CameraTargetDebug cameraControlsRef={cameraControlsRef} />
+      )}
 
       {/* {controls.showGrid && <gridHelper args={[10, 10]} />} */}
       {controls.showGrid && <Ground />}

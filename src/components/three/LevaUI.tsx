@@ -167,6 +167,7 @@ function Params() {
     showAxes: { value: false, label: "Axes" },
     showBoundingBoxes: { value: false, label: "Boîtes englobantes" },
     showStats: { value: false, label: "Statistiques" },
+    showCameraTarget: { value: false, label: "Cible caméra" },
   });
 
   const postProcessControls = useControls("Expérimental", {
