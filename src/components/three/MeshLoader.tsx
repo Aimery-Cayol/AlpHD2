@@ -31,7 +31,6 @@ export default function MeshLoader({
   const [geometry, setGeometry] = useState<BufferGeometry | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [optimized, setOptimized] = useState(false);
   const [cacheStatus, setCacheStatus] = useState < "loading" | "cache" | "network" | "local"
   >("loading");
   const meshRef = useRef<Mesh>(null);
@@ -234,15 +233,11 @@ export default function MeshLoader({
             if (process.env.NODE_ENV === 'development') {
               console.log(`📊 Performance info:`, perfInfo);
             }
-
-            const optimizedGeometry = ModelOptimizer.optimizeIfNeeded(geometry);
-            const wasOptimized = optimizedGeometry !== geometry;
             
             if (cancelled) return;
             
-            setOptimized(wasOptimized);
-            geometryCache.set(url, optimizedGeometry);
-            setGeometry(optimizedGeometry);
+            geometryCache.set(url, geometry);
+            setGeometry(geometry);
             setLoading(false);
           },
           (progress) => {
@@ -373,13 +368,6 @@ export default function MeshLoader({
         <mesh position={[0, 1.5, 0]}>
           <sphereGeometry args={[0.05, 8, 8]} />
           <meshBasicMaterial color="#0066cc" />
-        </mesh>
-      )}
-
-      {optimized && (
-        <mesh position={[0, 1.2, 0]}>
-          <sphereGeometry args={[0.03, 8, 8]} />
-          <meshBasicMaterial color="#f59e0b" />
         </mesh>
       )}
     </group>

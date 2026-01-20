@@ -17,7 +17,7 @@ interface CacheStats {
 
 class GeometryCache {
   private cache = new Map<string, CacheEntry>();
-  private maxSize: number = 500 * 1024 * 1024; // 500MB par défaut
+  private maxSize: number = 2000 * 1024 * 1024; // 2GB par défaut
   private maxEntries: number = 100;
   private hits: number = 0;
   private misses: number = 0;
