@@ -9,7 +9,7 @@ import * as THREE from "three";
 import { useSceneControls } from "./LevaUI";
 import BoundingBoxHelper from "./BoundingBoxHelper";
 import { geometryCache } from "./GeometryCache";
-import ModelOptimizer from "./ModelOptimizer";
+import GeometryInspector from "./GeometryInspector";
 import { isLocalUrl, revokeBlobUrl } from "@/utils/fileUtils";
 
 import HauteMontagne from "./HauteMontagneShader";
@@ -228,7 +228,7 @@ export default function MeshLoader({
             await new Promise(resolve => setTimeout(resolve, 0));
             if (cancelled) return;
             
-            const perfInfo = ModelOptimizer.getPerformanceInfo(geometry);
+            const perfInfo = GeometryInspector.getPerformanceInfo(geometry);
             
             if (process.env.NODE_ENV === 'development') {
               console.log(`📊 Performance info:`, perfInfo);

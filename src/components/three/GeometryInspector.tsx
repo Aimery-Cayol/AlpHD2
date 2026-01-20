@@ -2,7 +2,7 @@
 
 import { BufferGeometry } from "three";
 
-export class ModelOptimizer {
+export class GeometryInspector {
   /**
    * Obtient des informations de performance sur une géométrie
    */
@@ -38,4 +38,4 @@ export class ModelOptimizer {
   }
 }
 
-export default ModelOptimizer;
+export default GeometryInspector;
