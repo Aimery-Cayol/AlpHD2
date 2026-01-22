@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { S3Client, ListObjectsV2Command } from "@aws-sdk/client-s3";
 import amplifyOutputs from "../../../../amplify_outputs.json";
 
+// Définir les constantes en premier
+const BUCKET_NAME =
+  process.env.AWS_BUCKET_NAME || amplifyOutputs.storage.bucket_name;
+const AWS_REGION = process.env.AWS_REGION || amplifyOutputs.storage.aws_region;
+
 // Configuration S3 adaptée selon l'environnement
 const createS3Client = () => {
   // // En développement local, utiliser le profil AWS par défaut
@@ -27,9 +32,6 @@ const createS3Client = () => {
 };
 
 const s3Client = createS3Client();
-const BUCKET_NAME =
-  process.env.AWS_BUCKET_NAME || amplifyOutputs.storage.bucket_name;
-const AWS_REGION = process.env.AWS_REGION || amplifyOutputs.storage.aws_region;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function GET(_request: NextRequest) {
