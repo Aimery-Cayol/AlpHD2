@@ -12,40 +12,64 @@ export default function Header() {
     <header className="bg-white shadow-sm border-b sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Logo */}
+          
+          {/* Logo avec le SVG exact demandé */}
           <div className="flex items-center">
+<<<<<<< Updated upstream
             <Link href="/" className="flex items-center gap-2 group">
               <Mountain className="h-6 w-6 text-blue-600 transition-transform group-hover:scale-110" />
               <span className="text-xl font-bold tracking-tight text-gray-900">
                 Alp<span className="text-blue-600">HD</span>
+=======
+            <Link
+              href="/"
+              className="flex items-center gap-2.5 group transition-all"
+            >
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                width="24" 
+                height="24" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                className="lucide lucide-mountain h-6 w-6 text-blue-600 transition-transform group-hover:scale-110" 
+                aria-hidden="true"
+              >
+                <path d="m8 3 4 8 5-5 5 15H2L8 3z"></path>
+              </svg>
+              <span className="font-black text-xl tracking-tighter uppercase text-slate-900 transition-colors group-hover:text-blue-600">
+                Alp<span className="text-blue-600 group-hover:text-slate-900">HD</span>
+>>>>>>> Stashed changes
               </span>
             </Link>
           </div>
 
           {/* Navigation Desktop */}
-          <nav className="hidden md:flex space-x-8">
+          <nav className="hidden md:flex items-center space-x-8">
             <Link
               href="/"
-              className="text-gray-900 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors"
+              className="text-slate-900 hover:text-blue-600 px-3 py-2 text-sm font-bold uppercase tracking-wide transition-colors"
             >
               Accueil
             </Link>
             <Link
               href="/zonesdispos"
-              className="text-gray-500 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors"
+              className="text-slate-500 hover:text-blue-600 px-3 py-2 text-sm font-bold uppercase tracking-wide transition-colors"
             >
               Zones disponibles
             </Link>
             <Link
               href="/relief+"
-              className="text-gray-500 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors"
+              className="text-slate-500 hover:text-blue-600 px-3 py-2 text-sm font-bold uppercase tracking-wide transition-colors"
             >
               Relief+
             </Link>
-
             <Link
               href="/about"
-              className="text-gray-500 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors"
+              className="text-slate-500 hover:text-blue-600 px-3 py-2 text-sm font-bold uppercase tracking-wide transition-colors"
             >
               À propos
             </Link>
@@ -54,41 +78,40 @@ export default function Header() {
           {/* Bouton Menu Mobile */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
-            aria-label="Toggle menu"
+            className="md:hidden p-2 rounded-md text-slate-600 hover:text-slate-900 transition-colors"
           >
-            {isMenuOpen ? <FaTimes size={20} /> : <FaBars size={20} />}
+            {isMenuOpen ? <FaTimes size={22} /> : <FaBars size={22} />}
           </button>
         </div>
 
         {/* Menu Mobile */}
         {isMenuOpen && (
-          <div className="md:hidden border-t bg-white">
+          <div className="md:hidden border-t bg-white animate-in slide-in-from-top duration-200">
             <div className="px-2 pt-2 pb-3 space-y-1">
               <Link
                 href="/"
-                className="block px-3 py-2 text-base font-medium text-gray-900 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors"
+                className="block px-3 py-2 text-base font-black uppercase text-slate-900 hover:text-blue-600 hover:bg-slate-50 rounded-md transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Accueil
               </Link>
               <Link
                 href="/zonesdispos"
-                className="block px-3 py-2 text-base font-medium text-gray-500 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors"
+                className="block px-3 py-2 text-base font-black uppercase text-slate-500 hover:text-blue-600 hover:bg-slate-50 rounded-md transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Zones disponibles
               </Link>
               <Link
                 href="/relief+"
-                className="block px-3 py-2 text-base font-medium text-gray-500 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors"
+                className="block px-3 py-2 text-base font-black uppercase text-slate-500 hover:text-blue-600 hover:bg-slate-50 rounded-md transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Relief+
               </Link>
               <Link
                 href="/about"
-                className="block px-3 py-2 text-base font-medium text-gray-500 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors"
+                className="block px-3 py-2 text-base font-black uppercase text-slate-500 hover:text-blue-600 hover:bg-slate-50 rounded-md transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 À propos

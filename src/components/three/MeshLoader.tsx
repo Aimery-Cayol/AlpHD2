@@ -1,34 +1,28 @@
 "use client";
 
 import React, { useEffect, useState, useRef, useMemo } from "react";
+<<<<<<< Updated upstream
 import { useLoader } from "@react-three/fiber";
 import { PLYLoader } from "three-stdlib";
+=======
+>>>>>>> Stashed changes
 import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
-import { BufferGeometry, Material, Mesh } from "three";
+import { BufferGeometry, Mesh } from "three";
 import * as THREE from "three";
 import { useSceneControls } from "./LevaUI";
-import BoundingBoxHelper from "./BoundingBoxHelper";
 import { geometryCache } from "./GeometryCache";
+<<<<<<< Updated upstream
 import GeometryInspector from "./GeometryInspector";
 import { isLocalUrl, revokeBlobUrl } from "@/utils/fileUtils";
 
+=======
+>>>>>>> Stashed changes
 import HauteMontagne from "./HauteMontagneShader";
 import BasseMontagne from "./BasseMontagneShader";
 
-interface MeshLoaderProps {
-  url: string;
-  format?: "ply" | "drc";
-  onDoubleClick?: (event: any) => void;
-  lightDirection?: THREE.Vector3;
-}
-
-export default function MeshLoader({
-  url,
-  format,
-  onDoubleClick,
-  lightDirection,
-}: MeshLoaderProps) {
+export default function MeshLoader({ url, onDoubleClick, lightDirection }: any) {
   const [geometry, setGeometry] = useState<BufferGeometry | null>(null);
+<<<<<<< Updated upstream
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [cacheStatus, setCacheStatus] = useState < "loading" | "cache" | "network" | "local"
@@ -158,14 +152,24 @@ export default function MeshLoader({
       box.max.z - box.min.z,
     ];
   }, [geometry]);
+=======
+  const meshRef = useRef<Mesh>(null);
+  const controls = useSceneControls();
+
+  // On initialise les matériaux une seule fois
+  const hauteMat = useMemo(() => new HauteMontagne(), []);
+  const basseMat = useMemo(() => new BasseMontagne(), []);
+>>>>>>> Stashed changes
 
   useEffect(() => {
-    if (!url) {
-      setLoading(false);
-      setCacheStatus("loading");
+    if (!url) return;
+    const cached = geometryCache.get(url);
+    if (cached) {
+      setGeometry(cached);
       return;
     }
 
+<<<<<<< Updated upstream
     // 🎯 OPTIMISATION 6: Flag pour annuler les opérations async
     let cancelled = false;
 
@@ -377,5 +381,49 @@ export default function MeshLoader({
         </mesh>
       )}
     </group>
+=======
+    const loader = new DRACOLoader();
+    loader.setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.5.7/");
+    loader.load(url, (loadedGeometry: BufferGeometry) => {
+      loadedGeometry.computeBoundingBox();
+      // SURTOUT PAS DE .center() : cela écraserait les coordonnées Lambert
+      loadedGeometry.computeVertexNormals();
+      geometryCache.set(url, loadedGeometry);
+      setGeometry(loadedGeometry);
+    });
+  }, [url]);
+
+  if (!geometry) return null;
+
+  return (
+    <mesh ref={meshRef} geometry={geometry} onDoubleClick={onDoubleClick} castShadow receiveShadow>
+      {controls.material === "HauteMontagne" && (
+        <primitive
+          object={hauteMat}
+          attach="material"
+          snowColor={controls.snowColor}
+          rockColor={controls.rockColor}
+          slopeThreshold={controls.slopeThreshold}
+          smoothness={controls.smoothness}
+          lightDirection={lightDirection || new THREE.Vector3(1, 1, 1).normalize()}
+          ambientIntensity={controls.ambientIntensity}
+        />
+      )}
+      {controls.material === "BasseMontagne" && (
+        <primitive
+          object={basseMat}
+          attach="material"
+          snowColor={controls.snowColorBM}
+          rockColor={controls.rockColorBM}
+          slopeThreshold={controls.slopeThresholdBM}
+          smoothness={controls.smoothnessBM}
+          lightDirection={lightDirection || new THREE.Vector3(1, 1, 1).normalize()}
+        />
+      )}
+      {controls.material === "Standard" && (
+        <meshStandardMaterial color={controls.meshColor} side={THREE.DoubleSide} />
+      )}
+    </mesh>
+>>>>>>> Stashed changes
   );
 }

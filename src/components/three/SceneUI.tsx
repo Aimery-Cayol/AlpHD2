@@ -6,10 +6,6 @@ import { useControls } from 'leva'
 import { FaChevronDown, FaChevronUp, FaInfo, FaDatabase } from "react-icons/fa";
 import { geometryCache } from "./GeometryCache";
 
-
-
-
-
 interface Model {
   name: string;
   url: string;
@@ -22,33 +18,17 @@ interface SceneUIProps {
   selectedModels: string[];
 }
 
-function MyComponent() {
-  const { myValue } = useControls({ myValue: 10 })
-  return myValue
-}
-
-function AnotherComponent() {
-  const { anotherValue } = useControls({ anotherValue: 'alive!!' })
-
-  return <div>Hey, I'm {anotherValue}</div>
-}
-
-function UnmountedComponent() {
-  const { barValue } = useControls({ barValue: false })
-
-  return barValue ? <div>Hello!</div> : null
-}
-
-export default function SceneUI({ models, selectedModels }: SceneUIProps) {
+export default function SceneUI({ models = [], selectedModels = [] }: SceneUIProps) {
   const [isVisible, setIsVisible] = useState(false);
 
-  // Statistiques du cache mises à jour en temps réel
+  // Statistiques du cache sécurisées
   const cacheStats = useMemo(() => {
     return geometryCache.getStats();
-  }, [models, selectedModels]); // Se met à jour quand les modèles changent
+  }, [models, selectedModels]);
 
   const sceneInfo = useMemo(() => {
-    if (selectedModels.length === 0) {
+    // SÉCURITÉ : Vérifie si selectedModels existe et a une longueur
+    if (!selectedModels || selectedModels.length === 0) {
       return {
         modelCount: 0,
         boundingBox: null,
@@ -90,7 +70,6 @@ export default function SceneUI({ models, selectedModels }: SceneUIProps) {
 
   return (
     <div className="absolute top-4 left-4 z-10">
-      {/* Bouton de toggle dans le coin supérieur gauche */}
       <button
         onClick={() => setIsVisible(!isVisible)}
         className="absolute -top-2 -left-2 w-8 h-4 bg-white/90 backdrop-blur-sm rounded-full shadow-lg border flex items-center justify-center hover:bg-white/95 transition-all duration-200 z-20"
@@ -103,10 +82,8 @@ export default function SceneUI({ models, selectedModels }: SceneUIProps) {
         )}
       </button>
 
-      {/* Contenu de l'overlay - visible seulement si isVisible est true */}
       {isVisible && (
         <div className="space-y-2 absolute top-4">
-          {/* Informations principales - plus compact */}
           <div className="bg-white/95 backdrop-blur-sm rounded-lg p-3 shadow-lg border min-w-[240px]">
             <h3 className="text-xs font-semibold text-gray-800 mb-2 flex items-center">
               <FaInfo className="w-3 h-3 mr-1" />
@@ -114,13 +91,11 @@ export default function SceneUI({ models, selectedModels }: SceneUIProps) {
             </h3>
 
             <div className="space-y-2">
-              {/* Compteur de modèles */}
               <div className="flex justify-between items-center">
                 <span className="text-xs text-gray-600">Modèles:</span>
                 <span className="text-sm font-bold text-blue-600">{sceneInfo.modelCount}</span>
               </div>
 
-              {/* Bounding Box Info - plus compact */}
               {sceneInfo.boundingBox && (
                 <>
                   <div className="border-t pt-2">
@@ -159,7 +134,6 @@ export default function SceneUI({ models, selectedModels }: SceneUIProps) {
             </div>
           </div>
 
-          {/* Panneau de contrôles rapide - plus compact */}
           <div className="bg-white/90 backdrop-blur-sm rounded-lg p-2 shadow-lg border">
             <h4 className="text-xs font-semibold text-gray-700 mb-1">Actions</h4>
             <div className="space-y-1">
@@ -172,7 +146,6 @@ export default function SceneUI({ models, selectedModels }: SceneUIProps) {
             </div>
           </div>
 
-          {/* Statistiques du cache - nouveau panneau */}
           <div className="bg-white/90 backdrop-blur-sm rounded-lg p-2 shadow-lg border">
             <h4 className="text-xs font-semibold text-gray-700 mb-1 flex items-center">
               <FaDatabase className="w-3 h-3 mr-1" />
@@ -202,16 +175,8 @@ export default function SceneUI({ models, selectedModels }: SceneUIProps) {
                 <button
                   onClick={() => geometryCache.clear()}
                   className="flex-1 text-xs px-2 py-1 bg-red-50 hover:bg-red-100 text-red-600 rounded transition-colors"
-                  title="Vider le cache"
                 >
                   Vider cache
-                </button>
-                <button
-                  onClick={() => geometryCache.debugCache()}
-                  className="flex-1 text-xs px-2 py-1 bg-gray-50 hover:bg-gray-100 text-gray-600 rounded transition-colors"
-                  title="Déboguer le cache (console)"
-                >
-                  Debug
                 </button>
               </div>
             </div>
@@ -222,20 +187,18 @@ export default function SceneUI({ models, selectedModels }: SceneUIProps) {
   );
 }
 
-// Fonction pour calculer la bounding box de tous les modèles sélectionnés
-function calculateBoundingBox(models: Model[], selectedModels: string[]): Box3 | null {
-  if (selectedModels.length === 0) return null;
+function calculateBoundingBox(models: Model[] = [], selectedModels: string[] = []): Box3 | null {
+  // SÉCURITÉ : Vérifie si models et selectedModels sont valides
+  if (!models || !selectedModels || selectedModels.length === 0) return null;
 
   const box = new Box3();
   let hasValidModel = false;
 
   models.forEach(model => {
-    if (selectedModels.includes(model.url) && model.coordinates) {
-      // Chaque modèle fait 1 unité de côté
+    if (model && selectedModels.includes(model.url) && model.coordinates) {
       const modelSize = 1;
       const halfSize = modelSize / 2;
 
-      // Créer une bounding box pour ce modèle
       const modelBox = new Box3(
         new Vector3(
           model.coordinates.x * 1 - halfSize,

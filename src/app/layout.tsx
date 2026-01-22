@@ -4,15 +4,17 @@ import "./globals.css";
 import Header from "./components/Header";
 import DisableMiddleMouseScroll from "../components/DisableMiddleMouseScroll";
 import { Amplify } from 'aws-amplify';
-import outputs from '../../amplify_outputs.json';
+
+// On commente l'importation du fichier manquant
+// import outputs from '../../amplify_outputs.json';
 // import sandboxOutputs from '../../amplify_outputs.sandbox.json';
+
 import { AppProvider } from '../contexts/AppContext';
 
-
+// On commente la configuration automatique qui bloque le lancement
 // const isSandbox = process.env.NEXT_PUBLIC_ENV === 'sandbox';
 // Amplify.configure(isSandbox ? sandboxOutputs : outputs);
-
-Amplify.configure(outputs);
+// Amplify.configure(outputs);
 
 const inter = Inter({ subsets: ["latin"] });
 

@@ -1,56 +1,48 @@
 "use client";
 
-import React from "react";
-import { useMemo } from "react";
-import * as THREE from "three";
+import React, { useMemo } from "react";
 import MeshLoader from "./MeshLoader";
 
-interface Model {
-  name: string;
-  url: string;
-  format?: "ply" | "drc";
-  coordinates?: { x: number; y: number };
-}
-
-interface ModelPositionerProps {
-  models: Model[];
-  selectedModels: string[];
-  onMeshDoubleClick?: (event: any) => void;
-  lightDirection?: THREE.Vector3;
-}
-
 export default function ModelPositioner({
-  models,
-  selectedModels,
+  models = [],
+  selectedModels = [],
   onMeshDoubleClick,
   lightDirection,
-}: ModelPositionerProps) {
-  // Calculer les positions relatives avec le premier modèle au centre
+}: any) {
+  
   const positionedModels = useMemo(() => {
-    if (selectedModels.length === 0) return [];
+    // 1. On récupère les dalles sélectionnées
+    const selectedData = models.filter((m: any) => selectedModels.includes(m.url));
+    if (selectedData.length === 0) return [];
 
-    // Filtrer les modèles sélectionnés
-    const selectedModelData = models.filter((model) =>
-      selectedModels.includes(model.url)
-    );
+    // 2. REFERENCE : On prend la toute première dalle comme point 0
+    const refX = selectedData[0].x || 0;
+    const refY = selectedData[0].y || 0;
+    
+    // IMPORTANT : L'unité de tes coordonnées (1006, 1007) correspond déjà 
+    // à la taille des dalles dans tes fichiers DRC.
+    // On utilise donc un multiplicateur de 1 pour un alignement parfait.
+    const SCALE = 1; 
 
-    if (selectedModelData.length === 0) return [];
-
-    // Calculer les positions relatives
-    return calculateRelativePositions(selectedModelData);
+    return selectedData.map((model: any) => ({
+      ...model,
+      // On calcule la position relative par rapport à la première dalle
+      position: [
+        ((model.x || 0) - refX) * SCALE, 
+        0, 
+        -((model.y || 0) - refY) * SCALE
+      ] as [number, number, number]
+    }));
   }, [models, selectedModels]);
+
+  if (positionedModels.length === 0) return null;
 
   return (
     <>
-      {positionedModels.map((model) => (
-        <group
-          key={model.url}
-          position={model.position}
-          rotation={[-Math.PI / 2, 0, 0]}
-        >
+      {positionedModels.map((model: any) => (
+        <group key={model.url} position={model.position} rotation={[-Math.PI / 2, 0, 0]}>
           <MeshLoader
             url={model.url}
-            format={model.format}
             onDoubleClick={onMeshDoubleClick}
             lightDirection={lightDirection}
           />
@@ -58,46 +50,4 @@ export default function ModelPositioner({
       ))}
     </>
   );
-}
-
-// Fonction pour calculer les positions relatives basées sur les coordonnées géographiques
-function calculateRelativePositions(
-  models: Model[]
-): (Model & { position: [number, number, number] })[] {
-  if (models.length === 0) return [];
-
-  // Le premier modèle va au centre
-  const positionedModels: (Model & { position: [number, number, number] })[] =
-    [];
-
-  // Trouver le premier modèle avec des coordonnées valides
-  const firstModelWithCoords = models.find((model) => model.coordinates);
-
-  if (!firstModelWithCoords || !firstModelWithCoords.coordinates) {
-    // Si aucun modèle n'a de coordonnées, placer tous au centre
-    return models.map((model) => ({ ...model, position: [0, 0, 0] }));
-  }
-
-  const baseX = firstModelWithCoords.coordinates.x;
-  const baseY = firstModelWithCoords.coordinates.y;
-
-  models.forEach((model) => {
-    let position: [number, number, number] = [0, 0, 0];
-
-    if (model.coordinates) {
-      // Calculer la position relative basée sur les différences de coordonnées (inversées)
-      const relativeX = (baseX - model.coordinates.x) * 1; // Échelle 1:1, inversé
-      const relativeZ = (baseY - model.coordinates.y) * 1; // Z pour la profondeur, inversé
-
-      position = [-relativeX, 0, relativeZ];
-    }
-    // Si pas de coordonnées, le modèle reste au centre
-
-    positionedModels.push({
-      ...model,
-      position,
-    });
-  });
-
-  return positionedModels;
 }
