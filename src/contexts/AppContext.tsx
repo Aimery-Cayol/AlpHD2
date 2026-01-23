@@ -22,6 +22,10 @@ interface AppContextType {
   // Liste complète des modèles disponibles
   availableModels: Model[];
   setAvailableModels: (models: Model[]) => void;
+
+  // 🎯 NOUVEAU : État de la rotation caméra pour la boussole
+  cameraRotation: { x: number; y: number; z: number };
+  setCameraRotation: (rotation: { x: number; y: number; z: number }) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -39,38 +43,12 @@ interface AppProviderProps {
 }
 
 export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
-  // État des modèles sélectionnés pour Three.js
   const [selectedModels, setSelectedModels] = useState<string[]>([]);
-
-  // État des tuiles sélectionnées dans la carte
   const [selectedTiles, setSelectedTiles] = useState<string[]>([]);
-
-  // Liste complète des modèles disponibles
   const [availableModels, setAvailableModels] = useState<Model[]>([]);
-
-  // Ne plus charger depuis localStorage au démarrage pour éviter de recharger les anciens modèles
-  // useEffect(() => {
-  //   const savedSelectedModels = localStorage.getItem('selectedModels');
-  //   const savedSelectedTiles = localStorage.getItem('selectedTiles');
-
-  //   if (savedSelectedModels) {
-  //     try {
-  //       const models = JSON.parse(savedSelectedModels);
-  //       setSelectedModels(models);
-  //     } catch (e) {
-  //       console.error('Erreur chargement selectedModels:', e);
-  //     }
-  //   }
-
-  //   if (savedSelectedTiles) {
-  //     try {
-  //       const tiles = JSON.parse(savedSelectedTiles);
-  //       setSelectedTiles(tiles);
-  //     } catch (e) {
-  //       console.error('Erreur chargement selectedTiles:', e);
-  //     }
-  //   }
-  // }, []);
+  
+  // 🎯 NOUVEAU : État initial de la rotation
+  const [cameraRotation, setCameraRotation] = useState({ x: 0, y: 0, z: 0 });
 
   // Sauvegarder dans localStorage quand l'état change
   useEffect(() => {
@@ -88,6 +66,9 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     setSelectedTiles,
     availableModels,
     setAvailableModels,
+    // 🎯 AJOUT DANS LA VALEUR DU PROVIDER
+    cameraRotation,
+    setCameraRotation,
   };
 
   return (

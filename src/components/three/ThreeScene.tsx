@@ -1,7 +1,7 @@
 "use client";
 
 import * as THREE from "three";
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState, useCallback, useMemo } from "react";
 import { Canvas } from "@react-three/fiber";
 import {
   PerspectiveCamera,
@@ -11,6 +11,7 @@ import {
   CameraControlsImpl,
   Sky,
 } from "@react-three/drei";
+// ... autres imports inchangés
 import {
   EffectComposer,
   ToneMapping,
@@ -24,6 +25,7 @@ import SceneUI from "./SceneUI";
 import MyLevaUI, { useSceneControls } from "./LevaUI";
 import CameraTargetDebug from "./CameraTargetDebug";
 import JEasingsComponent from "./JEasings";
+import { useAppContext } from "@/contexts/AppContext";
 
 interface Model {
   name: string;
@@ -42,41 +44,49 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
   const controls = useSceneControls();
   const { ACTION } = CameraControlsImpl;
   const cameraControlsRef = useRef<CameraControls>(null);
+  const { setCameraRotation } = useAppContext();
 
-  // --- 1. LOGIQUE DE RECENTRAGE AUTOMATIQUE ---
-  // Dès que la liste des modèles change, on force la caméra à regarder le centre [0,0,0]
-  // car ModelPositioner positionne les dalles relativement à la première à l'origine.
-  useEffect(() => {
-    if (models.length > 0 && cameraControlsRef.current) {
-      // On attend un court instant que le MeshLoader ait fini de parser la géométrie
-      const timer = setTimeout(() => {
-        // FitToSphere permet d'englober la zone centrale (rayon de 5 unités ici)
-        // pour être sûr que la montagne soit dans le cadre.
-        cameraControlsRef.current?.setLookAt(0, 10, 10, 0, 0, 0, true);
-      }, 800);
-      return () => clearTimeout(timer);
-    }
-  }, [models]);
+  // 🎯 1. ÉTAT POUR LE SHIFT
+  const [isShiftPressed, setIsShiftPressed] = useState(false);
 
-  // LOGIQUE SPÉCIFIQUE MAC : Basculement Shift
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Shift" && cameraControlsRef.current) {
-        cameraControlsRef.current.mouseButtons.left = ACTION.ROTATE;
-      }
-    };
-    const handleKeyUp = (e: KeyboardEvent) => {
-      if (e.key === "Shift" && cameraControlsRef.current) {
-        cameraControlsRef.current.mouseButtons.left = ACTION.TRUCK;
-      }
-    };
+    const handleKeyDown = (e: KeyboardEvent) => { if (e.key === "Shift") setIsShiftPressed(true); };
+    const handleKeyUp = (e: KeyboardEvent) => { if (e.key === "Shift") setIsShiftPressed(false); };
     window.addEventListener("keydown", handleKeyDown);
     window.addEventListener("keyup", handleKeyUp);
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
     };
-  }, [ACTION]);
+  }, []);
+
+  // 🎯 2. CONFIGURATION DYNAMIQUE DES BOUTONS
+  // On recalcule les boutons seulement quand isShiftPressed change
+  const mouseButtonsConfig = useMemo(() => ({
+    left: isShiftPressed ? ACTION.ROTATE : ACTION.TRUCK,
+    right: ACTION.ROTATE,
+    middle: ACTION.NONE,
+    wheel: ACTION.DOLLY,
+  }), [isShiftPressed, ACTION]);
+
+  useEffect(() => {
+    if (models.length > 0 && cameraControlsRef.current) {
+      const timer = setTimeout(() => {
+        cameraControlsRef.current?.setLookAt(0, 10, 10, 0, 0, 0, true);
+      }, 800);
+      return () => clearTimeout(timer);
+    }
+  }, [models]);
+
+  const handleCameraChange = useCallback(() => {
+    if (cameraControlsRef.current && typeof setCameraRotation === "function") {
+      setCameraRotation({
+        x: cameraControlsRef.current.polarAngle,
+        y: cameraControlsRef.current.azimuthAngle,
+        z: 0
+      });
+    }
+  }, [setCameraRotation]);
 
   const getSunDirection = (azimuth: number, elevation: number, distance = 10) => {
     const azRad = (azimuth * Math.PI) / 180;
@@ -90,23 +100,6 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
 
   const sunPosition = getSunDirection(controls.sunAzimuth, controls.sunElevation);
   const lightDirection = new THREE.Vector3(...sunPosition).normalize();
-
-  function Ground() {
-    return (
-      <Grid 
-        position={[0, -0.05, 0]} // Légèrement rabaissé pour éviter le flickering
-        args={[20, 20]} 
-        cellSize={1} 
-        cellThickness={1} 
-        cellColor="#333333"
-        sectionSize={5} 
-        sectionThickness={1.5}
-        sectionColor="#444444" 
-        fadeDistance={50} 
-        infiniteGrid={true}
-      />
-    );
-  }
 
   return (
     <>
@@ -122,41 +115,31 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
 
       <PerspectiveCamera
         makeDefault
-        position={[0, 15, 15]} // Reculé par défaut pour voir la montagne de loin
+        position={[0, 15, 15]} 
         fov={controls.fov}
-        near={0.1}  // Augmenté (était 0.001) pour éviter les erreurs de clipping
-        far={10000} // Augmenté pour voir les sommets lointains
+        near={0.1}
+        far={10000}
       />
 
       <CameraControls
         ref={cameraControlsRef}
         makeDefault
-        mouseButtons={{
-          left: ACTION.TRUCK,
-          right: ACTION.ROTATE,
-          middle: ACTION.NONE,
-          wheel: ACTION.DOLLY,
-        }}
+        // 🎯 ON PASSE LA CONFIGURATION DYNAMIQUE ICI
+        mouseButtons={mouseButtonsConfig}
         dollyToCursor={true}
         minDistance={0.1}
         maxDistance={2000}
+        onChange={handleCameraChange}
       />
 
-      {controls.showCameraTarget && (
-        <CameraTargetDebug cameraControlsRef={cameraControlsRef} />
+      {controls.showCameraTarget && <CameraTargetDebug cameraControlsRef={cameraControlsRef} />}
+      {controls.showGrid && (
+        <Grid position={[0, -0.05, 0]} args={[20, 20]} cellColor="#333333" sectionColor="#444444" infiniteGrid />
       )}
-
-      {controls.showGrid && <Ground />}
       {controls.showStats && <Stats />}
 
       <ambientLight intensity={controls.ambientIntensity} />
-      <directionalLight 
-        position={sunPosition} 
-        intensity={controls.directionalIntensity} 
-        castShadow 
-        shadow-mapSize={[2048, 2048]}
-      />
-
+      <directionalLight position={sunPosition} intensity={controls.directionalIntensity} castShadow />
       <Sky sunPosition={sunPosition} distance={450000} />
 
       <ModelPositioner
@@ -174,9 +157,8 @@ export default function ThreeScene({ models, selectedModels }: ThreeSceneProps) 
       <MyLevaUI>
         <Canvas 
           className="w-full h-full" 
-          frameloop="always" 
           shadows 
-          gl={{ antialias: true, logarithmicDepthBuffer: true }} // Optimisation pour les grandes scènes LiDAR
+          gl={{ antialias: true, logarithmicDepthBuffer: true }}
         >
           <SceneContent models={models} selectedModels={selectedModels} />
         </Canvas>
