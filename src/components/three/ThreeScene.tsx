@@ -2,7 +2,7 @@
 
 import * as THREE from "three";
 import React, { useRef, useEffect } from "react";
-import { Canvas, useThree } from "@react-three/fiber";
+import { Canvas } from "@react-three/fiber";
 import {
   PerspectiveCamera,
   Grid,
@@ -22,20 +22,15 @@ import { BlendFunction } from "postprocessing";
 import ModelPositioner from "./ModelPositioner";
 import SceneUI from "./SceneUI";
 import MyLevaUI, { useSceneControls } from "./LevaUI";
-<<<<<<< Updated upstream
-import { FaExpand, FaCompress } from "react-icons/fa";
 import CameraTargetDebug from "./CameraTargetDebug";
-
-import JEASINGS from "jeasings";
-=======
->>>>>>> Stashed changes
 import JEasingsComponent from "./JEasings";
 
 interface Model {
   name: string;
   url: string;
   format?: "ply" | "drc";
-  coordinates?: { x: number; y: number };
+  x?: number;
+  y?: number;
 }
 
 interface ThreeSceneProps {
@@ -46,28 +41,35 @@ interface ThreeSceneProps {
 function SceneContent({ models, selectedModels }: ThreeSceneProps) {
   const controls = useSceneControls();
   const { ACTION } = CameraControlsImpl;
-<<<<<<< Updated upstream
-  const cameraControlsRef = useRef<CameraControlsImpl | null>(null);
-=======
   const cameraControlsRef = useRef<CameraControls>(null);
->>>>>>> Stashed changes
 
-  // LOGIQUE SPÉCIFIQUE MAC : Forcer le basculement Rotation/Pan
+  // --- 1. LOGIQUE DE RECENTRAGE AUTOMATIQUE ---
+  // Dès que la liste des modèles change, on force la caméra à regarder le centre [0,0,0]
+  // car ModelPositioner positionne les dalles relativement à la première à l'origine.
+  useEffect(() => {
+    if (models.length > 0 && cameraControlsRef.current) {
+      // On attend un court instant que le MeshLoader ait fini de parser la géométrie
+      const timer = setTimeout(() => {
+        // FitToSphere permet d'englober la zone centrale (rayon de 5 unités ici)
+        // pour être sûr que la montagne soit dans le cadre.
+        cameraControlsRef.current?.setLookAt(0, 10, 10, 0, 0, 0, true);
+      }, 800);
+      return () => clearTimeout(timer);
+    }
+  }, [models]);
+
+  // LOGIQUE SPÉCIFIQUE MAC : Basculement Shift
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Shift" && cameraControlsRef.current) {
-        // Quand Maj est pressé, le clic gauche devient ROTATE
         cameraControlsRef.current.mouseButtons.left = ACTION.ROTATE;
       }
     };
-
     const handleKeyUp = (e: KeyboardEvent) => {
       if (e.key === "Shift" && cameraControlsRef.current) {
-        // Quand Maj est relâché, le clic gauche redevient TRUCK (Pan)
         cameraControlsRef.current.mouseButtons.left = ACTION.TRUCK;
       }
     };
-
     window.addEventListener("keydown", handleKeyDown);
     window.addEventListener("keyup", handleKeyUp);
     return () => {
@@ -92,16 +94,15 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
   function Ground() {
     return (
       <Grid 
-        position={[0, -0.01, 0]} 
-        args={[10.5, 10.5]} 
-        cellSize={0.2} 
-        cellThickness={0.5} 
-        cellColor="#6f6f6f"
-        sectionSize={1} 
-        sectionThickness={1}
-        sectionColor="#9d4b4b" 
-        fadeDistance={30} 
-        fadeStrength={2}
+        position={[0, -0.05, 0]} // Légèrement rabaissé pour éviter le flickering
+        args={[20, 20]} 
+        cellSize={1} 
+        cellThickness={1} 
+        cellColor="#333333"
+        sectionSize={5} 
+        sectionThickness={1.5}
+        sectionColor="#444444" 
+        fadeDistance={50} 
         infiniteGrid={true}
       />
     );
@@ -121,42 +122,40 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
 
       <PerspectiveCamera
         makeDefault
-        position={[0, 5, 3]} 
+        position={[0, 15, 15]} // Reculé par défaut pour voir la montagne de loin
         fov={controls.fov}
-        near={0.001}
+        near={0.1}  // Augmenté (était 0.001) pour éviter les erreurs de clipping
+        far={10000} // Augmenté pour voir les sommets lointains
       />
 
       <CameraControls
         ref={cameraControlsRef}
-<<<<<<< Updated upstream
-=======
         makeDefault
->>>>>>> Stashed changes
         mouseButtons={{
-          left: ACTION.TRUCK,   // Par défaut : Glisser (Maps)
-          right: ACTION.ROTATE,  // Clic droit : Pivoter
+          left: ACTION.TRUCK,
+          right: ACTION.ROTATE,
           middle: ACTION.NONE,
           wheel: ACTION.DOLLY,
         }}
         dollyToCursor={true}
-        minDistance={0.2}
-        maxDistance={5}
+        minDistance={0.1}
+        maxDistance={2000}
       />
 
-<<<<<<< Updated upstream
-      {/* Cube de debug pour la cible de la caméra */}
       {controls.showCameraTarget && (
         <CameraTargetDebug cameraControlsRef={cameraControlsRef} />
       )}
 
-      {/* {controls.showGrid && <gridHelper args={[10, 10]} />} */}
-=======
->>>>>>> Stashed changes
       {controls.showGrid && <Ground />}
       {controls.showStats && <Stats />}
 
       <ambientLight intensity={controls.ambientIntensity} />
-      <directionalLight position={sunPosition} intensity={controls.directionalIntensity} castShadow />
+      <directionalLight 
+        position={sunPosition} 
+        intensity={controls.directionalIntensity} 
+        castShadow 
+        shadow-mapSize={[2048, 2048]}
+      />
 
       <Sky sunPosition={sunPosition} distance={450000} />
 
@@ -173,7 +172,12 @@ export default function ThreeScene({ models, selectedModels }: ThreeSceneProps) 
   return (
     <div className="relative w-full h-full outline-none">
       <MyLevaUI>
-        <Canvas className="w-full h-full" frameloop="always">
+        <Canvas 
+          className="w-full h-full" 
+          frameloop="always" 
+          shadows 
+          gl={{ antialias: true, logarithmicDepthBuffer: true }} // Optimisation pour les grandes scènes LiDAR
+        >
           <SceneContent models={models} selectedModels={selectedModels} />
         </Canvas>
         <SceneUI models={models} selectedModels={selectedModels} />

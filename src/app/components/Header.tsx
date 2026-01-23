@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useState } from "react";
 import { FaBars, FaTimes } from "react-icons/fa";
-import { Mountain } from "lucide-react";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -13,14 +12,8 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           
-          {/* Logo avec le SVG exact demandé */}
+          {/* Logo AlpHD */}
           <div className="flex items-center">
-<<<<<<< Updated upstream
-            <Link href="/" className="flex items-center gap-2 group">
-              <Mountain className="h-6 w-6 text-blue-600 transition-transform group-hover:scale-110" />
-              <span className="text-xl font-bold tracking-tight text-gray-900">
-                Alp<span className="text-blue-600">HD</span>
-=======
             <Link
               href="/"
               className="flex items-center gap-2.5 group transition-all"
@@ -42,7 +35,6 @@ export default function Header() {
               </svg>
               <span className="font-black text-xl tracking-tighter uppercase text-slate-900 transition-colors group-hover:text-blue-600">
                 Alp<span className="text-blue-600 group-hover:text-slate-900">HD</span>
->>>>>>> Stashed changes
               </span>
             </Link>
           </div>
