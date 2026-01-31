@@ -4,15 +4,16 @@ import "./globals.css";
 import Header from "./components/Header";
 import DisableMiddleMouseScroll from "../components/DisableMiddleMouseScroll";
 import { Amplify } from 'aws-amplify';
-import outputs from '../../amplify_outputs.json';
-// import sandboxOutputs from '../../amplify_outputs.sandbox.json';
 import { AppProvider } from '../contexts/AppContext';
 
+// Configure Amplify : DEUX LIGNES A COMMENTER LORS DE L'UTILISATION par FORK
+import outputs from '../../amplify_outputs.json';
+Amplify.configure(outputs);
 
+// Ancien test pour environnement sandbox : à garder commenté tant qu'on n'y revient pas :
+// import sandboxOutputs from '../../amplify_outputs.sandbox.json';
 // const isSandbox = process.env.NEXT_PUBLIC_ENV === 'sandbox';
 // Amplify.configure(isSandbox ? sandboxOutputs : outputs);
-
-Amplify.configure(outputs);
 
 const inter = Inter({ subsets: ["latin"] });
 
