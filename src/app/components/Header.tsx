@@ -23,29 +23,29 @@ export default function Header() {
           </div>
 
           {/* Navigation Desktop */}
-          <nav className="hidden md:flex space-x-8">
+          <nav className="hidden md:flex items-center space-x-8">
             <Link
               href="/"
-              className="text-gray-900 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors"
+              className="text-slate-900 hover:text-blue-600 px-3 py-2 text-sm font-bold uppercase tracking-wide transition-colors"
             >
               Accueil
             </Link>
             <Link
               href="/zonesdispos"
-              className="text-gray-500 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors"
+              className="text-slate-500 hover:text-blue-600 px-3 py-2 text-sm font-bold uppercase tracking-wide transition-colors"
             >
               Zones disponibles
             </Link>
             <Link
               href="/relief+"
-              className="text-gray-500 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors"
+              className="text-slate-500 hover:text-blue-600 px-3 py-2 text-sm font-bold uppercase tracking-wide transition-colors"
             >
               Relief+
             </Link>
 
             <Link
               href="/about"
-              className="text-gray-500 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors"
+              className="text-slate-500 hover:text-blue-600 px-3 py-2 text-sm font-bold uppercase tracking-wide transition-colors"
             >
               À propos
             </Link>
@@ -54,41 +54,41 @@ export default function Header() {
           {/* Bouton Menu Mobile */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+            className="md:hidden p-2 rounded-md text-slate-600 hover:text-slate-900 transition-colors"
             aria-label="Toggle menu"
           >
-            {isMenuOpen ? <FaTimes size={20} /> : <FaBars size={20} />}
+            {isMenuOpen ? <FaTimes size={22} /> : <FaBars size={22} />}
           </button>
         </div>
 
         {/* Menu Mobile */}
         {isMenuOpen && (
-          <div className="md:hidden border-t bg-white">
+          <div className="md:hidden border-t bg-white animate-in slide-in-from-top duration-200">
             <div className="px-2 pt-2 pb-3 space-y-1">
               <Link
                 href="/"
-                className="block px-3 py-2 text-base font-medium text-gray-900 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors"
+                className="block px-3 py-2 text-base font-black uppercase text-slate-900 hover:text-blue-600 hover:bg-slate-50 rounded-md transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Accueil
               </Link>
               <Link
                 href="/zonesdispos"
-                className="block px-3 py-2 text-base font-medium text-gray-500 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors"
+                className="block px-3 py-2 text-base font-black uppercase text-slate-500 hover:text-blue-600 hover:bg-slate-50 rounded-md transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Zones disponibles
               </Link>
               <Link
                 href="/relief+"
-                className="block px-3 py-2 text-base font-medium text-gray-500 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors"
+                className="block px-3 py-2 text-base font-black uppercase text-slate-500 hover:text-blue-600 hover:bg-slate-50 rounded-md transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Relief+
               </Link>
               <Link
                 href="/about"
-                className="block px-3 py-2 text-base font-medium text-gray-500 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors"
+                className="block px-3 py-2 text-base font-black uppercase text-slate-500 hover:text-blue-600 hover:bg-slate-50 rounded-md transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 À propos
