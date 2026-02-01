@@ -2,7 +2,7 @@
 
 import * as THREE from "three";
 
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState, useCallback, useMemo } from "react";
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import {
@@ -264,7 +264,7 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
         ref={cameraControlsRef}
         makeDefault
         mouseButtons={mouseButtonsConfig}
-        onChange={handleCameraChange}
+        
         dollyToCursor={true}
         minDistance={0.2}
         maxDistance={3}
