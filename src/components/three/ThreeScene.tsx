@@ -85,6 +85,28 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
   const { scene } = useThree();
   const { ACTION } = CameraControlsImpl;
   const cameraControlsRef = useRef<CameraControlsImpl | null>(null);
+  // GESTION DE L'APPUI DE LA TOUCHE SHIFT POUR CONTROLES CAMERA
+  const [isShiftPressed, setIsShiftPressed] = useState(false);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => { if (e.key === "Shift") setIsShiftPressed(true); };
+    const handleKeyUp = (e: KeyboardEvent) => { if (e.key === "Shift") setIsShiftPressed(false); };
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyUp);
+    };
+  }, []);
+
+  // CONFIGURATION DYNAMIQUE DES BOUTONS
+  // On recalcule les boutons seulement quand isShiftPressed change
+  const mouseButtonsConfig = useMemo(() => ({
+    left: isShiftPressed ? ACTION.ROTATE : ACTION.SCREEN_PAN,
+    right: ACTION.ROTATE,
+    middle: ACTION.TRUCK,
+    wheel: ACTION.DOLLY,
+  }), [isShiftPressed, ACTION]);
 
   //JEasing
   // const cameraControlsRef = useRef<any>(null);
@@ -231,22 +253,19 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
 
       <PerspectiveCamera
         makeDefault
-        position={[0, 5, 3]} // 2ème coord = hauteur 3ème coord = recul
+        position={[0, 8, 8]} // 2ème coord = hauteur 3ème coord = recul
         
         fov={controls.fov}
         near={0.001}
+        far={100}
       />
 
       <CameraControls
         ref={cameraControlsRef}
-        mouseButtons={{
-          left: ACTION.SCREEN_PAN,
-          middle: ACTION.TRUCK,
-          right: ACTION.ROTATE,
-          wheel: ACTION.DOLLY,
-        }}
+        makeDefault
+        mouseButtons={mouseButtonsConfig}
+        onChange={handleCameraChange}
         dollyToCursor={true}
-        // minDistance={0.03}
         minDistance={0.2}
         maxDistance={3}
         infinityDolly={true}
