@@ -312,10 +312,10 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
       <Sky
         distance={450000}
         sunPosition={sunPosition}
-        turbidity={2}
-        rayleigh={3}
-        mieCoefficient={0.005}
-        mieDirectionalG={0.8}
+        turbidity={controls.turbidity}
+        rayleigh={controls.rayleigh}
+        mieCoefficient={controls.mieCoefficient}
+        mieDirectionalG={controls.mieDirectionalG}
       />
 
 

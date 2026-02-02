@@ -89,6 +89,9 @@ export default function MeshLoader({
         lightDirection || new THREE.Vector3(1, 1, 1).normalize()
       );
       mat.uniforms.ambientIntensity.value = controls.ambientIntensity;
+      mat.uniforms.fogColor.value.set(controls.fogColor);
+      mat.uniforms.fogDensity.value = controls.fogDensity;
+      mat.uniforms.fogExponent.value = controls.fogExponent;
     }
 
     if (controls.material === "BasseMontagne") {
@@ -101,6 +104,9 @@ export default function MeshLoader({
         lightDirection || new THREE.Vector3(1, 1, 1).normalize()
       );
       mat.uniforms.ambientIntensity.value = controls.ambientIntensity;
+      mat.uniforms.fogColor.value.set(controls.fogColor);
+      mat.uniforms.fogDensity.value = controls.fogDensity;
+      mat.uniforms.fogExponent.value = controls.fogExponent;
     }
   }, [
     activeMaterial,
@@ -117,6 +123,9 @@ export default function MeshLoader({
     controls.slopeThresholdBM,
     controls.smoothnessBM,
     controls.ambientIntensity,
+    controls.fogColor,
+    controls.fogDensity,
+    controls.fogExponent,
     lightDirection,
   ]);
 

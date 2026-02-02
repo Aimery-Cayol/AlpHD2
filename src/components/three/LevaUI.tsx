@@ -162,6 +162,55 @@ function Params() {
     water: { value: false, label: "Mer" },
   });
 
+  const skyControls = useControls("Ciel", {
+    turbidity: {
+      value: 2,
+      min: 0,
+      max: 20,
+      step: 0.1,
+      label: "Turbidité",
+    },
+    rayleigh: {
+      value: 3,
+      min: 0,
+      max: 4,
+      step: 0.01,
+      label: "Diffusion Rayleigh",
+    },
+    mieCoefficient: {
+      value: 0.005,
+      min: 0,
+      max: 0.1,
+      step: 0.001,
+      label: "Coefficient Mie",
+    },
+    mieDirectionalG: {
+      value: 0.8,
+      min: 0,
+      max: 1,
+      step: 0.01,
+      label: "Directionnalité Mie",
+    },
+    fogColor: {
+      value: "#cddeea",
+      label: "Couleur brouillard",
+    },
+    fogDensity: {
+      value: 0.04,
+      min: 0,
+      max: 1,
+      step: 0.01,
+      label: "Densité brouillard",
+    },
+    fogExponent: {
+      value: 6.5,
+      min: 0,
+      max: 10,
+      step: 0.1,
+      label: "Exposant brouillard",
+    },
+  });
+
   const debugControls = useControls("Debug", {
     showGrid: { value: true, label: "Grille" },
     showAxes: { value: false, label: "Axes" },
@@ -227,6 +276,7 @@ function Params() {
     ...lightControls,
     ...aspectControls,
     ...environmentControls,
+    ...skyControls,
     ...postProcessControls,
   };
 }

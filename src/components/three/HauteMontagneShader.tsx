@@ -11,8 +11,9 @@ const HauteMontagne = shaderMaterial(
     smoothness: 0.2,
     lightDirection: new THREE.Vector3(1, 1, 1).normalize(),
     ambientIntensity: 0.3,
-    fogColor: new THREE.Color('#c5c5c5'),
-    fogDensity: 0.2,
+    fogColor: new THREE.Color('#cddeea'), //old : #c5c5c5
+    fogDensity: 0.04, //old : 0.2
+    fogExponent: 6.5, //old : 1.0
   },
   // Vertex Shader
   `
@@ -43,6 +44,7 @@ const HauteMontagne = shaderMaterial(
     uniform float ambientIntensity;
     uniform vec3 fogColor;
     uniform float fogDensity;
+    uniform float fogExponent;
 
     varying vec3 vWorldNormal;
     varying vec3 vViewNormal;
@@ -67,7 +69,7 @@ const HauteMontagne = shaderMaterial(
       vec3 finalColor = baseColor * intensity;
 
       // Effet de brume de profondeur
-      float fogFactor = 1.0 - exp(-fogDensity * vDepth);
+      float fogFactor = 1.0 - exp(-fogExponent * fogDensity * vDepth);
       finalColor = mix(finalColor, fogColor, fogFactor);
 
       gl_FragColor = vec4(finalColor, 1.0);
