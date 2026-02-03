@@ -89,6 +89,7 @@ export default function MeshLoader({
         lightDirection || new THREE.Vector3(1, 1, 1).normalize()
       );
       mat.uniforms.ambientIntensity.value = controls.ambientIntensity;
+      mat.uniforms.directionalIntensity.value = controls.directionalIntensity;
       mat.uniforms.fogColor.value.set(controls.fogColor);
       mat.uniforms.fogDensity.value = controls.fogDensity;
       mat.uniforms.fogExponent.value = controls.fogExponent;
@@ -104,6 +105,7 @@ export default function MeshLoader({
         lightDirection || new THREE.Vector3(1, 1, 1).normalize()
       );
       mat.uniforms.ambientIntensity.value = controls.ambientIntensity;
+      mat.uniforms.directionalIntensity.value = controls.directionalIntensity;
       mat.uniforms.fogColor.value.set(controls.fogColor);
       mat.uniforms.fogDensity.value = controls.fogDensity;
       mat.uniforms.fogExponent.value = controls.fogExponent;
@@ -123,6 +125,7 @@ export default function MeshLoader({
     controls.slopeThresholdBM,
     controls.smoothnessBM,
     controls.ambientIntensity,
+    controls.directionalIntensity,
     controls.fogColor,
     controls.fogDensity,
     controls.fogExponent,

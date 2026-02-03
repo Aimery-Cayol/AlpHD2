@@ -11,6 +11,7 @@ const BasseMontagne = shaderMaterial(
     smoothness: 0.2,
     lightDirection: new THREE.Vector3(1, 1, 1).normalize(),
     ambientIntensity: 0.3,
+    directionalIntensity: 1.2,
     fogColor: new THREE.Color('#c5c5c5'),
     fogDensity: 0.2,
     fogExponent: 1.0,
@@ -42,6 +43,7 @@ const BasseMontagne = shaderMaterial(
     uniform float smoothness;
     uniform vec3 lightDirection;
     uniform float ambientIntensity;
+    uniform float directionalIntensity;
     uniform vec3 fogColor;
     uniform float fogDensity;
     uniform float fogExponent;
@@ -64,7 +66,7 @@ const BasseMontagne = shaderMaterial(
 
       // Calcul de l'éclairage diffus en view space
       float diffuse = max(0.0, dot(normalize(vViewNormal), normalize(vLightDirection)));
-      float intensity = ambientIntensity + (1.0 - ambientIntensity) * diffuse;
+      float intensity = ambientIntensity + directionalIntensity * diffuse;
 
       vec3 finalColor = baseColor * intensity;
 

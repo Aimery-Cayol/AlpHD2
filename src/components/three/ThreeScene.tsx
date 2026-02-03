@@ -253,7 +253,7 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
 
       <PerspectiveCamera
         makeDefault
-        position={[0, 8, 8]} // 2ème coord = hauteur 3ème coord = recul
+        position={[0, 6, 6]} // 2ème coord = hauteur 3ème coord = recul
         
         fov={controls.fov}
         near={0.001}
@@ -267,14 +267,14 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
         
         dollyToCursor={true}
         minDistance={0.2}
-        maxDistance={3}
+        maxDistance={6}
         infinityDolly={true}
         dollySpeed={0.8}
         truckSpeed={0.8}
         azimuthRotateSpeed={0.5}
         polarRotateSpeed={0.5}
         // autoRotate={controls.autoRotate}
-        // dampingFactor={0.13}
+        // dampingFactor={0.53}
       />
 
       {/* Cube de debug pour la cible de la caméra */}
@@ -297,6 +297,7 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
           position={sunPosition}
           intensity={controls.directionalIntensity}
           castShadow={true}
+          receiveShadow={true}
           shadow-mapSize-width={2048}
           shadow-mapSize-height={2048}
           shadow-camera-far={20}

@@ -167,11 +167,11 @@ function Params() {
       value: 2,
       min: 0,
       max: 20,
-      step: 0.1,
+      step: 0.05,
       label: "Turbidité",
     },
     rayleigh: {
-      value: 3,
+      value: 0.30,
       min: 0,
       max: 4,
       step: 0.01,
@@ -185,7 +185,7 @@ function Params() {
       label: "Coefficient Mie",
     },
     mieDirectionalG: {
-      value: 0.8,
+      value: 0.90,
       min: 0,
       max: 1,
       step: 0.01,
