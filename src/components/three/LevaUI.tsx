@@ -6,12 +6,14 @@ export const SceneControlsContext = createContext<{
   showBoundingBoxes: boolean;
   material: string;
   fov: number;
+  showAvalanchePentes: boolean;
   [key: string]: any;
 }>({
   nuages: true,
   showBoundingBoxes: true,
   material: "normal",
   fov: 75,
+  showAvalanchePentes: false,
 });
 
 function Params() {
@@ -89,11 +91,6 @@ function Params() {
       max: 0.5,
       step: 0.01,
       label: "Douceur transition",
-      render: (get) => get("Aspect.material") === "HauteMontagne",
-    },
-    showAvalanchePentes: {
-      value: false,
-      label: "Pentes avalancheuses",
       render: (get) => get("Aspect.material") === "HauteMontagne",
     },
 
@@ -335,12 +332,18 @@ const lightTheme = {
   },
 };
 
-export default function MyLevaUI({ children }: { children: React.ReactNode }) {
+export default function MyLevaUI({
+  children,
+  showAvalanchePentes
+}: {
+  children: React.ReactNode;
+  showAvalanchePentes: boolean;
+}) {
   const controlsValue = Params();
 
   return (
     <>
-      <SceneControlsContext.Provider value={controlsValue}>
+      <SceneControlsContext.Provider value={{...controlsValue, showAvalanchePentes}}>
         <Leva
           theme={lightTheme}
           hideCopyButton={true}

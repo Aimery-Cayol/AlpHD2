@@ -29,7 +29,8 @@ import { BlendFunction } from "postprocessing";
 import ModelPositioner from "./ModelPositioner";
 import SceneUI from "./SceneUI";
 import MyLevaUI, { useSceneControls } from "./LevaUI";
-import { FaExpand, FaCompress } from "react-icons/fa";
+import { FaExpand, FaCompress, FaMountain } from "react-icons/fa";
+import { TbMountain } from "react-icons/tb";
 import CameraTargetDebug from "./CameraTargetDebug";
 
 import JEASINGS from "jeasings";
@@ -349,6 +350,7 @@ export default function ThreeScene({
 }: ThreeSceneProps) {
   const [webglSupported, setWebglSupported] = useState<boolean | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showAvalanchePentes, setShowAvalanchePentes] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Fonction pour basculer en plein écran
@@ -414,7 +416,7 @@ export default function ThreeScene({
 
   return (
     <div ref={containerRef} className="relative w-full h-full">
-      <MyLevaUI>
+      <MyLevaUI showAvalanchePentes={showAvalanchePentes}>
         <Canvas className="w-full h-full" frameloop="demand">
           <SceneContent models={models} selectedModels={selectedModels} />
         </Canvas>
@@ -435,6 +437,27 @@ export default function ThreeScene({
           ) : (
             <FaExpand className="w-4 h-4 text-gray-600" />
           )}
+        </button>
+
+        {/* Bouton pentes avalancheuses en bas à droite */}
+        <button
+          onClick={() => setShowAvalanchePentes(!showAvalanchePentes)}
+          className={`absolute bottom-4 right-4 z-50 w-10 h-10 backdrop-blur-sm rounded-full shadow-lg border flex items-center justify-center transition-all duration-200 ${
+            showAvalanchePentes
+              ? "bg-orange-500/90 hover:bg-orange-500/95 border-orange-600"
+              : "bg-white/90 hover:bg-white/95 border-gray-300"
+          }`}
+          title={
+            showAvalanchePentes
+              ? "Masquer les pentes avalancheuses"
+              : "Afficher les pentes avalancheuses"
+          }
+        >
+          <TbMountain
+            className={`w-6 h-6 ${
+              showAvalanchePentes ? "text-white" : "text-gray-600"
+            }`}
+          />
         </button>
       </MyLevaUI>
     </div>
