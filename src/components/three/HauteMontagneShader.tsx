@@ -90,7 +90,7 @@ const HauteMontagne = shaderMaterial(
         
         vec3 avalancheColor = vec3(0.0);
         float avalancheFactor = 0.0;
-        float fadeWidth = 1.5; // Largeur de la transition en degrés
+        float fadeWidth = 0.01; // Largeur de la transition en degrés
         
         // 30-35° : jaune (#F1E70B)
         if (slopeAngleDeg >= 30.0 && slopeAngleDeg < 35.0) {

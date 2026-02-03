@@ -4,7 +4,11 @@ import { useState, useEffect, Suspense } from "react";
 import dynamic from "next/dynamic";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import DropZone from "@/components/three/DropZone";
-import { createFileInfo, FileInfo, extractCoordinates } from "@/utils/fileUtils";
+import {
+  createFileInfo,
+  FileInfo,
+  extractCoordinates,
+} from "@/utils/fileUtils";
 import { detectAndLogCapabilities } from "@/utils/deviceCapabilities";
 import { useAppContext } from "@/contexts/AppContext";
 
@@ -22,13 +26,13 @@ interface Model {
 // Fonction utilitaire pour encoder en base64 (compatible Node.js et navigateur)
 const encodeBase64 = (str: string): string => {
   // Utilisation de Buffer.from pour la compatibilité Node.js
-  return Buffer.from(str, 'utf8').toString('base64');
+  return Buffer.from(str, "utf8").toString("base64");
 };
 
 // Fonction utilitaire pour décoder en base64 (compatible Node.js et navigateur)
 const decodeBase64 = (base64: string): string => {
   // Utilisation de Buffer.from pour la compatibilité Node.js
-  return Buffer.from(base64, 'base64').toString('utf8');
+  return Buffer.from(base64, "base64").toString("utf8");
 };
 
 // Composant interne qui utilise useSearchParams
@@ -36,7 +40,12 @@ function HomePageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
-  const { selectedModels, setSelectedModels, availableModels, setAvailableModels } = useAppContext();
+  const {
+    selectedModels,
+    setSelectedModels,
+    availableModels,
+    setAvailableModels,
+  } = useAppContext();
   const [models, setModels] = useState<Model[]>([]);
   const [localFiles, setLocalFiles] = useState<Model[]>([]);
   const [loading, setLoading] = useState(true);
@@ -81,7 +90,7 @@ function HomePageContent() {
             coordinates: extractCoordinates(modelData.url),
             fileSize,
           };
-        }
+        },
       );
 
       const modelList = await Promise.all(modelPromises);
@@ -133,40 +142,41 @@ function HomePageContent() {
 
   // Combiner les modèles distants et locaux
   const allModels = [...models, ...localFiles];
-// Fonction pour supprimer un fichier local
-const removeLocalFile = (url: string) => {
-  setLocalFiles((prev) => prev.filter((model) => model.url !== url));
-  setSelectedModels((prev) =>
-    prev.filter((selectedUrl) => selectedUrl !== url)
-  );
-};
+  // Fonction pour supprimer un fichier local
+  const removeLocalFile = (url: string) => {
+    setLocalFiles((prev) => prev.filter((model) => model.url !== url));
+    setSelectedModels((prev) =>
+      prev.filter((selectedUrl) => selectedUrl !== url),
+    );
+  };
 
-// Fonction pour gérer le partage
-const handleShareClick = () => {
-  if (selectedModels.length === 0) {
-    alert("Veuillez sélectionner au moins un modèle à partager");
-    return;
-  }
+  // Fonction pour gérer le partage
+  const handleShareClick = () => {
+    if (selectedModels.length === 0) {
+      alert("Veuillez sélectionner au moins un modèle à partager");
+      return;
+    }
 
-  // Générer l'URL de partage
-  const shareUrl = new URL(window.location.href);
-  const encoded = encodeBase64(JSON.stringify(selectedModels));
-  shareUrl.searchParams.set("models", encoded);
+    // Générer l'URL de partage
+    const shareUrl = new URL(window.location.href);
+    const encoded = encodeBase64(JSON.stringify(selectedModels));
+    shareUrl.searchParams.set("models", encoded);
 
-  // Copier dans le presse-papiers
-  navigator.clipboard.writeText(shareUrl.toString())
-    .then(() => {
-      setIsSharing(true);
-      setTimeout(() => setIsSharing(false), 2000);
-      alert("Lien de partage copié dans le presse-papiers !");
-    })
-    .catch(() => {
-      alert("Impossible de copier dans le presse-papiers. Voici le lien :\n" + shareUrl.toString());
-    });
-};
-
-
-
+    // Copier dans le presse-papiers
+    navigator.clipboard
+      .writeText(shareUrl.toString())
+      .then(() => {
+        setIsSharing(true);
+        setTimeout(() => setIsSharing(false), 2000);
+        alert("Lien de partage copié dans le presse-papiers !");
+      })
+      .catch(() => {
+        alert(
+          "Impossible de copier dans le presse-papiers. Voici le lien :\n" +
+            shareUrl.toString(),
+        );
+      });
+  };
 
   //routage avec encodage des modeles selectionnes dans l'url
   // État pour contrôler l'initialisation
@@ -180,9 +190,11 @@ const handleShareClick = () => {
       // Gérer les modèles existants depuis l'URL (pour compatibilité)
       if (encodedModels) {
         try {
-          const decoded = JSON.parse(decodeBase64(decodeURIComponent(encodedModels)));
+          const decoded = JSON.parse(
+            decodeBase64(decodeURIComponent(encodedModels)),
+          );
           const validUrls = decoded.filter((url: string) =>
-            models.some((m) => m.url === url)
+            models.some((m) => m.url === url),
           );
           setSelectedModels(validUrls);
         } catch (e) {
@@ -235,9 +247,13 @@ const handleShareClick = () => {
 
   return (
     <div className="container mx-auto px-4 py-4 sm:py-8">
-      <div className={`grid gap-4 lg:gap-6 ${isPanelVisible ? 'grid-cols-1 lg:grid-cols-5' : 'grid-cols-1'}`}>
+      <div
+        className={`grid gap-4 lg:gap-6 ${isPanelVisible ? "grid-cols-1 lg:grid-cols-5" : "grid-cols-1"}`}
+      >
         {/* Panneau de contrôle */}
-        <div className={`lg:col-span-1 order-2 lg:order-1 ${isPanelVisible ? 'block' : 'hidden lg:hidden'}`}>
+        <div
+          className={`lg:col-span-1 order-2 lg:order-1 ${isPanelVisible ? "block" : "hidden lg:hidden"}`}
+        >
           <div className="card">
             <h2 className="text-lg sm:text-xl font-semibold mb-4">
               Modèles LiDAR
@@ -248,6 +264,25 @@ const handleShareClick = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Sélectionner les modèles à afficher
                 </label>
+
+                {selectedModels.length > 0 && (
+                  <div className="pt-4 border-t">
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-2">
+                      <span className="text-sm font-medium">
+                        {selectedModels.length} modèle
+                        {selectedModels.length > 1 ? "s" : ""} sélectionné
+                        {selectedModels.length > 1 ? "s" : ""}
+                      </span>
+                      <button
+                        onClick={() => setSelectedModels([])}
+                        className="text-xs text-red-600 hover:text-red-800 transition-colors self-start sm:self-auto"
+                      >
+                        Tout désélectionner
+                      </button>
+                    </div>
+                  </div>
+                )}
+
                 <div className="space-y-2 max-h-64 sm:max-h-96 overflow-y-auto">
                   {allModels.map((model) => (
                     <label
@@ -262,7 +297,7 @@ const handleShareClick = () => {
                             setSelectedModels((prev) => [...prev, model.url]);
                           } else {
                             setSelectedModels((prev) =>
-                              prev.filter((url) => url !== model.url)
+                              prev.filter((url) => url !== model.url),
                             );
                           }
                         }}
@@ -334,26 +369,7 @@ const handleShareClick = () => {
                   ))}
                 </div>
               </div>
-
-              {selectedModels.length > 0 && (
-                <div className="pt-4 border-t">
-                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-2">
-                    <span className="text-sm font-medium">
-                      {selectedModels.length} modèle
-                      {selectedModels.length > 1 ? "s" : ""} sélectionné
-                      {selectedModels.length > 1 ? "s" : ""}
-                    </span>
-                    <button
-                      onClick={() => setSelectedModels([])}
-                      className="text-xs text-red-600 hover:text-red-800 transition-colors self-start sm:self-auto"
-                    >
-                      Tout désélectionner
-                    </button>
-                  </div>
-                </div>
-              )}
             </div>
-
           </div>
         </div>
 
