@@ -76,7 +76,7 @@ function Params() {
       render: (get) => get("Aspect.material") === "HauteMontagne",
     },
     slopeThreshold: {
-      value: 55,
+      value: 60,
       min: 0,
       max: 90,
       step: 1,
@@ -129,7 +129,7 @@ function Params() {
   const lightControls = useControls("Éclairages", {
     showAmbientLight: { value: true, label: "Lumière ambiante" },
     ambientIntensity: {
-      value: 0.3,
+      value: 0.2,
       min: 0,
       max: 1.5,
       step: 0.01,
@@ -138,7 +138,7 @@ function Params() {
     },
     showDirectionalLight: { value: true, label: "Lumière directionnelle" },
     directionalIntensity: {
-      value: 1.2,
+      value: 0.9,
       min: 0,
       max: 1.7,
       step: 0.01,

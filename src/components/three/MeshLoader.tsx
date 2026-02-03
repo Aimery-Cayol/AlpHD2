@@ -97,10 +97,12 @@ export default function MeshLoader({
       // Paramètre d'activation des pentes avalancheuses
       mat.uniforms.showAvalanchePentes.value = controls.showAvalanchePentes;
       // Couleurs pour les pentes avalancheuses
+      mat.uniforms.avalanche0Color.value.set('#00FF00'); // 0-5° : vert fluo
       mat.uniforms.avalanche1Color.value.set('#F1E70B'); // 30-35°
       mat.uniforms.avalanche2Color.value.set('#F86F21'); // 35-40°
       mat.uniforms.avalanche3Color.value.set('#E3035B'); // 40-45°
       mat.uniforms.avalanche4Color.value.set('#CB87BA'); // 45-50°
+      mat.uniforms.avalanche5Color.value.set('#120688'); // 50-55° : bleu foncé
       mat.uniforms.avalancheIntensity.value = 0.6;
       mat.uniforms.fogColor.value.set(controls.fogColor);
       mat.uniforms.fogDensity.value = controls.fogDensity;

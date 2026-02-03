@@ -253,7 +253,7 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
 
       <PerspectiveCamera
         makeDefault
-        position={[0, 6, 6]} // 2ème coord = hauteur 3ème coord = recul
+        position={[0, 6, 4]} // 2ème coord = hauteur 3ème coord = recul
         
         fov={controls.fov}
         near={0.001}
