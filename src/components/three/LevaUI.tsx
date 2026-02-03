@@ -76,11 +76,11 @@ function Params() {
       render: (get) => get("Aspect.material") === "HauteMontagne",
     },
     slopeThreshold: {
-      value: 0.55,
+      value: 55,
       min: 0,
-      max: 1,
-      step: 0.01,
-      label: "Seuil de pente",
+      max: 90,
+      step: 1,
+      label: "Seuil de pente (°)",
       render: (get) => get("Aspect.material") === "HauteMontagne",
     },
     smoothness: {
@@ -89,6 +89,11 @@ function Params() {
       max: 0.5,
       step: 0.01,
       label: "Douceur transition",
+      render: (get) => get("Aspect.material") === "HauteMontagne",
+    },
+    showAvalanchePentes: {
+      value: false,
+      label: "Pentes avalancheuses",
       render: (get) => get("Aspect.material") === "HauteMontagne",
     },
 
@@ -104,11 +109,11 @@ function Params() {
       render: (get) => get("Aspect.material") === "BasseMontagne",
     },
     slopeThresholdBM: {
-      value: 0.55,
+      value: 55,
       min: 0,
-      max: 1,
-      step: 0.01,
-      label: "Seuil de pente",
+      max: 90,
+      step: 1,
+      label: "Seuil de pente (°)",
       render: (get) => get("Aspect.material") === "BasseMontagne",
     },
     smoothnessBM: {

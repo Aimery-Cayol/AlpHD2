@@ -83,13 +83,25 @@ export default function MeshLoader({
       const mat = activeMaterial as any;
       mat.uniforms.snowColor.value.set(controls.snowColor);
       mat.uniforms.rockColor.value.set(controls.rockColor);
-      mat.uniforms.slopeThreshold.value = controls.slopeThreshold;
+      // Conversion degrés -> cosinus
+      // 0° (horizontal) → angle = 0° → cos(0°) = 1
+      // 90° (vertical) → angle = 90° → cos(90°) = 0
+      const slopeRadians = controls.slopeThreshold * (Math.PI / 180);
+      mat.uniforms.slopeThreshold.value = Math.cos(slopeRadians);
       mat.uniforms.smoothness.value = controls.smoothness;
       mat.uniforms.lightDirection.value.copy(
         lightDirection || new THREE.Vector3(1, 1, 1).normalize()
       );
       mat.uniforms.ambientIntensity.value = controls.ambientIntensity;
       mat.uniforms.directionalIntensity.value = controls.directionalIntensity;
+      // Paramètre d'activation des pentes avalancheuses
+      mat.uniforms.showAvalanchePentes.value = controls.showAvalanchePentes;
+      // Couleurs pour les pentes avalancheuses
+      mat.uniforms.avalanche1Color.value.set('#F1E70B'); // 30-35°
+      mat.uniforms.avalanche2Color.value.set('#F86F21'); // 35-40°
+      mat.uniforms.avalanche3Color.value.set('#E3035B'); // 40-45°
+      mat.uniforms.avalanche4Color.value.set('#CB87BA'); // 45-50°
+      mat.uniforms.avalancheIntensity.value = 0.6;
       mat.uniforms.fogColor.value.set(controls.fogColor);
       mat.uniforms.fogDensity.value = controls.fogDensity;
       mat.uniforms.fogExponent.value = controls.fogExponent;
@@ -99,7 +111,11 @@ export default function MeshLoader({
       const mat = activeMaterial as any;
       mat.uniforms.snowColor.value.set(controls.snowColorBM);
       mat.uniforms.rockColor.value.set(controls.rockColorBM);
-      mat.uniforms.slopeThreshold.value = controls.slopeThresholdBM;
+      // Conversion degrés -> cosinus
+      // 0° (horizontal) → angle = 0° → cos(0°) = 1
+      // 90° (vertical) → angle = 90° → cos(90°) = 0
+      const slopeRadians = controls.slopeThresholdBM * (Math.PI / 180);
+      mat.uniforms.slopeThreshold.value = Math.cos(slopeRadians);
       mat.uniforms.smoothness.value = controls.smoothnessBM;
       mat.uniforms.lightDirection.value.copy(
         lightDirection || new THREE.Vector3(1, 1, 1).normalize()
@@ -120,6 +136,7 @@ export default function MeshLoader({
     controls.rockColor,
     controls.slopeThreshold,
     controls.smoothness,
+    controls.showAvalanchePentes,
     controls.snowColorBM,
     controls.rockColorBM,
     controls.slopeThresholdBM,

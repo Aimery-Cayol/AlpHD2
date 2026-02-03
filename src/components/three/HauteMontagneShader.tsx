@@ -12,6 +12,13 @@ const HauteMontagne = shaderMaterial(
     lightDirection: new THREE.Vector3(1, 1, 1).normalize(),
     ambientIntensity: 0.3,
     directionalIntensity: 1.2,
+    // Couleurs pour les pentes avalancheuses
+    showAvalanchePentes: false,
+    avalanche1Color: new THREE.Color('#F1E70B'), // 30-35°
+    avalanche2Color: new THREE.Color('#F86F21'), // 35-40°
+    avalanche3Color: new THREE.Color('#E3035B'), // 40-45°
+    avalanche4Color: new THREE.Color('#CB87BA'), // 45-50°
+    avalancheIntensity: 0.6,
     fogColor: new THREE.Color('#cddeea'), //old : #c5c5c5
     fogDensity: 0.04, //old : 0.2
     fogExponent: 6.5, //old : 1.0
@@ -44,6 +51,12 @@ const HauteMontagne = shaderMaterial(
     uniform vec3 lightDirection;
     uniform float ambientIntensity;
     uniform float directionalIntensity;
+    uniform bool showAvalanchePentes;
+    uniform vec3 avalanche1Color; // 30-35°
+    uniform vec3 avalanche2Color; // 35-40°
+    uniform vec3 avalanche3Color; // 40-45°
+    uniform vec3 avalanche4Color; // 45-50°
+    uniform float avalancheIntensity;
     uniform vec3 fogColor;
     uniform float fogDensity;
     uniform float fogExponent;
@@ -69,6 +82,48 @@ const HauteMontagne = shaderMaterial(
       float intensity = ambientIntensity + directionalIntensity * diffuse;
 
       vec3 finalColor = baseColor * intensity;
+
+      // Coloration des pentes avalancheuses (si activée)
+      if (showAvalanchePentes) {
+        // Conversion de slope (cos) vers angle en degrés
+        float slopeAngleDeg = acos(slope) * 180.0 / 3.14159265359;
+        
+        vec3 avalancheColor = vec3(0.0);
+        float avalancheFactor = 0.0;
+        float fadeWidth = 1.5; // Largeur de la transition en degrés
+        
+        // 30-35° : jaune (#F1E70B)
+        if (slopeAngleDeg >= 30.0 && slopeAngleDeg < 35.0) {
+          float fadeIn = smoothstep(30.0 - fadeWidth, 30.0 + fadeWidth, slopeAngleDeg);
+          float fadeOut = 1.0 - smoothstep(35.0 - fadeWidth, 35.0, slopeAngleDeg);
+          avalancheColor = avalanche1Color;
+          avalancheFactor = fadeIn * fadeOut * avalancheIntensity;
+        }
+        // 35-40° : orange (#F86F21)
+        else if (slopeAngleDeg >= 35.0 && slopeAngleDeg < 40.0) {
+          float fadeIn = smoothstep(35.0, 35.0 + fadeWidth, slopeAngleDeg);
+          float fadeOut = 1.0 - smoothstep(40.0 - fadeWidth, 40.0, slopeAngleDeg);
+          avalancheColor = avalanche2Color;
+          avalancheFactor = fadeIn * fadeOut * avalancheIntensity;
+        }
+        // 40-45° : rose foncé (#E3035B)
+        else if (slopeAngleDeg >= 40.0 && slopeAngleDeg < 45.0) {
+          float fadeIn = smoothstep(40.0, 40.0 + fadeWidth, slopeAngleDeg);
+          float fadeOut = 1.0 - smoothstep(45.0 - fadeWidth, 45.0, slopeAngleDeg);
+          avalancheColor = avalanche3Color;
+          avalancheFactor = fadeIn * fadeOut * avalancheIntensity;
+        }
+        // 45-50° : violet (#CB87BA)
+        else if (slopeAngleDeg >= 45.0 && slopeAngleDeg <= 50.0) {
+          float fadeIn = smoothstep(45.0, 45.0 + fadeWidth, slopeAngleDeg);
+          float fadeOut = 1.0 - smoothstep(50.0 - fadeWidth, 50.0 + fadeWidth, slopeAngleDeg);
+          avalancheColor = avalanche4Color;
+          avalancheFactor = fadeIn * fadeOut * avalancheIntensity;
+        }
+        
+        // Mélange de la couleur de base avec la couleur avalanche
+        finalColor = mix(finalColor, avalancheColor, avalancheFactor);
+      }
 
       // Effet de brume de profondeur
       float fogFactor = 1.0 - exp(-fogExponent * fogDensity * vDepth);
