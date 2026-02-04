@@ -358,16 +358,16 @@ export default function MeshLoader({
   return (
     <group>
       {/* ✅ Un seul mesh avec le matériau actif */}
-      <mesh 
-        ref={meshRef} 
-        geometry={geometry} 
+      <mesh
+        ref={meshRef}
+        geometry={geometry}
         material={activeMaterial}
-        castShadow 
-        receiveShadow 
+        castShadow
+        receiveShadow
         userData={{ url }}
       />
 
-      {/* Mesh invisible pour les clics - utilise les valeurs mémorisées */}
+      {/* Mesh simplifié (bounding box invisible) pour le raycast - optimisé pour HD */}
       {geometry.boundingBox && onDoubleClick && (
         <mesh
           onDoubleClick={onDoubleClick}

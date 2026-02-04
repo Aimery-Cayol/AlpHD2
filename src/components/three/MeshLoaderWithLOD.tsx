@@ -360,33 +360,27 @@ export default function MeshLoaderWithLOD({
     );
   }
 
-  // pour débug
-  const red = new THREE.MeshLambertMaterial({ color: "red" })
-  const green = new THREE.MeshLambertMaterial({ color: "green" })
-
   // Utiliser le composant Detailed pour le LoD automatique
   return (
     <group>
       <Detailed distances={[distances[0], distances[1]]}>
         {/* Niveau HAUTE RÉSOLUTION (11) - 0 à distances[0] mètres */}
-        <mesh 
-          ref={meshRefHigh} 
-          geometry={geometryHigh} 
-          // material={activeMaterial}
-          material={red}
-          castShadow 
-          receiveShadow 
+        <mesh
+          ref={meshRefHigh}
+          geometry={geometryHigh}
+          material={activeMaterial}
+          castShadow
+          receiveShadow
           userData={{ url: urlHigh, lodLevel: 11 }}
         />
 
         {/* Niveau BASSE RÉSOLUTION (09) - distances[0] à distances[1] mètres */}
-        <mesh 
-          ref={meshRefLow} 
-          geometry={geometryLow} 
-          // material={activeMaterial}
-          material={green}
-          castShadow 
-          receiveShadow 
+        <mesh
+          ref={meshRefLow}
+          geometry={geometryLow}
+          material={activeMaterial}
+          castShadow
+          receiveShadow
           userData={{ url: urlLow, lodLevel: 9 }}
         />
 
@@ -394,7 +388,7 @@ export default function MeshLoaderWithLOD({
         <mesh visible={false} />
       </Detailed>
 
-      {/* Mesh invisible pour les clics */}
+      {/* Mesh simplifié (bounding box invisible) pour le raycast - optimisé pour HD */}
       {geometryHigh.boundingBox && onDoubleClick && (
         <mesh
           onDoubleClick={onDoubleClick}

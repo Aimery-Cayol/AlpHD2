@@ -113,17 +113,20 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
     wheel: ACTION.DOLLY,
   }), [isShiftPressed, ACTION]);
 
-  //JEasing
-  // const cameraControlsRef = useRef<any>(null);
-  // const handleMeshDoubleClick = (event: any) => {
-  //   event.stopPropagation();
-  //   if (cameraControlsRef.current && event.point) {
-  //     new JEASINGS.JEasing(cameraControlsRef.current.target)
-  //       .to({ x: event.point.x, y: event.point.y, z: event.point.z }, 500)
-  //       .easing(JEASINGS.Cubic.Out)
-  //       .start();
-  //   }
-  // };
+  // Gestionnaire de double-clic pour "Fit To Mesh" avec dolly
+  const handleMeshDoubleClick = useCallback((event: any) => {
+    event.stopPropagation();
+    if (cameraControlsRef.current && event.point) {
+      // Utilise moveTo pour animer la caméra vers le point cliqué
+      // moveTo(x, y, z, enableTransition)
+      cameraControlsRef.current.moveTo(
+        event.point.x,
+        event.point.y,
+        event.point.z,
+        true // Animation smooth
+      );
+    }
+  }, []);
 
   // Recentrer la caméra sur la bounding box des selectedModels
   // useEffect(() => {
@@ -346,7 +349,7 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
       <ModelPositioner
         models={models}
         selectedModels={selectedModels}
-        // onMeshDoubleClick={handleMeshDoubleClick}
+        onMeshDoubleClick={handleMeshDoubleClick}
         lightDirection={lightDirection}
       />
     </>
