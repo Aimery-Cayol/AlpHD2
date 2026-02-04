@@ -17,10 +17,13 @@ const ThreeScene = dynamic(() => import("@/components/three/ThreeScene"));
 
 interface Model {
   name: string;
-  url: string;
+  url?: string;          // Pour les meshes sans LoD
+  urlHigh?: string;      // Pour les meshes avec LoD (niveau 11)
+  urlLow?: string;       // Pour les meshes avec LoD (niveau 09)
   format?: "ply" | "drc";
   coordinates?: { x: number; y: number };
-  fileSize?: number; // Taille du fichier en octets
+  fileSize?: number;     // Taille du fichier en octets
+  lodEnabled?: boolean;  // Flag pour activer le LoD
 }
 
 // Fonction utilitaire pour encoder en base64 (compatible Node.js et navigateur)
@@ -53,6 +56,65 @@ function HomePageContent() {
   const [showDropZone, setShowDropZone] = useState(false);
   const [isPanelVisible, setIsPanelVisible] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
+
+  // Fonction utilitaire pour obtenir l'URL principale d'un modèle
+  const getModelUrl = (model: Model): string => {
+    return model.url || model.urlHigh || model.name;
+  };
+
+  // Fonction pour regrouper les meshes par coordonnées pour créer des modèles LoD
+  const groupMeshesByCoordinates = (modelsList: Model[]): Model[] => {
+    const grouped = new Map<string, { high?: Model, low?: Model }>();
+    const standalone: Model[] = [];
+    
+    modelsList.forEach(model => {
+      const modelUrl = getModelUrl(model);
+      // Extraire les coordonnées et le niveau depuis le nom du fichier
+      const match = modelUrl.match(/(\d{4}_\d{4})_(\d{2})\.drc$/);
+      
+      if (!match) {
+        // Si le format ne correspond pas, c'est un modèle standalone
+        standalone.push(model);
+        return;
+      }
+      
+      const [, coords, level] = match;
+      const key = coords;
+      
+      if (!grouped.has(key)) {
+        grouped.set(key, {});
+      }
+      
+      const entry = grouped.get(key)!;
+      if (level === '11') entry.high = model;
+      if (level === '09') entry.low = model;
+    });
+    
+    // Créer les modèles LoD ou standalone
+    const lodModels: Model[] = [];
+    grouped.forEach(({ high, low }, coords) => {
+      if (high && low) {
+        // Créer un modèle LoD avec les deux niveaux
+        lodModels.push({
+          name: coords,
+          urlHigh: high.url || "",
+          urlLow: low.url || "",
+          format: 'drc',
+          coordinates: high.coordinates,
+          lodEnabled: true,
+          fileSize: (high.fileSize || 0) + (low.fileSize || 0),
+        });
+      } else if (high) {
+        // Haute résolution seule
+        lodModels.push(high);
+      } else if (low) {
+        // Basse résolution seule
+        lodModels.push(low);
+      }
+    });
+    
+    return [...lodModels, ...standalone];
+  };
 
   // Fonction pour récupérer la taille d'un fichier depuis S3
   const getFileSize = async (url: string): Promise<number> => {
@@ -133,15 +195,17 @@ function HomePageContent() {
       console.log(`✅ Fichier uploadé: ${newModel.name}`);
 
       // Sélectionner automatiquement le fichier uploadé
-      setSelectedModels((prev) => [...prev, newModel.url]);
+      if (newModel.url) {
+        setSelectedModels((prev) => [...prev, newModel.url!]);
+      }
     } catch (err) {
       console.error("Erreur lors de l'upload du fichier:", err);
       setError("Erreur lors du traitement du fichier");
     }
   };
 
-  // Combiner les modèles distants et locaux
-  const allModels = [...models, ...localFiles];
+  // Combiner les modèles distants et locaux, puis regrouper pour le LoD
+  const allModels = groupMeshesByCoordinates([...models, ...localFiles]);
   // Fonction pour supprimer un fichier local
   const removeLocalFile = (url: string) => {
     setLocalFiles((prev) => prev.filter((model) => model.url !== url));
@@ -284,20 +348,22 @@ function HomePageContent() {
                 )}
 
                 <div className="space-y-2 max-h-64 sm:max-h-96 overflow-y-auto">
-                  {allModels.map((model) => (
+                  {allModels.map((model) => {
+                    const modelUrl = getModelUrl(model);
+                    return (
                     <label
-                      key={model.url}
+                      key={modelUrl}
                       className="flex items-center space-x-2 p-2 rounded hover:bg-gray-50 transition-colors"
                     >
                       <input
                         type="checkbox"
-                        checked={selectedModels.includes(model.url)}
+                        checked={selectedModels.includes(modelUrl)}
                         onChange={(e) => {
                           if (e.target.checked) {
-                            setSelectedModels((prev) => [...prev, model.url]);
+                            setSelectedModels((prev) => [...prev, modelUrl]);
                           } else {
                             setSelectedModels((prev) =>
-                              prev.filter((url) => url !== model.url),
+                              prev.filter((url) => url !== modelUrl),
                             );
                           }
                         }}
@@ -307,7 +373,12 @@ function HomePageContent() {
                         <div className="flex items-center justify-between">
                           <div className="font-medium text-sm truncate">
                             {model.name}
-                            {localFiles.find((lf) => lf.url === model.url) && (
+                            {model.lodEnabled && (
+                              <span className="ml-2 text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                                LoD
+                              </span>
+                            )}
+                            {localFiles.find((lf) => getModelUrl(lf) === modelUrl) && (
                               <span className="ml-2 text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded">
                                 Local
                               </span>
@@ -323,12 +394,12 @@ function HomePageContent() {
                             >
                               {model.format?.toUpperCase()}
                             </span>
-                            {localFiles.find((lf) => lf.url === model.url) && (
+                            {localFiles.find((lf) => getModelUrl(lf) === modelUrl) && (
                               <button
                                 onClick={(e) => {
                                   e.preventDefault();
                                   e.stopPropagation();
-                                  removeLocalFile(model.url);
+                                  removeLocalFile(modelUrl);
                                 }}
                                 className="text-red-500 hover:text-red-700 p-1"
                                 title="Supprimer le fichier local"
@@ -366,7 +437,7 @@ function HomePageContent() {
                         </div>
                       </div>
                     </label>
-                  ))}
+                  )})}
                 </div>
               </div>
             </div>

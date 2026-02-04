@@ -12,9 +12,13 @@ import { geometryCache } from "./GeometryCache";
 
 interface Model {
   name: string;
-  url: string;
+  url?: string;          // Pour les meshes sans LoD
+  urlHigh?: string;      // Pour les meshes avec LoD (niveau 11)
+  urlLow?: string;       // Pour les meshes avec LoD (niveau 09)
   format?: 'ply' | 'drc';
   coordinates?: { x: number; y: number };
+  fileSize?: number;
+  lodEnabled?: boolean;  // Flag pour activer le LoD
 }
 
 interface SceneUIProps {
@@ -222,6 +226,11 @@ export default function SceneUI({ models, selectedModels }: SceneUIProps) {
   );
 }
 
+// Fonction utilitaire pour obtenir l'URL principale d'un modèle
+const getModelUrl = (model: Model): string => {
+  return model.url || model.urlHigh || model.name;
+};
+
 // Fonction pour calculer la bounding box de tous les modèles sélectionnés
 function calculateBoundingBox(models: Model[], selectedModels: string[]): Box3 | null {
   if (selectedModels.length === 0) return null;
@@ -230,7 +239,8 @@ function calculateBoundingBox(models: Model[], selectedModels: string[]): Box3 |
   let hasValidModel = false;
 
   models.forEach(model => {
-    if (selectedModels.includes(model.url) && model.coordinates) {
+    const modelUrl = getModelUrl(model);
+    if (selectedModels.includes(modelUrl) && model.coordinates) {
       // Chaque modèle fait 1 unité de côté
       const modelSize = 1;
       const halfSize = modelSize / 2;

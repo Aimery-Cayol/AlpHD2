@@ -4,7 +4,7 @@ import * as THREE from "three";
 
 import React, { useEffect, useRef, useState, useCallback, useMemo } from "react";
 
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Canvas, invalidate, useFrame, useThree } from "@react-three/fiber";
 import {
   PerspectiveCamera,
   Grid,
@@ -38,9 +38,13 @@ import JEasingsComponent from "./JEasings";
 
 interface Model {
   name: string;
-  url: string;
+  url?: string;          // Pour les meshes sans LoD
+  urlHigh?: string;      // Pour les meshes avec LoD (niveau 11)
+  urlLow?: string;       // Pour les meshes avec LoD (niveau 09)
   format?: "ply" | "drc";
   coordinates?: { x: number; y: number };
+  filesize?: number;
+  lodEnabled?: boolean;  // Flag pour activer le LoD
 }
 
 interface ThreeSceneProps {
@@ -195,6 +199,7 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
     );
   }
 
+
   return (
     <>
       <JEasingsComponent />
@@ -276,6 +281,10 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
         polarRotateSpeed={0.5}
         // autoRotate={controls.autoRotate}
         // dampingFactor={0.53}
+
+        draggingSmoothTime={0.5}
+
+        
       />
 
       {/* Cube de debug pour la cible de la caméra */}

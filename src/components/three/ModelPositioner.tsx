@@ -4,12 +4,17 @@ import React from "react";
 import { useMemo } from "react";
 import * as THREE from "three";
 import MeshLoader from "./MeshLoader";
+import MeshLoaderWithLOD from "./MeshLoaderWithLOD";
+import { useSceneControls } from "./LevaUI";
 
 interface Model {
   name: string;
-  url: string;
+  url?: string;          // Pour les meshes sans LoD
+  urlHigh?: string;      // Pour les meshes avec LoD (niveau 11)
+  urlLow?: string;       // Pour les meshes avec LoD (niveau 09)
   format?: "ply" | "drc";
   coordinates?: { x: number; y: number };
+  lodEnabled?: boolean;  // Flag pour activer le LoD
 }
 
 interface ModelPositionerProps {
@@ -25,14 +30,19 @@ export default function ModelPositioner({
   onMeshDoubleClick,
   lightDirection,
 }: ModelPositionerProps) {
+  // Récupérer les contrôles LoD depuis LevaUI
+  const controls = useSceneControls();
+  
   // Calculer les positions relatives avec le premier modèle au centre
   const positionedModels = useMemo(() => {
     if (selectedModels.length === 0) return [];
 
     // Filtrer les modèles sélectionnés
-    const selectedModelData = models.filter((model) =>
-      selectedModels.includes(model.url)
-    );
+    // Gérer les modèles avec url ou urlHigh/urlLow
+    const selectedModelData = models.filter((model) => {
+      const modelUrl = model.url || model.urlHigh || model.name;
+      return modelUrl && selectedModels.includes(modelUrl);
+    });
 
     if (selectedModelData.length === 0) return [];
 
@@ -44,16 +54,27 @@ export default function ModelPositioner({
     <>
       {positionedModels.map((model) => (
         <group
-          key={model.url}
+          key={model.url || model.urlHigh || model.name}
           position={model.position}
           rotation={[-Math.PI / 2, 0, 0]}
         >
-          <MeshLoader
-            url={model.url}
-            format={model.format}
-            onDoubleClick={onMeshDoubleClick}
-            lightDirection={lightDirection}
-          />
+          {controls.lodEnabled && model.urlHigh && model.urlLow ? (
+            <MeshLoaderWithLOD
+              urlHigh={model.urlHigh}
+              urlLow={model.urlLow}
+              format="drc"
+              onDoubleClick={onMeshDoubleClick}
+              lightDirection={lightDirection}
+              distances={[controls.lodDistanceHigh, controls.lodDistanceLow]} // Distances de transition (ajustables)
+            />
+          ) : (
+            <MeshLoader
+              url={model.url || model.urlHigh || ""}
+              format={model.format}
+              onDoubleClick={onMeshDoubleClick}
+              lightDirection={lightDirection}
+            />
+          )}
         </group>
       ))}
     </>
