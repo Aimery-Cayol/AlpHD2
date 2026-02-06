@@ -92,6 +92,8 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
   const cameraControlsRef = useRef<CameraControlsImpl | null>(null);
   // GESTION DE L'APPUI DE LA TOUCHE SHIFT POUR CONTROLES CAMERA
   const [isShiftPressed, setIsShiftPressed] = useState(false);
+  // État pour stocker les marqueurs de double-clic
+  const [clickMarkers, setClickMarkers] = useState<THREE.Vector3[]>([]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => { if (e.key === "Shift") setIsShiftPressed(true); };
@@ -117,6 +119,9 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
   const handleMeshDoubleClick = useCallback((event: any) => {
     event.stopPropagation();
     if (cameraControlsRef.current && event.point) {
+      // Ajoute un marqueur au point cliqué
+      setClickMarkers(prev => [...prev, event.point.clone()]);
+      
       // Utilise moveTo pour animer la caméra vers le point cliqué
       // moveTo(x, y, z, enableTransition)
       cameraControlsRef.current.moveTo(
@@ -262,7 +267,7 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
 
       <PerspectiveCamera
         makeDefault
-        position={[0, 6, 4]} // 2ème coord = hauteur 3ème coord = recul
+        position={[0, 4, 2]} // 2ème coord = hauteur 3ème coord = recul
         
         fov={controls.fov}
         near={0.001}
@@ -285,15 +290,21 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
         // autoRotate={controls.autoRotate}
         // dampingFactor={0.53}
 
-        draggingSmoothTime={0.5}
-
-        
+        draggingSmoothTime={0.4}
       />
 
       {/* Cube de debug pour la cible de la caméra */}
       {controls.showCameraTarget && (
         <CameraTargetDebug cameraControlsRef={cameraControlsRef} />
       )}
+
+      {/* Marqueurs de double-clic */}
+      {controls.showCameraTarget && clickMarkers.map((position, index) => (
+        <mesh key={index} position={position} castShadow receiveShadow>
+          <sphereGeometry args={[0.02, 16, 16]} />
+          <meshStandardMaterial color="blue" />
+        </mesh>
+      ))}
 
       {/* {controls.showGrid && <gridHelper args={[10, 10]} />} */}
       {controls.showGrid && <Ground />}
@@ -352,6 +363,8 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
         onMeshDoubleClick={handleMeshDoubleClick}
         lightDirection={lightDirection}
       />
+
+      
     </>
   );
 }

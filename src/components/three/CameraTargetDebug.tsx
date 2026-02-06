@@ -28,13 +28,13 @@ export default function CameraTargetDebug({ cameraControlsRef }: CameraTargetDeb
     <>
       {/* Cube bleu */}
       <mesh ref={meshRef}>
-        <boxGeometry args={[0.01, 0.01, 0.01]} />
-        <meshBasicMaterial color="blue" />
+        <boxGeometry args={[0.01, 0.1, 0.01]} />
+        <meshStandardMaterial color="blue" />
       </mesh>
       
       {/* Ombre projetée au sol */}
       <mesh ref={shadowRef} rotation={[-Math.PI / 2, 0, Math.PI / 4]}>
-        <circleGeometry args={[0.01, 4]} />
+        <circleGeometry args={[0.02, 4]} />
         <meshBasicMaterial color="black" opacity={0.5} transparent />
       </mesh>
     </>
