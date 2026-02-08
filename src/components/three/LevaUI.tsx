@@ -162,6 +162,24 @@ function Params() {
     water: { value: false, label: "Mer" },
   });
 
+  const basemapControls = useControls("Fond de carte", {
+    showBasemap: { value: true, label: "Carte IGN" },
+    basemapLayer: {
+      value: "PLANIGNV2",
+      options: ["PLANIGNV2", "ORTHOPHOTOS", "MAPS"],
+      label: "Type de carte",
+      render: (get) => get("Fond de carte.showBasemap"),
+    },
+    basemapOpacity: {
+      value: 0.9,
+      min: 0,
+      max: 1,
+      step: 0.05,
+      label: "Opacité",
+      render: (get) => get("Fond de carte.showBasemap"),
+    },
+  });
+
   const debugControls = useControls("Debug", {
     showGrid: { value: true, label: "Grille" },
     showAxes: { value: false, label: "Axes" },
@@ -227,6 +245,7 @@ function Params() {
     ...lightControls,
     ...aspectControls,
     ...environmentControls,
+    ...basemapControls,
     ...postProcessControls,
   };
 }

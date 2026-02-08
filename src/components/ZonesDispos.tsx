@@ -291,23 +291,12 @@ export default function MapPage() {
   const handleLoadSelectedTiles = () => {
     if (selectedTiles.length === 0) return;
 
-    // Ajouter les tuiles sélectionnées aux modèles sélectionnés
-    setSelectedModels((prev) => {
-      // Filtrer les URLs qui ne sont pas déjà sélectionnées
-      const newUrls = selectedTiles.filter((url) => !prev.includes(url));
-      if (newUrls.length > 0) {
-        console.log("Tuiles chargées en 3D:", newUrls);
-        return [...prev, ...newUrls];
-      }
-      return prev;
-    });
+    // Les tuiles sont déjà dans selectedTiles et persistées via localStorage
+    // On désélectionne les sommets pour que les dalles directes soient utilisées
+    setSelectedModels([]);
 
-    // Utiliser un petit délai pour s'assurer que l'état est mis à jour avant la navigation
-    // Dans React, les mises à jour d'état sont asynchrones, donc un délai minimal est nécessaire
-    setTimeout(() => {
-      // Naviguer vers la page principale
-      router.push("/");
-    }, 100);
+    // Naviguer vers la page principale
+    router.push("/");
   };
 
   return (

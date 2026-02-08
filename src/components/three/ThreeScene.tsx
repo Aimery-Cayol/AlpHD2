@@ -2,7 +2,7 @@
 
 import * as THREE from "three";
 import React, { useRef, useEffect, useState, useCallback, useMemo } from "react";
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useThree, useFrame } from "@react-three/fiber";
 import {
   PerspectiveCamera,
   Grid,
@@ -11,6 +11,7 @@ import {
   CameraControlsImpl,
   Sky,
 } from "@react-three/drei";
+import { ColliderProvider, useColliders } from "@/contexts/ColliderContext";
 // ... autres imports inchangés
 import {
   EffectComposer,
@@ -38,6 +39,62 @@ interface Model {
 interface ThreeSceneProps {
   models: Model[];
   selectedModels: string[];
+}
+
+// Système de collision caméra avec raycasting multi-directionnel
+function CameraCollisionSystem({ cameraControlsRef }: { cameraControlsRef: React.RefObject<CameraControls | null> }) {
+  const { collidersRef, version } = useColliders();
+  const { camera } = useThree();
+  const raycaster = useMemo(() => new THREE.Raycaster(), []);
+  const minDistanceFromSurface = 0.15;
+
+  // Mémoriser les colliders seulement quand version change
+  const colliderMeshes = useMemo(() => {
+    return collidersRef.current;
+  }, [collidersRef, version]);
+
+  useFrame(() => {
+    if (!cameraControlsRef.current || colliderMeshes.length === 0) return;
+
+    const cameraPos = camera.position.clone();
+
+    // 10 directions de test
+    const directions = [
+      new THREE.Vector3(0, -1, 0),   // bas
+      new THREE.Vector3(0, 1, 0),    // haut
+      new THREE.Vector3(1, 0, 0),    // droite
+      new THREE.Vector3(-1, 0, 0),   // gauche
+      new THREE.Vector3(0, 0, 1),    // devant
+      new THREE.Vector3(0, 0, -1),   // derrière
+      new THREE.Vector3(1, -1, 0).normalize(),
+      new THREE.Vector3(-1, -1, 0).normalize(),
+      new THREE.Vector3(0, -1, 1).normalize(),
+      new THREE.Vector3(0, -1, -1).normalize(),
+    ];
+
+    let needsPush = false;
+    const pushVector = new THREE.Vector3();
+
+    for (const dir of directions) {
+      raycaster.set(cameraPos, dir);
+      raycaster.far = minDistanceFromSurface * 2;
+
+      const intersects = raycaster.intersectObjects(colliderMeshes, false);
+
+      if (intersects.length > 0 && intersects[0].distance < minDistanceFromSurface) {
+        const pushAmount = minDistanceFromSurface - intersects[0].distance;
+        pushVector.addScaledVector(dir, -pushAmount);
+        needsPush = true;
+      }
+    }
+
+    if (needsPush) {
+      const newPos = cameraPos.add(pushVector);
+      cameraControlsRef.current.setPosition(newPos.x, newPos.y, newPos.z, false);
+    }
+  });
+
+  return null;
 }
 
 function SceneContent({ models, selectedModels }: ThreeSceneProps) {
@@ -132,8 +189,9 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
         onChange={handleCameraChange}
       />
 
+      <CameraCollisionSystem cameraControlsRef={cameraControlsRef} />
       {controls.showCameraTarget && <CameraTargetDebug cameraControlsRef={cameraControlsRef} />}
-      {controls.showGrid && (
+      {controls.showGrid && !controls.showBasemap && (
         <Grid position={[0, -0.05, 0]} args={[20, 20]} cellColor="#333333" sectionColor="#444444" infiniteGrid />
       )}
       {controls.showStats && <Stats />}
@@ -154,16 +212,18 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
 export default function ThreeScene({ models, selectedModels }: ThreeSceneProps) {
   return (
     <div className="relative w-full h-full outline-none">
-      <MyLevaUI>
-        <Canvas 
-          className="w-full h-full" 
-          shadows 
-          gl={{ antialias: true, logarithmicDepthBuffer: true }}
-        >
-          <SceneContent models={models} selectedModels={selectedModels} />
-        </Canvas>
-        <SceneUI models={models} selectedModels={selectedModels} />
-      </MyLevaUI>
+      <ColliderProvider>
+        <MyLevaUI>
+          <Canvas
+            className="w-full h-full"
+            shadows
+            gl={{ antialias: true, logarithmicDepthBuffer: true }}
+          >
+            <SceneContent models={models} selectedModels={selectedModels} />
+          </Canvas>
+          <SceneUI models={models} selectedModels={selectedModels} />
+        </MyLevaUI>
+      </ColliderProvider>
     </div>
   );
 }

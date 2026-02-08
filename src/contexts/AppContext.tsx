@@ -46,18 +46,39 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [selectedModels, setSelectedModels] = useState<string[]>([]);
   const [selectedTiles, setSelectedTiles] = useState<string[]>([]);
   const [availableModels, setAvailableModels] = useState<Model[]>([]);
-  
+  const [isHydrated, setIsHydrated] = useState(false);
+
   // 🎯 NOUVEAU : État initial de la rotation
   const [cameraRotation, setCameraRotation] = useState({ x: 0, y: 0, z: 0 });
 
-  // Sauvegarder dans localStorage quand l'état change
+  // Charger depuis localStorage au démarrage (côté client uniquement)
   useEffect(() => {
-    localStorage.setItem('selectedModels', JSON.stringify(selectedModels));
-  }, [selectedModels]);
+    try {
+      const storedTiles = localStorage.getItem('selectedTiles');
+      if (storedTiles) {
+        const parsed = JSON.parse(storedTiles);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setSelectedTiles(parsed);
+        }
+      }
+    } catch (e) {
+      console.error('Erreur chargement localStorage:', e);
+    }
+    setIsHydrated(true);
+  }, []);
+
+  // Sauvegarder dans localStorage quand l'état change (après hydratation)
+  useEffect(() => {
+    if (isHydrated) {
+      localStorage.setItem('selectedModels', JSON.stringify(selectedModels));
+    }
+  }, [selectedModels, isHydrated]);
 
   useEffect(() => {
-    localStorage.setItem('selectedTiles', JSON.stringify(selectedTiles));
-  }, [selectedTiles]);
+    if (isHydrated) {
+      localStorage.setItem('selectedTiles', JSON.stringify(selectedTiles));
+    }
+  }, [selectedTiles, isHydrated]);
 
   const value: AppContextType = {
     selectedModels,

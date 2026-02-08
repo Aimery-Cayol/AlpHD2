@@ -11,6 +11,13 @@ import GeometryInspector from "./GeometryInspector";
 import { isLocalUrl, revokeBlobUrl } from "@/utils/fileUtils";
 import HauteMontagne from "./HauteMontagneShader";
 import BasseMontagne from "./BasseMontagneShader";
+import { useColliders } from "@/contexts/ColliderContext";
+import { computeBoundsTree, disposeBoundsTree, acceleratedRaycast } from "three-mesh-bvh";
+
+// Extension du prototype pour BVH accéléré (cast pour compatibilité TypeScript)
+(THREE.BufferGeometry.prototype as any).computeBoundsTree = computeBoundsTree;
+(THREE.BufferGeometry.prototype as any).disposeBoundsTree = disposeBoundsTree;
+(THREE.Mesh.prototype as any).raycast = acceleratedRaycast;
 
 // Helper simple pour la Bounding Box (si tu ne l'as pas ailleurs)
 function BoundingBoxHelper({ box, color }: { box: THREE.Box3, color: string }) {
@@ -22,9 +29,10 @@ export default function MeshLoader({ url, format, onDoubleClick, lightDirection 
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [cacheStatus, setCacheStatus] = useState<"loading" | "cache" | "network" | "local">("loading");
-  
+
   const meshRef = useRef<Mesh>(null);
   const controls = useSceneControls();
+  const { addCollider, removeCollider } = useColliders();
 
   // 🎯 OPTIMISATION 1: Créer les matériaux une seule fois
   const materials = useMemo(() => ({
@@ -92,10 +100,11 @@ export default function MeshLoader({ url, format, onDoubleClick, lightDirection 
 
       loader.load(url, (geo: BufferGeometry) => {
         if (cancelled) return;
-        
+
         // SURTOUT PAS DE .center() : on garde les coordonnées Lambert
         geo.computeVertexNormals();
         geo.computeBoundingBox();
+        (geo as any).computeBoundsTree(); // BVH pour raycasting accéléré
 
         geometryCache.set(url, geo);
         setGeometry(geo);
@@ -110,6 +119,17 @@ export default function MeshLoader({ url, format, onDoubleClick, lightDirection 
     loadGeometry();
     return () => { cancelled = true; };
   }, [url, format]);
+
+  // Enregistrement du mesh comme collider pour la collision caméra
+  useEffect(() => {
+    const mesh = meshRef.current;
+    if (mesh && geometry) {
+      addCollider(mesh);
+      return () => {
+        removeCollider(mesh);
+      };
+    }
+  }, [geometry, addCollider, removeCollider]);
 
   // Mémorisation des dimensions pour le mesh invisible (clics)
   const boundingInfo = useMemo(() => {
@@ -126,12 +146,13 @@ export default function MeshLoader({ url, format, onDoubleClick, lightDirection 
 
   return (
     <group>
-      <mesh 
-        ref={meshRef} 
-        geometry={geometry} 
+      <mesh
+        ref={meshRef}
+        geometry={geometry}
         material={activeMaterial}
-        castShadow 
-        receiveShadow 
+        castShadow
+        receiveShadow
+        renderOrder={2}
       />
 
       {/* Mesh invisible pour faciliter le double-clic sur les gros reliefs */}
