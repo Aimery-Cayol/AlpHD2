@@ -9,13 +9,13 @@ import { useSceneControls } from "./LevaUI";
 
 interface Model {
   name: string;
-  url?: string;          // Pour les meshes sans LoD
-  urlHigh?: string;      // Pour les meshes avec LoD (niveau 11)
-  urlLow?: string;       // Pour les meshes avec LoD (niveau 09)
-  urlUltraLow?: string;  // Pour les meshes avec LoD (niveau 01)
+  url?: string; // Pour les meshes sans LoD
+  urlHigh?: string; // Pour les meshes avec LoD (niveau 11)
+  urlLow?: string; // Pour les meshes avec LoD (niveau 09)
+  urlUltraLow?: string; // Pour les meshes avec LoD (niveau 01)
   format?: "ply" | "drc";
   coordinates?: { x: number; y: number };
-  lodEnabled?: boolean;  // Flag pour activer le LoD
+  lodEnabled?: boolean; // Flag pour activer le LoD
 }
 
 interface ModelPositionerProps {
@@ -33,7 +33,7 @@ export default function ModelPositioner({
 }: ModelPositionerProps) {
   // Récupérer les contrôles LoD depuis LevaUI
   const controls = useSceneControls();
-  
+
   // Calculer les positions relatives avec le premier modèle au centre
   const positionedModels = useMemo(() => {
     if (selectedModels.length === 0) return [];
@@ -85,7 +85,7 @@ export default function ModelPositioner({
 
 // Fonction pour calculer les positions relatives basées sur les coordonnées géographiques
 function calculateRelativePositions(
-  models: Model[]
+  models: Model[],
 ): (Model & { position: [number, number, number] })[] {
   if (models.length === 0) return [];
 

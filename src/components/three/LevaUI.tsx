@@ -173,7 +173,7 @@ function Params() {
       label: "Turbidité",
     },
     rayleigh: {
-      value: 0.30,
+      value: 0.3,
       min: 0,
       max: 4,
       step: 0.01,
@@ -187,7 +187,7 @@ function Params() {
       label: "Coefficient Mie",
     },
     mieDirectionalG: {
-      value: 0.90,
+      value: 0.9,
       min: 0,
       max: 1,
       step: 0.01,
@@ -366,7 +366,7 @@ const lightTheme = {
 
 export default function MyLevaUI({
   children,
-  showAvalanchePentes
+  showAvalanchePentes,
 }: {
   children: React.ReactNode;
   showAvalanchePentes: boolean;
@@ -375,7 +375,9 @@ export default function MyLevaUI({
 
   return (
     <>
-      <SceneControlsContext.Provider value={{...controlsValue, showAvalanchePentes}}>
+      <SceneControlsContext.Provider
+        value={{ ...controlsValue, showAvalanchePentes }}
+      >
         <Leva
           theme={lightTheme}
           hideCopyButton={true}

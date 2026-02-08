@@ -2,7 +2,13 @@
 
 import * as THREE from "three";
 
-import React, { useEffect, useRef, useState, useCallback, useMemo } from "react";
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  useCallback,
+  useMemo,
+} from "react";
 
 import { Canvas, invalidate, useFrame, useThree } from "@react-three/fiber";
 import {
@@ -97,8 +103,12 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
   const [clickMarkers, setClickMarkers] = useState<THREE.Vector3[]>([]);
 
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => { if (e.key === "Shift") setIsShiftPressed(true); };
-    const handleKeyUp = (e: KeyboardEvent) => { if (e.key === "Shift") setIsShiftPressed(false); };
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Shift") setIsShiftPressed(true);
+    };
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (e.key === "Shift") setIsShiftPressed(false);
+    };
     window.addEventListener("keydown", handleKeyDown);
     window.addEventListener("keyup", handleKeyUp);
     return () => {
@@ -109,27 +119,30 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
 
   // CONFIGURATION DYNAMIQUE DES BOUTONS
   // On recalcule les boutons seulement quand isShiftPressed change
-  const mouseButtonsConfig = useMemo(() => ({
-    left: isShiftPressed ? ACTION.ROTATE : ACTION.SCREEN_PAN,
-    right: ACTION.ROTATE,
-    middle: ACTION.TRUCK,
-    wheel: ACTION.DOLLY,
-  }), [isShiftPressed, ACTION]);
+  const mouseButtonsConfig = useMemo(
+    () => ({
+      left: isShiftPressed ? ACTION.ROTATE : ACTION.SCREEN_PAN,
+      right: ACTION.ROTATE,
+      middle: ACTION.TRUCK,
+      wheel: ACTION.DOLLY,
+    }),
+    [isShiftPressed, ACTION],
+  );
 
   // Gestionnaire de double-clic pour "Fit To Mesh" avec dolly
   const handleMeshDoubleClick = useCallback((event: any) => {
     event.stopPropagation();
     if (cameraControlsRef.current && event.point) {
       // Ajoute un marqueur au point cliqué
-      setClickMarkers(prev => [...prev, event.point.clone()]);
-      
+      setClickMarkers((prev) => [...prev, event.point.clone()]);
+
       // Utilise moveTo pour animer la caméra vers le point cliqué
       // moveTo(x, y, z, enableTransition)
       cameraControlsRef.current.moveTo(
         event.point.x,
         event.point.y,
         event.point.z,
-        true // Animation smooth
+        true, // Animation smooth
       );
     }
   }, []);
@@ -170,7 +183,7 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
   const getSunDirection = (
     azimuth: number,
     elevation: number,
-    distance = 10
+    distance = 10,
   ) => {
     const azRad = (azimuth * Math.PI) / 180;
     const elRad = (elevation * Math.PI) / 180;
@@ -184,7 +197,7 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
 
   const sunPosition = getSunDirection(
     controls.sunAzimuth,
-    controls.sunElevation
+    controls.sunElevation,
   );
 
   // Calcul de la direction de la lumière pour le shader (direction vers la surface)
@@ -208,38 +221,42 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
     );
   }
 
-
   return (
     <>
       <JEasingsComponent />
-      <EffectComposer enabled={controls.enablePostProcess} enableNormalPass={true}>
+      <EffectComposer
+        enabled={controls.enablePostProcess}
+        enableNormalPass={true}
+      >
         {/* <SMAA /> */}
 
         {controls.enableVignette && (
           <Vignette
-          offset={0.3} // vignette offset
-          darkness={0.4} // vignette darkness
-          eskil={false} // Eskil's vignette technique
-          blendFunction={BlendFunction.NORMAL} // blend mode
-        />)}
-        
-        
+            offset={0.3} // vignette offset
+            darkness={0.4} // vignette darkness
+            eskil={false} // Eskil's vignette technique
+            blendFunction={BlendFunction.NORMAL} // blend mode
+          />
+        )}
+
         {controls.enableBrightnessContrast && (
           <BrightnessContrast
-          brightness={0.1} // brightness. min: -1, max: 1
-          contrast={0.1} // contrast: min -1, max: 1
-        />)}
+            brightness={0.1} // brightness. min: -1, max: 1
+            contrast={0.1} // contrast: min -1, max: 1
+          />
+        )}
 
         {controls.enableToneMapping && (
           <ToneMapping
-          blendFunction={BlendFunction.NORMAL} // blend mode
-          adaptive={true} // toggle adaptive luminance map usage
-          resolution={256} // texture resolution of the luminance map
-          middleGrey={0.9} // middle grey factor
-          maxLuminance={16.0} // maximum luminance
-          averageLuminance={1.0} // average luminance
-          adaptationRate={1.0} // luminance adaptation rate
-        />)}
+            blendFunction={BlendFunction.NORMAL} // blend mode
+            adaptive={true} // toggle adaptive luminance map usage
+            resolution={256} // texture resolution of the luminance map
+            middleGrey={0.9} // middle grey factor
+            maxLuminance={16.0} // maximum luminance
+            averageLuminance={1.0} // average luminance
+            adaptationRate={1.0} // luminance adaptation rate
+          />
+        )}
 
         {controls.enableBloom && (
           <Bloom
@@ -248,8 +265,6 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
             intensity={controls.bloomIntensity}
           />
         )}
-
-        
 
         {/* {controls.enableSSAO && (
           <SSAO
@@ -269,7 +284,6 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
       <PerspectiveCamera
         makeDefault
         position={[0, 4, 2]} // 2ème coord = hauteur 3ème coord = recul
-        
         fov={controls.fov}
         near={0.001}
         far={100}
@@ -279,7 +293,6 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
         ref={cameraControlsRef}
         makeDefault
         mouseButtons={mouseButtonsConfig}
-        
         dollyToCursor={true}
         minDistance={0.2}
         maxDistance={6}
@@ -300,12 +313,13 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
       )}
 
       {/* Marqueurs de double-clic */}
-      {controls.showCameraTarget && clickMarkers.map((position, index) => (
-        <mesh key={index} position={position} castShadow receiveShadow>
-          <sphereGeometry args={[0.02, 16, 16]} />
-          <meshStandardMaterial color="blue" />
-        </mesh>
-      ))}
+      {controls.showCameraTarget &&
+        clickMarkers.map((position, index) => (
+          <mesh key={index} position={position} castShadow receiveShadow>
+            <sphereGeometry args={[0.02, 16, 16]} />
+            <meshStandardMaterial color="blue" />
+          </mesh>
+        ))}
 
       {/* {controls.showGrid && <gridHelper args={[10, 10]} />} */}
       {controls.showGrid && <Ground />}
@@ -333,8 +347,6 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
         />
       )}
 
-    
-
       <Sky
         distance={450000}
         sunPosition={sunPosition}
@@ -343,7 +355,6 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
         mieCoefficient={controls.mieCoefficient}
         mieDirectionalG={controls.mieDirectionalG}
       />
-
 
       {/* Mer */}
       {controls.water && (
@@ -364,8 +375,6 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
         onMeshDoubleClick={handleMeshDoubleClick}
         lightDirection={lightDirection}
       />
-
-      
     </>
   );
 }

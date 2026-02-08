@@ -1,12 +1,11 @@
-import { shaderMaterial } from '@react-three/drei';
-import { extend } from '@react-three/fiber';
-import * as THREE from 'three';
-
+import { shaderMaterial } from "@react-three/drei";
+import { extend } from "@react-three/fiber";
+import * as THREE from "three";
 
 const HauteMontagne = shaderMaterial(
   {
-    snowColor: new THREE.Color('#ffffff'),
-    rockColor: new THREE.Color('#404040'),
+    snowColor: new THREE.Color("#ffffff"),
+    rockColor: new THREE.Color("#404040"),
     slopeThreshold: 0.7,
     smoothness: 0.2,
     lightDirection: new THREE.Vector3(1, 1, 1).normalize(),
@@ -14,14 +13,14 @@ const HauteMontagne = shaderMaterial(
     directionalIntensity: 1.2,
     // Couleurs pour les pentes avalancheuses
     showAvalanchePentes: false,
-    avalanche0Color: new THREE.Color('#00FF00'), // 0-5° : vert fluo
-    avalanche1Color: new THREE.Color('#F1E70B'), // 30-35°
-    avalanche2Color: new THREE.Color('#F86F21'), // 35-40°
-    avalanche3Color: new THREE.Color('#E3035B'), // 40-45°
-    avalanche4Color: new THREE.Color('#CB87BA'), // 45-50°
-    avalanche5Color: new THREE.Color('#120688'), // 50-55° : bleu foncé
+    avalanche0Color: new THREE.Color("#00FF00"), // 0-5° : vert fluo
+    avalanche1Color: new THREE.Color("#F1E70B"), // 30-35°
+    avalanche2Color: new THREE.Color("#F86F21"), // 35-40°
+    avalanche3Color: new THREE.Color("#E3035B"), // 40-45°
+    avalanche4Color: new THREE.Color("#CB87BA"), // 45-50°
+    avalanche5Color: new THREE.Color("#120688"), // 50-55° : bleu foncé
     avalancheIntensity: 0.6,
-    fogColor: new THREE.Color('#cddeea'), //old : #c5c5c5
+    fogColor: new THREE.Color("#cddeea"), //old : #c5c5c5
     fogDensity: 0.04, //old : 0.2
     fogExponent: 6.5, //old : 1.0
   },
@@ -149,7 +148,7 @@ const HauteMontagne = shaderMaterial(
 
       gl_FragColor = vec4(finalColor, 1.0);
     }
-  `
+  `,
 );
 
 // Extension pour React Three Fiber

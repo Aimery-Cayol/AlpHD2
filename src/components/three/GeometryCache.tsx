@@ -33,7 +33,7 @@ class GeometryCache {
     let hash = 0;
     for (let i = 0; i < url.length; i++) {
       const char = url.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash; // Convertir en 32 bits
     }
     return `geometry_${Math.abs(hash).toString(36)}_${url.length}`;
@@ -44,7 +44,7 @@ class GeometryCache {
     let size = 0;
 
     // Taille des attributs de géométrie
-    Object.values(geometry.attributes).forEach(attribute => {
+    Object.values(geometry.attributes).forEach((attribute) => {
       size += attribute.array.byteLength;
     });
 
@@ -84,7 +84,8 @@ class GeometryCache {
     const size = this.calculateSize(geometry);
 
     // Vérifier si on dépasse la taille maximale
-    if (size > this.maxSize * 0.5) { // Si la géométrie est > 50% du cache max
+    if (size > this.maxSize * 0.5) {
+      // Si la géométrie est > 50% du cache max
       console.warn(`Géométrie trop volumineuse pour le cache: ${size} octets`);
       return;
     }
@@ -98,7 +99,7 @@ class GeometryCache {
     const entry: CacheEntry = {
       geometry: geometryClone,
       timestamp: Date.now(),
-      size
+      size,
     };
 
     this.cache.set(key, entry);
@@ -164,7 +165,7 @@ class GeometryCache {
       totalEntries: this.cache.size,
       totalSize,
       maxSize: this.maxSize,
-      hitRate
+      hitRate,
     };
   }
 
@@ -177,22 +178,22 @@ class GeometryCache {
 
   // Obtenir la liste des URLs en cache (pour debug)
   getCachedUrls(): string[] {
-    return Array.from(this.cache.keys()).map(key =>
-      key.replace('geometry_', '')
+    return Array.from(this.cache.keys()).map((key) =>
+      key.replace("geometry_", ""),
     );
   }
 
   // Fonction de débogage pour inspecter le cache
   debugCache(): void {
-    console.log('=== DEBUG CACHE ===');
+    console.log("=== DEBUG CACHE ===");
     console.log(`Total entries: ${this.cache.size}`);
     console.log(`Total size: ${this.getTotalSize()} bytes`);
-    console.log('Cached URLs:');
+    console.log("Cached URLs:");
     this.cache.forEach((entry, key) => {
-      const url = key.replace('geometry_', '');
+      const url = key.replace("geometry_", "");
       console.log(`  ${key}: ${url} (${entry.size} bytes)`);
     });
-    console.log('==================');
+    console.log("==================");
   }
 }
 

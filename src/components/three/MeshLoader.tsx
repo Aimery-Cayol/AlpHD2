@@ -31,7 +31,8 @@ export default function MeshLoader({
   const [geometry, setGeometry] = useState<BufferGeometry | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [cacheStatus, setCacheStatus] = useState < "loading" | "cache" | "network" | "local"
+  const [cacheStatus, setCacheStatus] = useState<
+    "loading" | "cache" | "network" | "local"
   >("loading");
   const meshRef = useRef<Mesh>(null);
   const controls = useSceneControls();
@@ -40,7 +41,7 @@ export default function MeshLoader({
   const materials = useMemo(() => {
     return {
       normal: new THREE.MeshNormalMaterial({ side: THREE.DoubleSide }),
-      standard: new THREE.MeshStandardMaterial({ 
+      standard: new THREE.MeshStandardMaterial({
         side: THREE.DoubleSide,
         color: controls.meshColor,
         roughness: controls.roughness,
@@ -90,19 +91,19 @@ export default function MeshLoader({
       mat.uniforms.slopeThreshold.value = Math.cos(slopeRadians);
       mat.uniforms.smoothness.value = controls.smoothness;
       mat.uniforms.lightDirection.value.copy(
-        lightDirection || new THREE.Vector3(1, 1, 1).normalize()
+        lightDirection || new THREE.Vector3(1, 1, 1).normalize(),
       );
       mat.uniforms.ambientIntensity.value = controls.ambientIntensity;
       mat.uniforms.directionalIntensity.value = controls.directionalIntensity;
       // Paramètre d'activation des pentes avalancheuses
       mat.uniforms.showAvalanchePentes.value = controls.showAvalanchePentes;
       // Couleurs pour les pentes avalancheuses
-      mat.uniforms.avalanche0Color.value.set('#00FF00'); // 0-5° : vert fluo
-      mat.uniforms.avalanche1Color.value.set('#F1E70B'); // 30-35°
-      mat.uniforms.avalanche2Color.value.set('#F86F21'); // 35-40°
-      mat.uniforms.avalanche3Color.value.set('#E3035B'); // 40-45°
-      mat.uniforms.avalanche4Color.value.set('#CB87BA'); // 45-50°
-      mat.uniforms.avalanche5Color.value.set('#120688'); // 50-55° : bleu foncé
+      mat.uniforms.avalanche0Color.value.set("#00FF00"); // 0-5° : vert fluo
+      mat.uniforms.avalanche1Color.value.set("#F1E70B"); // 30-35°
+      mat.uniforms.avalanche2Color.value.set("#F86F21"); // 35-40°
+      mat.uniforms.avalanche3Color.value.set("#E3035B"); // 40-45°
+      mat.uniforms.avalanche4Color.value.set("#CB87BA"); // 45-50°
+      mat.uniforms.avalanche5Color.value.set("#120688"); // 50-55° : bleu foncé
       mat.uniforms.avalancheIntensity.value = 0.6;
       mat.uniforms.fogColor.value.set(controls.fogColor);
       mat.uniforms.fogDensity.value = controls.fogDensity;
@@ -120,7 +121,7 @@ export default function MeshLoader({
       mat.uniforms.slopeThreshold.value = Math.cos(slopeRadians);
       mat.uniforms.smoothness.value = controls.smoothnessBM;
       mat.uniforms.lightDirection.value.copy(
-        lightDirection || new THREE.Vector3(1, 1, 1).normalize()
+        lightDirection || new THREE.Vector3(1, 1, 1).normalize(),
       );
       mat.uniforms.ambientIntensity.value = controls.ambientIntensity;
       mat.uniforms.directionalIntensity.value = controls.directionalIntensity;
@@ -155,13 +156,13 @@ export default function MeshLoader({
   useEffect(() => {
     return () => {
       // Dispose de TOUS les matériaux
-      Object.values(materials).forEach(mat => mat.dispose());
-      
+      Object.values(materials).forEach((mat) => mat.dispose());
+
       // Ne dispose la géométrie QUE si elle n'est pas en cache
       if (meshRef.current?.geometry && !geometryCache.has(url)) {
         meshRef.current.geometry.dispose();
       }
-      
+
       // Nettoyer les URLs blob locales
       if (url && isLocalUrl(url)) {
         revokeBlobUrl(url);
@@ -209,7 +210,7 @@ export default function MeshLoader({
         const cachedGeometry = geometryCache.get(url);
 
         if (cachedGeometry) {
-          if (process.env.NODE_ENV === 'development') {
+          if (process.env.NODE_ENV === "development") {
             console.log("✅ Géométrie depuis cache:", url);
           }
           setCacheStatus("cache");
@@ -232,7 +233,7 @@ export default function MeshLoader({
           const supportsWasm =
             typeof WebAssembly === "object" && WebAssembly.validate;
           const decoderType = supportsWasm ? "wasm" : "js";
-          loader.setDecoderPath('/draco/');
+          loader.setDecoderPath("/draco/");
           loader.setDecoderConfig({ type: decoderType });
         } else {
           loader = new PLYLoader();
@@ -246,40 +247,49 @@ export default function MeshLoader({
             if (cancelled) return; // ✅ Éviter les updates après unmount
 
             // 🎯 OPTIMISATION 7: Calculs asynchrones découplés
-            await new Promise(resolve => setTimeout(resolve, 0));
+            await new Promise((resolve) => setTimeout(resolve, 0));
             if (cancelled) return;
-            
+
             geometry.computeVertexNormals();
-            
-            await new Promise(resolve => setTimeout(resolve, 0));
+
+            await new Promise((resolve) => setTimeout(resolve, 0));
             if (cancelled) return;
-            
+
             geometry.computeBoundingBox();
 
-            await new Promise(resolve => setTimeout(resolve, 0));
+            await new Promise((resolve) => setTimeout(resolve, 0));
             if (cancelled) return;
-            
+
             const perfInfo = GeometryInspector.getPerformanceInfo(geometry);
-            const meshName = url.split('/').pop() || 'mesh';
-            
+            const meshName = url.split("/").pop() || "mesh";
+
             console.log(`📊 Mesh chargé: ${meshName}`);
             console.log(`  └─ Vertices: ${perfInfo.vertices.toLocaleString()}`);
             if (perfInfo.indexed) {
               console.log(`  └─ Indices: ${perfInfo.indices.toLocaleString()}`);
             }
-            console.log(`  └─ Triangles: ${Math.floor(perfInfo.triangles).toLocaleString()}`);
-            console.log(`  └─ Mémoire: ${(perfInfo.memoryUsage / (1024 * 1024)).toFixed(2)} MB`);
-            console.log(`  └─ Type: ${perfInfo.indexed ? 'Indexé' : 'Non-indexé'}`);
-            
+            console.log(
+              `  └─ Triangles: ${Math.floor(perfInfo.triangles).toLocaleString()}`,
+            );
+            console.log(
+              `  └─ Mémoire: ${(perfInfo.memoryUsage / (1024 * 1024)).toFixed(2)} MB`,
+            );
+            console.log(
+              `  └─ Type: ${perfInfo.indexed ? "Indexé" : "Non-indexé"}`,
+            );
+
             if (cancelled) return;
-            
+
             geometryCache.set(url, geometry);
             setGeometry(geometry);
             setLoading(false);
           },
           (progress) => {
-            if (process.env.NODE_ENV === 'development') {
-              console.log("Chargement:", (progress.loaded / progress.total) * 100 + "%");
+            if (process.env.NODE_ENV === "development") {
+              console.log(
+                "Chargement:",
+                (progress.loaded / progress.total) * 100 + "%",
+              );
             }
           },
           (error) => {
@@ -287,7 +297,7 @@ export default function MeshLoader({
             console.error(`Erreur chargement ${format?.toUpperCase()}:`, error);
             setError(`Erreur chargement ${format?.toUpperCase()}`);
             setLoading(false);
-          }
+          },
         );
       } catch (err) {
         if (cancelled) return;
@@ -323,7 +333,7 @@ export default function MeshLoader({
             box={
               new THREE.Box3(
                 new THREE.Vector3(-0.5, -0.5, -0.5),
-                new THREE.Vector3(0.5, 0.5, 0.5)
+                new THREE.Vector3(0.5, 0.5, 0.5),
               )
             }
             color={loadingColor}
@@ -345,7 +355,7 @@ export default function MeshLoader({
             box={
               new THREE.Box3(
                 new THREE.Vector3(-0.5, -0.5, -0.5),
-                new THREE.Vector3(0.5, 0.5, 0.5)
+                new THREE.Vector3(0.5, 0.5, 0.5),
               )
             }
             color="#ff0000"

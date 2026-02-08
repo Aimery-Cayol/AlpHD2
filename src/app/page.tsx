@@ -17,14 +17,14 @@ const ThreeScene = dynamic(() => import("@/components/three/ThreeScene"));
 
 interface Model {
   name: string;
-  url?: string;          // Pour les meshes sans LoD
-  urlHigh?: string;      // Pour les meshes avec LoD (niveau 11)
-  urlLow?: string;       // Pour les meshes avec LoD (niveau 09)
-  urlUltraLow?: string;  // Pour les meshes avec LoD (niveau 01)
+  url?: string; // Pour les meshes sans LoD
+  urlHigh?: string; // Pour les meshes avec LoD (niveau 11)
+  urlLow?: string; // Pour les meshes avec LoD (niveau 09)
+  urlUltraLow?: string; // Pour les meshes avec LoD (niveau 01)
   format?: "ply" | "drc";
   coordinates?: { x: number; y: number };
-  fileSize?: number;     // Taille du fichier en octets
-  lodEnabled?: boolean;  // Flag pour activer le LoD
+  fileSize?: number; // Taille du fichier en octets
+  lodEnabled?: boolean; // Flag pour activer le LoD
 }
 
 // Fonction utilitaire pour encoder en base64 (compatible Node.js et navigateur)
@@ -65,33 +65,36 @@ function HomePageContent() {
 
   // Fonction pour regrouper les meshes par coordonnées pour créer des modèles LoD
   const groupMeshesByCoordinates = (modelsList: Model[]): Model[] => {
-    const grouped = new Map<string, { high?: Model, low?: Model, ultraLow?: Model }>();
+    const grouped = new Map<
+      string,
+      { high?: Model; low?: Model; ultraLow?: Model }
+    >();
     const standalone: Model[] = [];
-    
-    modelsList.forEach(model => {
+
+    modelsList.forEach((model) => {
       const modelUrl = getModelUrl(model);
       // Extraire les coordonnées et le niveau depuis le nom du fichier
       const match = modelUrl.match(/(\d{4}_\d{4})_(\d{2})\.drc$/);
-      
+
       if (!match) {
         // Si le format ne correspond pas, c'est un modèle standalone
         standalone.push(model);
         return;
       }
-      
+
       const [, coords, level] = match;
       const key = coords;
-      
+
       if (!grouped.has(key)) {
         grouped.set(key, {});
       }
-      
+
       const entry = grouped.get(key)!;
-      if (level === '11') entry.high = model;
-      if (level === '09') entry.low = model;
-      if (level === '01') entry.ultraLow = model;
+      if (level === "11") entry.high = model;
+      if (level === "09") entry.low = model;
+      if (level === "01") entry.ultraLow = model;
     });
-    
+
     // Créer les modèles LoD ou standalone
     const lodModels: Model[] = [];
     grouped.forEach(({ high, low, ultraLow }, coords) => {
@@ -102,10 +105,13 @@ function HomePageContent() {
           urlHigh: high.url || "",
           urlLow: low.url || "",
           urlUltraLow: ultraLow?.url,
-          format: 'drc',
+          format: "drc",
           coordinates: high.coordinates,
           lodEnabled: true,
-          fileSize: (high.fileSize || 0) + (low.fileSize || 0) + (ultraLow?.fileSize || 0),
+          fileSize:
+            (high.fileSize || 0) +
+            (low.fileSize || 0) +
+            (ultraLow?.fileSize || 0),
         });
       } else if (high) {
         // Haute résolution seule
@@ -118,7 +124,7 @@ function HomePageContent() {
         //lodModels.push(ultraLow); // On peut choisir de ne pas afficher les ultra basse résolutions seules
       }
     });
-    
+
     return [...lodModels, ...standalone];
   };
 
@@ -357,93 +363,98 @@ function HomePageContent() {
                   {allModels.map((model) => {
                     const modelUrl = getModelUrl(model);
                     return (
-                    <label
-                      key={modelUrl}
-                      className="flex items-center space-x-2 p-2 rounded hover:bg-gray-50 transition-colors"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={selectedModels.includes(modelUrl)}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setSelectedModels((prev) => [...prev, modelUrl]);
-                          } else {
-                            setSelectedModels((prev) =>
-                              prev.filter((url) => url !== modelUrl),
-                            );
-                          }
-                        }}
-                        className="w-4 h-4 sm:w-5 sm:h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                      />
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between">
-                          <div className="font-medium text-sm truncate">
-                            {model.name}
-                            {model.lodEnabled && (
-                              <span className="ml-2 text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
-                                LoD
-                              </span>
-                            )}
-                            {localFiles.find((lf) => getModelUrl(lf) === modelUrl) && (
-                              <span className="ml-2 text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded">
-                                Local
-                              </span>
-                            )}
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <span
-                              className={`text-xs px-2 py-1 rounded ${
-                                model.format === "drc"
-                                  ? "bg-green-100 text-green-800"
-                                  : "bg-blue-100 text-blue-800"
-                              }`}
-                            >
-                              {model.format?.toUpperCase()}
-                            </span>
-                            {localFiles.find((lf) => getModelUrl(lf) === modelUrl) && (
-                              <button
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  removeLocalFile(modelUrl);
-                                }}
-                                className="text-red-500 hover:text-red-700 p-1"
-                                title="Supprimer le fichier local"
+                      <label
+                        key={modelUrl}
+                        className="flex items-center space-x-2 p-2 rounded hover:bg-gray-50 transition-colors"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selectedModels.includes(modelUrl)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSelectedModels((prev) => [...prev, modelUrl]);
+                            } else {
+                              setSelectedModels((prev) =>
+                                prev.filter((url) => url !== modelUrl),
+                              );
+                            }
+                          }}
+                          className="w-4 h-4 sm:w-5 sm:h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between">
+                            <div className="font-medium text-sm truncate">
+                              {model.name}
+                              {model.lodEnabled && (
+                                <span className="ml-2 text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                                  LoD
+                                </span>
+                              )}
+                              {localFiles.find(
+                                (lf) => getModelUrl(lf) === modelUrl,
+                              ) && (
+                                <span className="ml-2 text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded">
+                                  Local
+                                </span>
+                              )}
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <span
+                                className={`text-xs px-2 py-1 rounded ${
+                                  model.format === "drc"
+                                    ? "bg-green-100 text-green-800"
+                                    : "bg-blue-100 text-blue-800"
+                                }`}
                               >
-                                <svg
-                                  className="w-4 h-4"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
+                                {model.format?.toUpperCase()}
+                              </span>
+                              {localFiles.find(
+                                (lf) => getModelUrl(lf) === modelUrl,
+                              ) && (
+                                <button
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    removeLocalFile(modelUrl);
+                                  }}
+                                  className="text-red-500 hover:text-red-700 p-1"
+                                  title="Supprimer le fichier local"
                                 >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                  />
-                                </svg>
-                              </button>
+                                  <svg
+                                    className="w-4 h-4"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                    />
+                                  </svg>
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                          <div className="flex justify-between items-center">
+                            {model.coordinates && (
+                              <div className="text-xs text-gray-500 truncate">
+                                ({model.coordinates.x}, {model.coordinates.y})
+                              </div>
+                            )}
+                            {model.fileSize && (
+                              <div className="text-xs text-gray-600 font-mono">
+                                {model.fileSize > 1024 * 1024
+                                  ? `${Math.round(model.fileSize / (1024 * 1024))}MB`
+                                  : `${Math.round(model.fileSize / 1024)}KB`}
+                              </div>
                             )}
                           </div>
                         </div>
-                        <div className="flex justify-between items-center">
-                          {model.coordinates && (
-                            <div className="text-xs text-gray-500 truncate">
-                              ({model.coordinates.x}, {model.coordinates.y})
-                            </div>
-                          )}
-                          {model.fileSize && (
-                            <div className="text-xs text-gray-600 font-mono">
-                              {model.fileSize > 1024 * 1024
-                                ? `${Math.round(model.fileSize / (1024 * 1024))}MB`
-                                : `${Math.round(model.fileSize / 1024)}KB`}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </label>
-                  )})}
+                      </label>
+                    );
+                  })}
                 </div>
               </div>
             </div>

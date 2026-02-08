@@ -1,18 +1,17 @@
-import { shaderMaterial } from '@react-three/drei';
-import { extend } from '@react-three/fiber';
-import * as THREE from 'three';
-
+import { shaderMaterial } from "@react-three/drei";
+import { extend } from "@react-three/fiber";
+import * as THREE from "three";
 
 const BasseMontagne = shaderMaterial(
   {
-    snowColor: new THREE.Color('#bfcfa3'),
-    rockColor: new THREE.Color('#f3efdc'),
+    snowColor: new THREE.Color("#bfcfa3"),
+    rockColor: new THREE.Color("#f3efdc"),
     slopeThreshold: 0.7,
     smoothness: 0.2,
     lightDirection: new THREE.Vector3(1, 1, 1).normalize(),
     ambientIntensity: 0.3,
     directionalIntensity: 1.2,
-    fogColor: new THREE.Color('#c5c5c5'),
+    fogColor: new THREE.Color("#c5c5c5"),
     fogDensity: 0.2,
     fogExponent: 1.0,
   },
@@ -76,7 +75,7 @@ const BasseMontagne = shaderMaterial(
 
       gl_FragColor = vec4(finalColor, 1.0);
     }
-  `
+  `,
 );
 
 // Extension pour React Three Fiber
