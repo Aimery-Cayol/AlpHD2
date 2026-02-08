@@ -16,31 +16,37 @@ import BasseMontagne from "./BasseMontagneShader";
 import { MeshPhysicalMaterial } from "three";
 
 interface MeshLoaderWithLODProps {
-  urlHigh: string;  // mesh niveau 11 (haute résolution)
-  urlLow: string;   // mesh niveau 09 (basse résolution)
+  urlHigh: string;       // mesh niveau 11 (haute résolution)
+  urlLow: string;        // mesh niveau 09 (basse résolution)
+  urlUltraLow?: string;  // mesh niveau 01 (ultra basse résolution) - optionnel
   format?: "drc";
   onDoubleClick?: (event: any) => void;
   lightDirection?: THREE.Vector3;
-  distances?: [number, number]; // [distance haute, distance basse]
+  distances?: [number, number, number?]; // [distance haute, distance basse, distance ultra basse?]
 }
 
 export default function MeshLoaderWithLOD({
   urlHigh,
   urlLow,
+  urlUltraLow,
   format = "drc",
   onDoubleClick,
   lightDirection,
-  distances = [2, 5], // Distances par défaut
+  distances = [0, 2, 5], // Distances par défaut : [haute, basse, ultra basse]
 }: MeshLoaderWithLODProps) {
   const [geometryHigh, setGeometryHigh] = useState<BufferGeometry | null>(null);
   const [geometryLow, setGeometryLow] = useState<BufferGeometry | null>(null);
+  const [geometryUltraLow, setGeometryUltraLow] = useState<BufferGeometry | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loadingHigh, setLoadingHigh] = useState(true);
   const [loadingLow, setLoadingLow] = useState(true);
+  const [loadingUltraLow, setLoadingUltraLow] = useState(!!urlUltraLow);
   const [cacheStatusHigh, setCacheStatusHigh] = useState<"loading" | "cache" | "network" | "local">("loading");
   const [cacheStatusLow, setCacheStatusLow] = useState<"loading" | "cache" | "network" | "local">("loading");
+  const [cacheStatusUltraLow, setCacheStatusUltraLow] = useState<"loading" | "cache" | "network" | "local">("loading");
   const meshRefHigh = useRef<Mesh>(null);
   const meshRefLow = useRef<Mesh>(null);
+  const meshRefUltraLow = useRef<Mesh>(null);
   const controls = useSceneControls();
 
   // 🎯 Créer TOUS les matériaux une seule fois et les partager entre les niveaux LoD
@@ -161,12 +167,18 @@ export default function MeshLoaderWithLOD({
       if (meshRefLow.current?.geometry && !geometryCache.has(urlLow)) {
         meshRefLow.current.geometry.dispose();
       }
+      if (meshRefUltraLow.current?.geometry && urlUltraLow && !geometryCache.has(urlUltraLow)) {
+        meshRefUltraLow.current.geometry.dispose();
+      }
       
       if (urlHigh && isLocalUrl(urlHigh)) {
         revokeBlobUrl(urlHigh);
       }
       if (urlLow && isLocalUrl(urlLow)) {
         revokeBlobUrl(urlLow);
+      }
+      if (urlUltraLow && isLocalUrl(urlUltraLow)) {
+        revokeBlobUrl(urlUltraLow);
       }
     };
   }, [materials, urlHigh, urlLow]);
@@ -279,19 +291,27 @@ export default function MeshLoaderWithLOD({
     }
   };
 
-  // Charger les deux géométries en parallèle
+  // Charger les géométries en parallèle (2 ou 3 selon si urlUltraLow existe)
   useEffect(() => {
     if (!urlHigh || !urlLow) return;
 
     let cancelled = false;
 
-    const loadBothGeometries = async () => {
+    const loadAllGeometries = async () => {
       try {
-        // Charger les deux meshes en parallèle pour optimiser le temps de chargement
-        await Promise.all([
+        const loadPromises = [
           loadGeometry(urlHigh, setGeometryHigh, setLoadingHigh, setCacheStatusHigh, "HAUTE RÉSOLUTION (11)"),
           loadGeometry(urlLow, setGeometryLow, setLoadingLow, setCacheStatusLow, "BASSE RÉSOLUTION (09)"),
-        ]);
+        ];
+        
+        // Ajouter le niveau ultra low si présent
+        if (urlUltraLow) {
+          loadPromises.push(
+            loadGeometry(urlUltraLow, setGeometryUltraLow, setLoadingUltraLow, setCacheStatusUltraLow, "ULTRA BASSE RÉSOLUTION (01)")
+          );
+        }
+        
+        await Promise.all(loadPromises);
       } catch (err) {
         if (!cancelled) {
           console.error("Erreur lors du chargement parallèle:", err);
@@ -299,15 +319,15 @@ export default function MeshLoaderWithLOD({
       }
     };
 
-    loadBothGeometries();
+    loadAllGeometries();
 
     return () => {
       cancelled = true;
     };
-  }, [urlHigh, urlLow]);
+  }, [urlHigh, urlLow, urlUltraLow]);
 
   // Affichage pendant le chargement
-  const loading = loadingHigh || loadingLow;
+  const loading = loadingHigh || loadingLow || (urlUltraLow ? loadingUltraLow : false);
   
   if (loading) {
     const loadingColor = 
@@ -338,7 +358,7 @@ export default function MeshLoaderWithLOD({
     );
   }
 
-  if (error || !geometryHigh || !geometryLow) {
+  if (error || !geometryHigh || !geometryLow || (urlUltraLow && !geometryUltraLow)) {
     return (
       <group>
         <mesh>
@@ -361,46 +381,84 @@ export default function MeshLoaderWithLOD({
   }
 
   // Utiliser le composant Detailed pour le LoD automatique
+  // Key basée sur les distances pour forcer le remontage quand elles changent
+  const lodKey = `lod-${distances[0]}-${distances[1]}-${distances[2] || 'none'}`;
+  
   return (
     <group>
-      <Detailed distances={[distances[0], distances[1]]}>
-        {/* Niveau HAUTE RÉSOLUTION (11) - 0 à distances[0] mètres */}
-        <mesh
-          ref={meshRefHigh}
-          geometry={geometryHigh}
-          material={activeMaterial}
-          castShadow
-          receiveShadow
-          userData={{ url: urlHigh, lodLevel: 11 }}
-        />
+      {urlUltraLow && geometryUltraLow ? (
+        // Mode 3 niveaux de LoD
+        <Detailed key={lodKey} distances={[distances[0], distances[1], distances[2] || 10]}>
+          {/* Niveau HAUTE RÉSOLUTION (11) - 0 à distances[0] mètres */}
+          <mesh
+            ref={meshRefHigh}
+            geometry={geometryHigh}
+            material={activeMaterial}
+            castShadow
+            receiveShadow
+            userData={{ url: urlHigh, lodLevel: 11 }}
+          />
 
-        {/* Niveau BASSE RÉSOLUTION (09) - distances[0] à distances[1] mètres */}
-        <mesh
-          ref={meshRefLow}
-          geometry={geometryLow}
-          material={activeMaterial}
-          castShadow
-          receiveShadow
-          userData={{ url: urlLow, lodLevel: 9 }}
-        />
+          {/* Niveau BASSE RÉSOLUTION (09) - distances[0] à distances[1] mètres */}
+          <mesh
+            ref={meshRefLow}
+            geometry={geometryLow}
+            material={activeMaterial}
+            castShadow
+            receiveShadow
+            userData={{ url: urlLow, lodLevel: 9 }}
+          />
 
-        {/* Au-delà de distances[1] mètres : mesh invisible (culled) */}
-        <mesh visible={false} />
-      </Detailed>
+          {/* Niveau ULTRA BASSE RÉSOLUTION (01) - distances[1] à distances[2] mètres */}
+          <mesh
+            ref={meshRefUltraLow}
+            geometry={geometryUltraLow}
+            material={activeMaterial}
+            castShadow
+            receiveShadow
+            userData={{ url: urlUltraLow, lodLevel: 1 }}
+          />
 
-      {/* Mesh simplifié (bounding box invisible) pour le raycast - optimisé pour HD */}
-      {geometryHigh.boundingBox && onDoubleClick && (
-        <mesh
-          onDoubleClick={onDoubleClick}
-          visible={false}
-          position={boundingCenter}
-        >
-          <boxGeometry args={boundingSize as [number, number, number]} />
-          <meshBasicMaterial transparent opacity={0} />
-        </mesh>
+        </Detailed>
+      ) : (
+        // Mode 2 niveaux de LoD
+        <Detailed key={lodKey} distances={[distances[0], distances[1]]}>
+          {/* Niveau HAUTE RÉSOLUTION (11) - 0 à distances[0] mètres */}
+          <mesh
+            ref={meshRefHigh}
+            geometry={geometryHigh}
+            material={activeMaterial}
+            castShadow
+            receiveShadow
+            userData={{ url: urlHigh, lodLevel: 11 }}
+          />
+
+          {/* Niveau BASSE RÉSOLUTION (09) - distances[0] à distances[1] mètres */}
+          <mesh
+            ref={meshRefLow}
+            geometry={geometryLow}
+            material={activeMaterial}
+            castShadow
+            receiveShadow
+            userData={{ url: urlLow, lodLevel: 9 }}
+          />
+
+        </Detailed>
       )}
 
-      {/* Bounding box - affiche toujours celle de la haute résolution */}
+      {/* Mesh ULTRALOW invisible pour le raycast pour double clic préics sur relief */}
+      {geometryHigh.boundingBox && onDoubleClick && geometryUltraLow &&(
+        <mesh
+            onDoubleClick={onDoubleClick}
+            ref={meshRefUltraLow}
+            geometry={geometryUltraLow}
+            visible={false}
+            userData={{ url: urlUltraLow, lodLevel: 1 }}
+          />
+      )
+      }
+
+      {/* Bounding box pour débug - affiche toujours celle de la haute résolution */}
       {controls.showBoundingBoxes && geometryHigh.boundingBox && (
         <BoundingBoxHelper
           box={geometryHigh.boundingBox}

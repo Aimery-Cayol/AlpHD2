@@ -38,13 +38,14 @@ import JEasingsComponent from "./JEasings";
 
 interface Model {
   name: string;
-  url?: string;          // Pour les meshes sans LoD
-  urlHigh?: string;      // Pour les meshes avec LoD (niveau 11)
-  urlLow?: string;       // Pour les meshes avec LoD (niveau 09)
+  url?: string; // Pour les meshes sans LoD
+  urlHigh?: string; // Pour les meshes avec LoD (niveau 11)
+  urlLow?: string; // Pour les meshes avec LoD (niveau 09)
+  urlUltraLow?: string; // Pour les meshes avec LoD (niveau 01)
   format?: "ply" | "drc";
   coordinates?: { x: number; y: number };
   filesize?: number;
-  lodEnabled?: boolean;  // Flag pour activer le LoD
+  lodEnabled?: boolean; // Flag pour activer le LoD
 }
 
 interface ThreeSceneProps {

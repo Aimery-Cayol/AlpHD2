@@ -20,6 +20,7 @@ interface Model {
   url?: string;          // Pour les meshes sans LoD
   urlHigh?: string;      // Pour les meshes avec LoD (niveau 11)
   urlLow?: string;       // Pour les meshes avec LoD (niveau 09)
+  urlUltraLow?: string;  // Pour les meshes avec LoD (niveau 01)
   format?: "ply" | "drc";
   coordinates?: { x: number; y: number };
   fileSize?: number;     // Taille du fichier en octets
@@ -64,7 +65,7 @@ function HomePageContent() {
 
   // Fonction pour regrouper les meshes par coordonnées pour créer des modèles LoD
   const groupMeshesByCoordinates = (modelsList: Model[]): Model[] => {
-    const grouped = new Map<string, { high?: Model, low?: Model }>();
+    const grouped = new Map<string, { high?: Model, low?: Model, ultraLow?: Model }>();
     const standalone: Model[] = [];
     
     modelsList.forEach(model => {
@@ -88,21 +89,23 @@ function HomePageContent() {
       const entry = grouped.get(key)!;
       if (level === '11') entry.high = model;
       if (level === '09') entry.low = model;
+      if (level === '01') entry.ultraLow = model;
     });
     
     // Créer les modèles LoD ou standalone
     const lodModels: Model[] = [];
-    grouped.forEach(({ high, low }, coords) => {
+    grouped.forEach(({ high, low, ultraLow }, coords) => {
       if (high && low) {
-        // Créer un modèle LoD avec les deux niveaux
+        // Créer un modèle LoD avec 2 ou 3 niveaux
         lodModels.push({
           name: coords,
           urlHigh: high.url || "",
           urlLow: low.url || "",
+          urlUltraLow: ultraLow?.url,
           format: 'drc',
           coordinates: high.coordinates,
           lodEnabled: true,
-          fileSize: (high.fileSize || 0) + (low.fileSize || 0),
+          fileSize: (high.fileSize || 0) + (low.fileSize || 0) + (ultraLow?.fileSize || 0),
         });
       } else if (high) {
         // Haute résolution seule
@@ -110,6 +113,9 @@ function HomePageContent() {
       } else if (low) {
         // Basse résolution seule
         lodModels.push(low);
+      } else if (ultraLow) {
+        // Ultra basse résolution seule
+        //lodModels.push(ultraLow); // On peut choisir de ne pas afficher les ultra basse résolutions seules
       }
     });
     

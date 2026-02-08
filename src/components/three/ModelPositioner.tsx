@@ -12,6 +12,7 @@ interface Model {
   url?: string;          // Pour les meshes sans LoD
   urlHigh?: string;      // Pour les meshes avec LoD (niveau 11)
   urlLow?: string;       // Pour les meshes avec LoD (niveau 09)
+  urlUltraLow?: string;  // Pour les meshes avec LoD (niveau 01)
   format?: "ply" | "drc";
   coordinates?: { x: number; y: number };
   lodEnabled?: boolean;  // Flag pour activer le LoD
@@ -62,6 +63,7 @@ export default function ModelPositioner({
             <MeshLoaderWithLOD
               urlHigh={model.urlHigh}
               urlLow={model.urlLow}
+              urlUltraLow={model.urlUltraLow}
               format="drc"
               onDoubleClick={onMeshDoubleClick}
               lightDirection={lightDirection}
