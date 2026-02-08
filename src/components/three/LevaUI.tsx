@@ -387,7 +387,7 @@ export default function MyLevaUI({
           titleBar={{
             // Configure title bar options
             title: "Paramètres", // Custom title
-            drag: false, // Enable dragging
+            drag: true, // Enable dragging
             filter: false, // Enable filter/search
             position: { x: 0, y: 0 }, // Initial position (when drag is enabled)
             onDrag: (position) => {}, // Callback when dragged

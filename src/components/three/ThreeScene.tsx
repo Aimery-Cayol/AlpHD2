@@ -33,14 +33,10 @@ import {
 } from "@react-three/postprocessing";
 import { BlendFunction } from "postprocessing";
 import ModelPositioner from "./ModelPositioner";
-import SceneUI from "./SceneUI";
 import MyLevaUI, { useSceneControls } from "./LevaUI";
 import { FaExpand, FaCompress, FaMountain } from "react-icons/fa";
 import { TbMountain } from "react-icons/tb";
 import CameraTargetDebug from "./CameraTargetDebug";
-
-import JEASINGS from "jeasings";
-import JEasingsComponent from "./JEasings";
 
 interface Model {
   name: string;
@@ -59,37 +55,31 @@ interface ThreeSceneProps {
   selectedModels: string[];
 }
 
-function JEasings() {
-  useFrame(() => {
-    JEASINGS.update();
-  });
-}
-
-// Composant de fallback pour les appareils sans WebGL
-function WebGLFallback() {
-  return (
-    <div className="flex items-center justify-center h-full bg-gray-100 rounded-lg">
-      <div className="text-center p-8">
-        <div className="text-6xl mb-4">🚫</div>
-        <h3 className="text-xl font-semibold text-gray-800 mb-2">
-          WebGL non supporté
-        </h3>
-        <p className="text-gray-600 mb-4">
-          Votre navigateur ou appareil ne supporte pas WebGL, nécessaire pour
-          afficher les visualisations 3D.
-        </p>
-        <div className="text-sm text-gray-500">
-          <p>Essayez de :</p>
-          <ul className="list-disc list-inside mt-2 text-left">
-            <li>Mettre à jour votre navigateur</li>
-            <li>Activer l'accélération matérielle dans les paramètres</li>
-            <li>Utiliser un appareil plus récent</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  );
-}
+// // Composant de fallback pour les appareils sans WebGL
+// function WebGLFallback() {
+//   return (
+//     <div className="flex items-center justify-center h-full bg-gray-100 rounded-lg">
+//       <div className="text-center p-8">
+//         <div className="text-6xl mb-4">🚫</div>
+//         <h3 className="text-xl font-semibold text-gray-800 mb-2">
+//           WebGL non supporté
+//         </h3>
+//         <p className="text-gray-600 mb-4">
+//           Votre navigateur ou appareil ne supporte pas WebGL, nécessaire pour
+//           afficher les visualisations 3D.
+//         </p>
+//         <div className="text-sm text-gray-500">
+//           <p>Essayez de :</p>
+//           <ul className="list-disc list-inside mt-2 text-left">
+//             <li>Mettre à jour votre navigateur</li>
+//             <li>Activer l'accélération matérielle dans les paramètres</li>
+//             <li>Utiliser un appareil plus récent</li>
+//           </ul>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
 
 // Composant interne qui utilise les contrôles de scène
 function SceneContent({ models, selectedModels }: ThreeSceneProps) {
@@ -223,13 +213,10 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
 
   return (
     <>
-      <JEasingsComponent />
       <EffectComposer
         enabled={controls.enablePostProcess}
         enableNormalPass={true}
       >
-        {/* <SMAA /> */}
-
         {controls.enableVignette && (
           <Vignette
             offset={0.3} // vignette offset
@@ -265,20 +252,6 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
             intensity={controls.bloomIntensity}
           />
         )}
-
-        {/* {controls.enableSSAO && (
-          <SSAO
-            samples={30} // amount of samples per pixel (shouldn't be a multiple of the ring count)
-            rings={4} // amount of rings in the occlusion sampling pattern
-            distanceThreshold={10.0} // global distance threshold at which the occlusion effect starts to fade out. min: 0, max: 1
-            distanceFalloff={0.0} // distance falloff. min: 0, max: 1
-            rangeThreshold={0.05} // local occlusion range threshold at which the occlusion starts to fade out. min: 0, max: 1
-            rangeFalloff={0.1} // occlusion range falloff. min: 0, max: 1
-            luminanceInfluence={0.9} // how much the luminance of the scene influences the ambient occlusion
-            radius={10} // occlusion sampling radius
-            bias={0.5} // occlusion bias
-          />
-        )} */}
       </EffectComposer>
 
       <PerspectiveCamera
@@ -301,7 +274,6 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
         truckSpeed={0.8}
         azimuthRotateSpeed={0.5}
         polarRotateSpeed={0.5}
-        // autoRotate={controls.autoRotate}
         // dampingFactor={0.53}
 
         draggingSmoothTime={0.4}
@@ -383,7 +355,6 @@ export default function ThreeScene({
   models,
   selectedModels,
 }: ThreeSceneProps) {
-  const [webglSupported, setWebglSupported] = useState<boolean | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showAvalanchePentes, setShowAvalanchePentes] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -415,49 +386,12 @@ export default function ThreeScene({
     };
   }, []);
 
-  useEffect(() => {
-    // Détecter le support WebGL
-    const detectWebGL = () => {
-      try {
-        const canvas = document.createElement("canvas");
-        const gl =
-          canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
-        setWebglSupported(!!gl);
-      } catch (error) {
-        console.warn("Erreur lors de la détection WebGL:", error);
-        setWebglSupported(false);
-      }
-    };
-
-    detectWebGL();
-  }, []);
-
-  // Afficher un indicateur de chargement pendant la détection
-  if (webglSupported === null) {
-    return (
-      <div className="flex items-center justify-center h-full bg-gray-100 rounded-lg">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-2 text-gray-600">Vérification WebGL...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Fallback si WebGL n'est pas supporté
-  if (!webglSupported) {
-    return <WebGLFallback />;
-  }
-
   return (
     <div ref={containerRef} className="relative w-full h-full">
       <MyLevaUI showAvalanchePentes={showAvalanchePentes}>
         <Canvas className="w-full h-full" frameloop="demand">
           <SceneContent models={models} selectedModels={selectedModels} />
         </Canvas>
-
-        {/* Interface utilisateur overlay */}
-        <SceneUI models={models} selectedModels={selectedModels} />
 
         {/* Bouton plein écran dans le coin supérieur droit */}
         <button
