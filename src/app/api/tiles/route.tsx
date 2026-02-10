@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
     const data = await response.Body.transformToByteArray();
     const contentType = path.endsWith('.geojson') ? 'application/json' : 'application/octet-stream';
 
-    return new NextResponse(data, {
+    return new NextResponse(Buffer.from(data), {
       headers: { 'Content-Type': contentType, 'Access-Control-Allow-Origin': '*' }
     });
   } catch (error: any) {

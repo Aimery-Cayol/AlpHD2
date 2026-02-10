@@ -18,10 +18,12 @@ import {
   AlertTriangle,
   Sun,
   Grid3X3,
-  ExternalLink
+  ExternalLink,
+  Ruler
 } from "lucide-react";
 import { useAppContext } from "@/contexts/AppContext";
 import ThreeScene from "@/components/three/ThreeScene";
+import Compass3D from "@/components/three/Compass3D";
 import Link from "next/link";
 
 // --- LOGO OFFICIEL CAMPTOCAMP ---
@@ -244,10 +246,216 @@ function Compass() {
   );
 }
 
-function TreeElement({ item, selectedIds, onToggle }: any) {
-  const [isOpen, setIsOpen] = useState(true);
+// Identifie si c'est un massif racine (niveau 0)
+const ROOT_MASSIF_IDS = ["massif-mont-blanc", "massif-ecrins", "massif-sainte-victoire"];
+
+// Composant pour le profil altimétrique détaillé avec tous les points de mesure
+function ElevationProfilePanel({ profile, userPoints }: {
+  profile: { distance: number; altitude: number }[];
+  userPoints?: { altitude: number }[];
+}) {
+  const chartData = useMemo(() => {
+    if (profile.length < 2) return null;
+
+    const altitudes = profile.map(p => p.altitude);
+    const distances = profile.map(p => p.distance);
+    const minAlt = Math.min(...altitudes);
+    const maxAlt = Math.max(...altitudes);
+    const altRange = maxAlt - minAlt || 1;
+    const maxDist = Math.max(...distances);
+
+    // Générer les points SVG normalisés
+    const points = profile.map(p => {
+      const x = (p.distance / maxDist) * 100;
+      const y = 100 - ((p.altitude - minAlt) / altRange) * 85 - 7.5;
+      return { x, y, distance: p.distance, altitude: p.altitude };
+    });
+
+    // Path pour la ligne (courbe lissée avec les vraies données du terrain)
+    const linePath = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x},${p.y}`).join(' ');
+
+    // Path pour le remplissage
+    const areaPath = `M 0,100 L 0,${points[0].y} ` +
+      points.map(p => `L ${p.x},${p.y}`).join(' ') +
+      ` L 100,${points[points.length - 1].y} L 100,100 Z`;
+
+    // Trouver les indices des points utilisateur dans le profil
+    // On cherche les points où la distance correspond à un point de mesure
+    const userPointsInProfile: { x: number; y: number; index: number }[] = [];
+    if (userPoints && userPoints.length > 0) {
+      // Le premier point est à distance 0
+      userPointsInProfile.push({ ...points[0], index: 0 });
+
+      // Les points intermédiaires et le dernier
+      if (userPoints.length > 1) {
+        // On distribue les points uniformément sur la distance
+        const distPerPoint = maxDist / (userPoints.length - 1);
+        for (let i = 1; i < userPoints.length; i++) {
+          const targetDist = distPerPoint * i;
+          // Trouver le point le plus proche dans le profil
+          let closestIdx = 0;
+          let closestDiff = Infinity;
+          for (let j = 0; j < points.length; j++) {
+            const diff = Math.abs(points[j].distance - targetDist);
+            if (diff < closestDiff) {
+              closestDiff = diff;
+              closestIdx = j;
+            }
+          }
+          userPointsInProfile.push({ ...points[closestIdx], index: i });
+        }
+      }
+    }
+
+    return {
+      points,
+      linePath,
+      areaPath,
+      minAlt: Math.round(minAlt),
+      maxAlt: Math.round(maxAlt),
+      maxDist: Math.round(maxDist),
+      altRange: Math.round(altRange),
+      userPointsInProfile
+    };
+  }, [profile, userPoints]);
+
+  if (!chartData) {
+    return (
+      <div className="h-32 bg-slate-100 rounded-xl flex items-center justify-center text-slate-400 text-xs">
+        Cliquez sur le terrain pour mesurer...
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white rounded-xl border border-slate-200 p-4">
+      {/* Infos du graphique */}
+      <div className="flex justify-between text-[9px] text-slate-400 mb-2">
+        <span>Dénivelé : {chartData.altRange}m</span>
+        <span>Distance : {chartData.maxDist}m</span>
+      </div>
+
+      {/* Graphique */}
+      <div className="relative">
+        {/* Labels Y-axis */}
+        <div className="absolute left-0 top-0 bottom-6 w-10 flex flex-col justify-between text-[8px] text-slate-400 pr-1">
+          <span className="text-right">{chartData.maxAlt}m</span>
+          <span className="text-right">{Math.round((chartData.maxAlt + chartData.minAlt) / 2)}m</span>
+          <span className="text-right">{chartData.minAlt}m</span>
+        </div>
+
+        {/* Chart area */}
+        <div className="ml-11 h-40 bg-gradient-to-b from-amber-50/50 via-slate-50 to-emerald-50/30 rounded-lg overflow-hidden border border-slate-200">
+          <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="w-full h-full">
+            {/* Grille horizontale */}
+            <line x1="0" y1="25" x2="100" y2="25" stroke="#e2e8f0" strokeWidth="0.2" strokeDasharray="2,2" />
+            <line x1="0" y1="50" x2="100" y2="50" stroke="#e2e8f0" strokeWidth="0.2" strokeDasharray="2,2" />
+            <line x1="0" y1="75" x2="100" y2="75" stroke="#e2e8f0" strokeWidth="0.2" strokeDasharray="2,2" />
+
+            {/* Grille verticale */}
+            <line x1="25" y1="0" x2="25" y2="100" stroke="#e2e8f0" strokeWidth="0.2" strokeDasharray="2,2" />
+            <line x1="50" y1="0" x2="50" y2="100" stroke="#e2e8f0" strokeWidth="0.2" strokeDasharray="2,2" />
+            <line x1="75" y1="0" x2="75" y2="100" stroke="#e2e8f0" strokeWidth="0.2" strokeDasharray="2,2" />
+
+            {/* Zone de remplissage - effet terrain */}
+            <path
+              d={chartData.areaPath}
+              fill="url(#terrainGradient)"
+              opacity="0.7"
+            />
+
+            {/* Ligne du profil - aspérités du terrain réel */}
+            <path
+              d={chartData.linePath}
+              fill="none"
+              stroke="#78716c"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              vectorEffect="non-scaling-stroke"
+            />
+
+            {/* Tous les points de mesure utilisateur */}
+            {chartData.userPointsInProfile.map((p, i) => (
+              <g key={i}>
+                {/* Ligne verticale pour marquer le point */}
+                <line
+                  x1={p.x}
+                  y1={p.y}
+                  x2={p.x}
+                  y2="100"
+                  stroke={i === 0 ? "#22c55e" : i === chartData.userPointsInProfile.length - 1 ? "#ef4444" : "#3b82f6"}
+                  strokeWidth="0.5"
+                  strokeDasharray="1,1"
+                  opacity="0.5"
+                  vectorEffect="non-scaling-stroke"
+                />
+                {/* Point */}
+                <circle
+                  cx={p.x}
+                  cy={p.y}
+                  r="2.5"
+                  fill={i === 0 ? "#22c55e" : i === chartData.userPointsInProfile.length - 1 ? "#ef4444" : "#3b82f6"}
+                  stroke="white"
+                  strokeWidth="1"
+                  vectorEffect="non-scaling-stroke"
+                />
+              </g>
+            ))}
+
+            {/* Gradient definition - effet terrain montagneux */}
+            <defs>
+              <linearGradient id="terrainGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#a8a29e" stopOpacity="0.6" />
+                <stop offset="30%" stopColor="#78716c" stopOpacity="0.4" />
+                <stop offset="70%" stopColor="#57534e" stopOpacity="0.3" />
+                <stop offset="100%" stopColor="#44403c" stopOpacity="0.1" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+
+        {/* Labels X-axis */}
+        <div className="ml-11 flex justify-between text-[8px] text-slate-400 mt-1">
+          <span>0m</span>
+          <span>{Math.round(chartData.maxDist / 4)}m</span>
+          <span>{Math.round(chartData.maxDist / 2)}m</span>
+          <span>{Math.round(chartData.maxDist * 3 / 4)}m</span>
+          <span>{chartData.maxDist}m</span>
+        </div>
+      </div>
+
+      {/* Légende */}
+      <div className="flex items-center justify-center gap-3 mt-3 text-[9px] text-slate-500 flex-wrap">
+        <div className="flex items-center gap-1">
+          <div className="w-2 h-2 rounded-full bg-green-500" />
+          <span>Départ</span>
+        </div>
+        {userPoints && userPoints.length > 2 && (
+          <div className="flex items-center gap-1">
+            <div className="w-2 h-2 rounded-full bg-blue-500" />
+            <span>Points ({userPoints.length - 2})</span>
+          </div>
+        )}
+        <div className="flex items-center gap-1">
+          <div className="w-2 h-2 rounded-full bg-red-500" />
+          <span>Arrivée</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <div className="w-4 h-0.5 bg-stone-500 rounded" />
+          <span>Relief</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function TreeElement({ item, selectedIds, onToggle, level = 0 }: any) {
+  // Les massifs racines sont repliés par défaut, les autres ouverts
+  const [isOpen, setIsOpen] = useState(level > 0);
   const isBranch = item.children && item.children.length > 0;
   const isSelected = selectedIds.includes(item.id);
+  const isRootMassif = ROOT_MASSIF_IDS.includes(item.id);
 
   return (
     <div className="select-none w-full">
@@ -259,13 +467,13 @@ function TreeElement({ item, selectedIds, onToggle }: any) {
           {isBranch ? (isOpen ? <ChevronDown className="h-3.5 w-3.5 text-slate-400" /> : <ChevronRight className="h-3.5 w-3.5 text-slate-400" />) : isSelected ? <CheckSquare className="h-4 w-4 text-white" /> : <Square className="h-4 w-4 text-slate-300 group-hover:text-slate-400" />}
         </div>
         <div className="flex items-center gap-2 min-w-0 flex-1">
-          {item.id === "massif-mont-blanc" ? <MapIcon className={`h-3.5 w-3.5 ${isSelected ? "text-white" : "text-slate-900"}`} /> : !isBranch && <Mountain className={`h-3.5 w-3.5 ${isSelected ? "text-white" : "text-orange-500"}`} />}
+          {isRootMassif ? <MapIcon className="h-3.5 w-3.5 text-slate-900" /> : !isBranch && <Mountain className={`h-3.5 w-3.5 ${isSelected ? "text-white" : "text-orange-500"}`} />}
           <span className={`text-[12px] leading-tight truncate ${isBranch ? "font-bold uppercase tracking-tight text-slate-900" : isSelected ? "text-white font-bold" : "text-slate-600 font-medium"}`}>{item.name}</span>
         </div>
       </div>
       {isBranch && isOpen && (
         <div className="ml-4 border-l-2 border-slate-100 pl-2 mt-1 space-y-1">
-          {item.children.map((child: any) => <TreeElement key={child.id} item={child} selectedIds={selectedIds} onToggle={onToggle} />)}
+          {item.children.map((child: any) => <TreeElement key={child.id} item={child} selectedIds={selectedIds} onToggle={onToggle} level={level + 1} />)}
         </div>
       )}
     </div>
@@ -282,12 +490,23 @@ interface AvailableTile {
 }
 
 function HomePageContent() {
-  const { selectedModels, setSelectedModels, selectedTiles, setSelectedTiles } = useAppContext();
+  const { selectedModels, setSelectedModels, selectedTiles, setSelectedTiles, measurementEnabled, setMeasurementEnabled, measurementData } = useAppContext();
   const [showHelp, setShowHelp] = useState(false);
   const [showDetails, setShowDetails] = useState(true);
+  const [showSummitInfo, setShowSummitInfo] = useState(false); // Contrôle l'affichage des infos du sommet
   const [showTilesPanel, setShowTilesPanel] = useState(false);
   const [availableTiles, setAvailableTiles] = useState<AvailableTile[]>([]);
   const [tilesLoading, setTilesLoading] = useState(false);
+
+  // Vérifier si on a une mesure avec au moins 2 points
+  const hasMeasurement = measurementData.points.length >= 2;
+
+  // Afficher automatiquement le panneau dès qu'on a 2 points de mesure
+  useEffect(() => {
+    if (hasMeasurement && measurementEnabled) {
+      setShowDetails(true);
+    }
+  }, [hasMeasurement, measurementEnabled]);
 
   // Charger les dalles disponibles depuis l'API
   useEffect(() => {
@@ -391,6 +610,8 @@ function HomePageContent() {
     // Désélectionner les dalles directes quand on sélectionne un sommet
     setSelectedTiles([]);
     setSelectedModels(selectedModels.includes(id) ? [] : [id]);
+    // Désactiver la mesure quand on sélectionne un sommet
+    setMeasurementEnabled(false);
   };
 
   const handleTileToggle = (url: string) => {
@@ -544,8 +765,38 @@ function HomePageContent() {
             {threeModels.length > 0 ? (
                 <>
                     <ThreeScene models={threeModels} selectedModels={effectiveSelectedModels} />
-                    <div className="absolute top-6 right-6 z-40">
-                        <button 
+                    {/* Barre d'outils en haut à droite */}
+                    <div className="absolute top-6 right-6 z-40 flex gap-2">
+                        {/* Bouton Infos sur le sommet - visible uniquement si un sommet est sélectionné */}
+                        {selectedRouteInfo && !measurementEnabled && (
+                          <button
+                              onClick={() => {
+                                const newState = !showSummitInfo;
+                                setShowSummitInfo(newState);
+                                if (newState) setShowDetails(true); // S'assurer que le panneau est visible
+                              }}
+                              className={`flex items-center gap-2 px-4 py-3 backdrop-blur border rounded-xl shadow-xl transition-all group ${
+                                showSummitInfo
+                                  ? "bg-orange-500 text-white border-orange-600"
+                                  : "bg-white/90 border-slate-200 hover:bg-orange-500 hover:text-white"
+                              }`}
+                          >
+                              <Info className={`h-4 w-4 ${showSummitInfo ? "text-white" : "text-orange-500 group-hover:text-white"}`} />
+                              <span className="text-[10px] font-black uppercase tracking-widest">Infos sommet</span>
+                          </button>
+                        )}
+                        <button
+                            onClick={() => setMeasurementEnabled(!measurementEnabled)}
+                            className={`flex items-center gap-2 px-4 py-3 backdrop-blur border rounded-xl shadow-xl transition-all group ${
+                              measurementEnabled
+                                ? "bg-blue-600 text-white border-blue-700"
+                                : "bg-white/90 border-slate-200 hover:bg-blue-600 hover:text-white"
+                            }`}
+                        >
+                            <Ruler className={`h-4 w-4 ${measurementEnabled ? "text-white" : "text-blue-600 group-hover:text-white"}`} />
+                            <span className="text-[10px] font-black uppercase tracking-widest">Mesure</span>
+                        </button>
+                        <button
                             onClick={() => window.dispatchEvent(new CustomEvent('reset-camera'))}
                             className="flex items-center gap-2 px-4 py-3 bg-white/90 backdrop-blur border border-slate-200 rounded-xl shadow-xl hover:bg-blue-600 hover:text-white transition-all group"
                         >
@@ -553,7 +804,8 @@ function HomePageContent() {
                             <span className="text-[10px] font-black uppercase tracking-widest">Réinitialiser</span>
                         </button>
                     </div>
-                    <Compass />
+                    {/* Boussole 3D */}
+                    <Compass3D />
                 </>
             ) : (
                 <div className="w-full h-full flex flex-col items-center justify-center p-8 lg:p-12 animate-in fade-in duration-700">
@@ -596,17 +848,24 @@ function HomePageContent() {
             )}
         </section>
 
-        {(selectedRouteInfo || selectedTiles.length > 0) && showDetails && (
+        {/* Panneau de droite : Mesure OU Infos sommet OU Dalles */}
+        {((hasMeasurement && measurementEnabled) || (selectedRouteInfo && showSummitInfo) || (selectedTiles.length > 0 && !selectedRouteInfo)) && showDetails && (
           <aside className="w-[380px] flex-shrink-0 animate-in slide-in-from-right-4 duration-500">
             <div className="bg-white border border-slate-200 rounded-[2rem] h-full shadow-2xl flex flex-col overflow-hidden">
+              {/* Header du panneau */}
               <div className="p-8 border-b border-slate-100">
                 <div className="flex justify-between items-start mb-6">
                   <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 bg-slate-50 px-3 py-1 rounded-full border border-slate-100">
-                    {selectedRouteInfo ? "Détails Relief" : "Dalles sélectionnées"}
+                    {(hasMeasurement && measurementEnabled) ? "Mesure de distance" : selectedRouteInfo ? "Détails Relief" : "Dalles sélectionnées"}
                   </span>
-                  <button onClick={() => setShowDetails(false)} className="p-2 hover:bg-slate-100 rounded-full transition-colors group"><X className="h-5 w-5 text-slate-300 group-hover:text-slate-600" /></button>
+                  <button onClick={() => { setShowDetails(false); setShowSummitInfo(false); }} className="p-2 hover:bg-slate-100 rounded-full transition-colors group"><X className="h-5 w-5 text-slate-300 group-hover:text-slate-600" /></button>
                 </div>
-                {selectedRouteInfo ? (
+                {(hasMeasurement && measurementEnabled) ? (
+                  <>
+                    <h2 className="text-3xl font-black text-slate-900 leading-none mb-2 uppercase tracking-tighter">Mesure</h2>
+                    <div className="flex items-center gap-2"><Ruler className="h-4 w-4 text-blue-600" /><p className="text-xl font-bold text-slate-900 uppercase tracking-tighter">{measurementData.points.length} points</p></div>
+                  </>
+                ) : selectedRouteInfo ? (
                   <>
                     <h2 className="text-3xl font-black text-slate-900 leading-none mb-2 uppercase tracking-tighter">{selectedRouteInfo.name.split('(')[0]}</h2>
                     <div className="flex items-center gap-2"><Mountain className="h-4 w-4 text-orange-500" /><p className="text-xl font-bold text-slate-900 uppercase tracking-tighter">{selectedRouteInfo.altitude}</p></div>
@@ -618,8 +877,95 @@ function HomePageContent() {
                   </>
                 )}
               </div>
-              <div className="flex-1 overflow-y-auto p-8 space-y-10 custom-scrollbar-light">
-                {selectedRouteInfo ? (
+              <div className="flex-1 overflow-y-auto p-8 space-y-6 custom-scrollbar-light">
+                {/* Contenu Mesure */}
+                {(hasMeasurement && measurementEnabled) ? (
+                  <>
+                    {/* Stats principales */}
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
+                        <div className="flex items-center gap-1.5 text-blue-400 mb-1">
+                          <Ruler className="h-3 w-3" />
+                          <span className="text-[9px] font-bold uppercase tracking-wider">Distance</span>
+                        </div>
+                        <p className="text-xl font-black text-slate-900">
+                          {measurementData.distance !== null
+                            ? (measurementData.distance >= 1 ? `${measurementData.distance.toFixed(2)} km` : `${(measurementData.distance * 1000).toFixed(0)} m`)
+                            : "—"}
+                        </p>
+                      </div>
+                      <div className="bg-orange-50 rounded-xl p-4 border border-orange-100">
+                        <div className="flex items-center gap-1.5 text-orange-400 mb-1">
+                          <Mountain className="h-3 w-3" />
+                          <span className="text-[9px] font-bold uppercase tracking-wider">Pente moy.</span>
+                        </div>
+                        <p className="text-xl font-black text-slate-900">
+                          {measurementData.slope !== null ? `${measurementData.slope.toFixed(1)}°` : "—"}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Dénivelé */}
+                    <div className="bg-gradient-to-r from-green-50 to-orange-50 rounded-xl p-4 border border-slate-100">
+                      <div className="flex items-center gap-1.5 text-slate-400 mb-3">
+                        <Mountain className="h-3 w-3" />
+                        <span className="text-[9px] font-bold uppercase tracking-wider">Dénivelé</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="text-center">
+                          <p className="text-[9px] text-slate-400 uppercase">Départ</p>
+                          <p className="text-sm font-bold text-green-600">{measurementData.startPoint ? `${Math.round(measurementData.startPoint.altitude)} m` : "—"}</p>
+                        </div>
+                        <div className="flex-1 px-3">
+                          <div className="h-0.5 bg-slate-200 relative">
+                            <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 px-2 py-0.5 rounded text-[10px] font-bold ${
+                              measurementData.elevationDiff !== null && measurementData.elevationDiff > 0
+                                ? 'bg-green-100 text-green-700'
+                                : 'bg-orange-100 text-orange-700'
+                            }`}>
+                              {measurementData.elevationDiff !== null
+                                ? `${measurementData.elevationDiff > 0 ? '+' : ''}${Math.round(measurementData.elevationDiff)}m`
+                                : '—'
+                              }
+                            </div>
+                          </div>
+                        </div>
+                        <div className="text-center">
+                          <p className="text-[9px] text-slate-400 uppercase">Arrivée</p>
+                          <p className="text-sm font-bold text-orange-600">{measurementData.endPoint ? `${Math.round(measurementData.endPoint.altitude)} m` : "—"}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Profil altimétrique */}
+                    <div>
+                      <div className="flex items-center gap-1.5 text-slate-400 mb-3">
+                        <Mountain className="h-3 w-3" />
+                        <span className="text-[9px] font-bold uppercase tracking-wider">Profil altimétrique</span>
+                      </div>
+                      <ElevationProfilePanel profile={measurementData.elevationProfile} userPoints={measurementData.points} />
+                    </div>
+
+                    {/* Liste des points */}
+                    <div className="bg-slate-50 rounded-xl p-4 border border-slate-100">
+                      <div className="flex items-center gap-1.5 text-slate-400 mb-3">
+                        <Info className="h-3 w-3" />
+                        <span className="text-[9px] font-bold uppercase tracking-wider">Points de mesure</span>
+                      </div>
+                      <div className="space-y-2 max-h-32 overflow-y-auto">
+                        {measurementData.points.map((point, idx) => (
+                          <div key={idx} className="flex items-center justify-between text-[11px] bg-white px-3 py-2 rounded-lg border border-slate-200">
+                            <span className={`font-bold ${idx === 0 ? 'text-green-600' : idx === measurementData.points.length - 1 ? 'text-orange-600' : 'text-blue-600'}`}>
+                              Point {idx + 1}
+                            </span>
+                            <span className="text-slate-500">{Math.round(point.altitude)} m</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                ) : selectedRouteInfo ? (
+                  /* Contenu Infos Sommet */
                   <>
                     <section>
                         <h3 className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-4 flex items-center gap-2"><Info className="h-3 w-3 text-blue-600" /> Description</h3>
@@ -646,6 +992,7 @@ function HomePageContent() {
                     )}
                   </>
                 ) : (
+                  /* Contenu Dalles */
                   <>
                     <section>
                         <h3 className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-4 flex items-center gap-2"><Info className="h-3 w-3 text-green-600" /> Dalles LiDAR HD</h3>

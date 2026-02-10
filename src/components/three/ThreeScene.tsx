@@ -26,7 +26,12 @@ import SceneUI from "./SceneUI";
 import MyLevaUI, { useSceneControls } from "./LevaUI";
 import CameraTargetDebug from "./CameraTargetDebug";
 import JEasingsComponent from "./JEasings";
+import MeasurementTool from "./MeasurementTool";
 import { useAppContext } from "@/contexts/AppContext";
+
+// Position caméra par défaut
+const DEFAULT_CAMERA_POSITION = { x: 0, y: 4, z: 4 };
+const DEFAULT_CAMERA_TARGET = { x: 0, y: 0, z: 0 };
 
 interface Model {
   name: string;
@@ -126,14 +131,48 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
     wheel: ACTION.DOLLY,
   }), [isShiftPressed, ACTION]);
 
+  // Reset caméra à la position par défaut
+  const resetCameraToDefault = useCallback(() => {
+    if (cameraControlsRef.current) {
+      cameraControlsRef.current.setLookAt(
+        DEFAULT_CAMERA_POSITION.x, DEFAULT_CAMERA_POSITION.y, DEFAULT_CAMERA_POSITION.z,
+        DEFAULT_CAMERA_TARGET.x, DEFAULT_CAMERA_TARGET.y, DEFAULT_CAMERA_TARGET.z,
+        true
+      );
+    }
+  }, []);
+
+  // Reset caméra vers le nord
+  const resetCameraToNorth = useCallback(() => {
+    if (cameraControlsRef.current) {
+      // Garde la position actuelle mais remet l'azimuth à 0 (nord)
+      cameraControlsRef.current.rotateAzimuthTo(0, true);
+    }
+  }, []);
+
+  // Écouter les événements de reset
+  useEffect(() => {
+    const handleResetCamera = () => resetCameraToDefault();
+    const handleResetNorth = () => resetCameraToNorth();
+
+    window.addEventListener("reset-camera", handleResetCamera);
+    window.addEventListener("reset-camera-north", handleResetNorth);
+
+    return () => {
+      window.removeEventListener("reset-camera", handleResetCamera);
+      window.removeEventListener("reset-camera-north", handleResetNorth);
+    };
+  }, [resetCameraToDefault, resetCameraToNorth]);
+
+  // Position initiale de la caméra au chargement
   useEffect(() => {
     if (models.length > 0 && cameraControlsRef.current) {
       const timer = setTimeout(() => {
-        cameraControlsRef.current?.setLookAt(0, 10, 10, 0, 0, 0, true);
+        resetCameraToDefault();
       }, 800);
       return () => clearTimeout(timer);
     }
-  }, [models]);
+  }, [models, resetCameraToDefault]);
 
   const handleCameraChange = useCallback(() => {
     if (cameraControlsRef.current && typeof setCameraRotation === "function") {
@@ -205,17 +244,28 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
         selectedModels={selectedModels}
         lightDirection={lightDirection}
       />
+
+      <MeasurementTool />
     </>
   );
 }
 
 export default function ThreeScene({ models, selectedModels }: ThreeSceneProps) {
+  const { measurementEnabled, setMeasurementEnabled } = useAppContext();
+
+  // Écouter l'événement toggle-measurement (pour compatibilité avec le bouton existant)
+  useEffect(() => {
+    const handleToggleMeasurement = () => setMeasurementEnabled(!measurementEnabled);
+    window.addEventListener("toggle-measurement", handleToggleMeasurement);
+    return () => window.removeEventListener("toggle-measurement", handleToggleMeasurement);
+  }, [measurementEnabled, setMeasurementEnabled]);
+
   return (
     <div className="relative w-full h-full outline-none">
       <ColliderProvider>
         <MyLevaUI>
           <Canvas
-            className="w-full h-full"
+            className={`w-full h-full ${measurementEnabled ? "cursor-crosshair" : ""}`}
             shadows
             gl={{ antialias: true, logarithmicDepthBuffer: true }}
           >
@@ -224,6 +274,16 @@ export default function ThreeScene({ models, selectedModels }: ThreeSceneProps) 
           <SceneUI models={models} selectedModels={selectedModels} />
         </MyLevaUI>
       </ColliderProvider>
+
+      {/* Indicateur mode mesure */}
+      {measurementEnabled && (
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50">
+          <div className="bg-blue-600 text-white px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest shadow-lg flex items-center gap-2">
+            <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
+            Clic gauche : ajouter un point | Clic droit : terminer
+          </div>
+        </div>
+      )}
     </div>
   );
 }

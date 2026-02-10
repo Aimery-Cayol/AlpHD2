@@ -10,6 +10,30 @@ interface Model {
   fileSize?: number;
 }
 
+// Données de mesure
+interface MeasurementPoint {
+  position: { x: number; y: number; z: number };
+  altitude: number; // altitude en mètres
+}
+
+interface SegmentData {
+  distance: number; // en km
+  slope: number; // en degrés
+  elevationDiff: number; // en mètres
+}
+
+interface MeasurementData {
+  points: MeasurementPoint[]; // Tous les points placés
+  segments: SegmentData[]; // Données par segment
+  startPoint: MeasurementPoint | null; // Premier point (compatibilité)
+  endPoint: MeasurementPoint | null; // Dernier point (compatibilité)
+  totalDistance: number | null; // Distance totale en km
+  distance: number | null; // en km (dernier segment, compatibilité)
+  slope: number | null; // en degrés (pente moyenne)
+  elevationDiff: number | null; // en mètres (total)
+  elevationProfile: { distance: number; altitude: number }[]; // profil altimétrique complet
+}
+
 interface AppContextType {
   // État des modèles pour Three.js
   selectedModels: string[];
@@ -23,9 +47,16 @@ interface AppContextType {
   availableModels: Model[];
   setAvailableModels: (models: Model[]) => void;
 
-  // 🎯 NOUVEAU : État de la rotation caméra pour la boussole
+  // État de la rotation caméra pour la boussole
   cameraRotation: { x: number; y: number; z: number };
   setCameraRotation: (rotation: { x: number; y: number; z: number }) => void;
+
+  // État de mesure
+  measurementEnabled: boolean;
+  setMeasurementEnabled: (enabled: boolean) => void;
+  measurementData: MeasurementData;
+  setMeasurementData: (data: MeasurementData | ((prev: MeasurementData) => MeasurementData)) => void;
+  resetMeasurement: () => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -42,14 +73,34 @@ interface AppProviderProps {
   children: ReactNode;
 }
 
+const defaultMeasurementData: MeasurementData = {
+  points: [],
+  segments: [],
+  startPoint: null,
+  endPoint: null,
+  totalDistance: null,
+  distance: null,
+  slope: null,
+  elevationDiff: null,
+  elevationProfile: [],
+};
+
 export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [selectedModels, setSelectedModels] = useState<string[]>([]);
   const [selectedTiles, setSelectedTiles] = useState<string[]>([]);
   const [availableModels, setAvailableModels] = useState<Model[]>([]);
   const [isHydrated, setIsHydrated] = useState(false);
 
-  // 🎯 NOUVEAU : État initial de la rotation
+  // État initial de la rotation
   const [cameraRotation, setCameraRotation] = useState({ x: 0, y: 0, z: 0 });
+
+  // État de mesure
+  const [measurementEnabled, setMeasurementEnabled] = useState(false);
+  const [measurementData, setMeasurementData] = useState<MeasurementData>(defaultMeasurementData);
+
+  const resetMeasurement = () => {
+    setMeasurementData(defaultMeasurementData);
+  };
 
   // Charger depuis localStorage au démarrage (côté client uniquement)
   useEffect(() => {
@@ -87,9 +138,14 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     setSelectedTiles,
     availableModels,
     setAvailableModels,
-    // 🎯 AJOUT DANS LA VALEUR DU PROVIDER
     cameraRotation,
     setCameraRotation,
+    // Mesure
+    measurementEnabled,
+    setMeasurementEnabled,
+    measurementData,
+    setMeasurementData,
+    resetMeasurement,
   };
 
   return (
