@@ -51,7 +51,7 @@ export default function Header() {
               href="/zonesdispos"
               className="text-slate-500 hover:text-blue-600 px-3 py-2 text-sm font-bold uppercase tracking-wide transition-colors"
             >
-              Zones disponibles
+              Carte des zones disponibles
             </Link>
             <Link
               href="/relief+"

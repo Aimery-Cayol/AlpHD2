@@ -634,8 +634,8 @@ function HomePageContent() {
 
       <header className="flex-shrink-0 p-5 flex items-center justify-between bg-white border border-slate-200 rounded-2xl shadow-sm">
           <div>
-              <h1 className="text-xl lg:text-2xl font-bold text-slate-900 tracking-tighter uppercase leading-none">Topographies <span className="text-blue-600 font-black">3D</span></h1>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-1">Explorateur de Massif</p>
+              <h1 className="text-xl lg:text-2xl font-bold text-slate-900 tracking-tighter uppercase leading-none">Topos <span className="text-blue-600 font-black">3D</span></h1>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-1">Explorateur de Massifs</p>
           </div>
           <button onClick={() => setShowHelp(true)} className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-blue-700 shadow-lg shadow-blue-500/20 active:scale-95 transition-all">
              <HelpCircle className="h-3.5 w-3.5" /> Aide à la navigation 3D
@@ -662,7 +662,7 @@ function HomePageContent() {
                 <div className="flex items-center gap-2">
                   {showTilesPanel ? <ChevronDown className="h-3.5 w-3.5 text-slate-400" /> : <ChevronRight className="h-3.5 w-3.5 text-slate-400" />}
                   <Grid3X3 className="h-3.5 w-3.5 text-green-600" />
-                  <span className="text-[12px] font-bold uppercase tracking-tight text-slate-900">Dalles disponibles</span>
+                  <span className="text-[12px] font-bold uppercase tracking-tight text-slate-900">Liste complète des zones disponibles</span>
                 </div>
                 {selectedTiles.length > 0 && (
                   <span className="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full">
