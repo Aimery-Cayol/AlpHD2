@@ -46,13 +46,6 @@ export default function Header() {
             </Link>
 
             <Link
-              href="/map"
-              className="text-slate-500 hover:text-blue-600 px-3 py-2 text-sm font-bold uppercase tracking-wide transition-colors"
-            >
-              Carte
-            </Link>
-
-            <Link
               href="/about"
               className="text-slate-500 hover:text-blue-600 px-3 py-2 text-sm font-bold uppercase tracking-wide transition-colors"
             >
@@ -96,14 +89,6 @@ export default function Header() {
                 onClick={() => setIsMenuOpen(false)}
               >
                 Relief+
-              </Link>
-
-              <Link
-                href="/map"
-                className="block px-3 py-2 text-base font-black uppercase text-slate-500 hover:text-blue-600 hover:bg-slate-50 rounded-md transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Carte
               </Link>
               
               <Link
