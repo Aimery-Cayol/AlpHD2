@@ -463,7 +463,7 @@ function HomePageContent() {
 
         {/* Zone de visualisation 3D */}
         <div className="lg:col-span-4 order-1 lg:order-2">
-          <div className="card h-[400px] sm:h-[500px] lg:h-[700px]">
+          <div className="card h-100 sm:h-125 lg:h-175">
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-4">
               <h2 className="text-lg sm:text-xl font-semibold">
                 Visualiseur 3D
@@ -496,7 +496,7 @@ function HomePageContent() {
 
             <div
               id="threejs-container"
-              className="w-full h-[40vh] sm:h-[50vh] lg:h-[70vh] min-h-[350px] bg-gray-50 rounded-lg overflow-hidden"
+              className="w-full h-[40vh] sm:h-[50vh] lg:h-[70vh] min-h-87.5 bg-gray-50 rounded-lg overflow-hidden"
             >
               {showDropZone ? (
                 <DropZone

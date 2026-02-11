@@ -20,7 +20,7 @@ export default function About() {
             className="h-full w-full object-cover contrast-125 saturate-125"
           />
           {/* Overlay avec gradient pour la lisibilité */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/40"></div>
+          <div className="absolute inset-0 bg-linear-to-b from-black/20 via-transparent to-black/40"></div>
         </div>
 
         {/* Contenu de la section hero */}
@@ -70,7 +70,7 @@ export default function About() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                 {/* Étape 1 : Relevés LiDAR */}
                 <div className="flex items-start space-x-3 sm:space-x-4 p-4 bg-gray-50 rounded-lg">
-                  <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                  <div className="shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-full flex items-center justify-center">
                     <FaDatabase className="text-blue-600 text-lg sm:text-xl" />
                   </div>
                   <div className="min-w-0">
@@ -87,7 +87,7 @@ export default function About() {
 
                 {/* Étape 2 : Reconstruction 3D */}
                 <div className="flex items-start space-x-3 sm:space-x-4 p-4 bg-gray-50 rounded-lg">
-                  <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-green-100 rounded-full flex items-center justify-center">
+                  <div className="shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-green-100 rounded-full flex items-center justify-center">
                     <FaCubes className="text-green-600 text-lg sm:text-xl" />
                   </div>
                   <div className="min-w-0">
@@ -104,7 +104,7 @@ export default function About() {
 
                 {/* Étape 3 : Compression */}
                 <div className="flex items-start space-x-3 sm:space-x-4 p-4 bg-gray-50 rounded-lg">
-                  <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-orange-100 rounded-full flex items-center justify-center">
+                  <div className="shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-orange-100 rounded-full flex items-center justify-center">
                     <FaCompress className="text-orange-600 text-lg sm:text-xl" />
                   </div>
                   <div className="min-w-0">
@@ -120,7 +120,7 @@ export default function About() {
 
                 {/* Étape 4 : Visualisation */}
                 <div className="flex items-start space-x-3 sm:space-x-4 p-4 bg-gray-50 rounded-lg">
-                  <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                  <div className="shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-purple-100 rounded-full flex items-center justify-center">
                     <FaEye className="text-purple-600 text-lg sm:text-xl" />
                   </div>
                   <div className="min-w-0">
@@ -163,7 +163,7 @@ export default function About() {
             </h3>
             <div className="space-y-3">
               <div className="flex items-start space-x-3">
-                <FaGithub className="text-gray-600 mt-1 flex-shrink-0" />
+                <FaGithub className="text-gray-600 mt-1 shrink-0" />
                 <div>
                   <a
                     href="https://github.com/mkazhdan/PoissonRecon"
@@ -180,7 +180,7 @@ export default function About() {
               </div>
 
               <div className="flex items-start space-x-3">
-                <FaGithub className="text-gray-600 mt-1 flex-shrink-0" />
+                <FaGithub className="text-gray-600 mt-1 shrink-0" />
                 <div>
                   <a
                     href="https://github.com/oscarpilote/LidarTerrainMesh"

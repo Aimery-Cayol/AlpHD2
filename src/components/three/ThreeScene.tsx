@@ -3,23 +3,19 @@
 import * as THREE from "three";
 
 import React, {
-  useEffect,
   useRef,
   useState,
   useCallback,
-  useMemo,
+  useEffect,
 } from "react";
 
-import { Canvas, invalidate, useFrame, useThree } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import {
   PerspectiveCamera,
   Grid,
   Stats,
   CameraControls,
-  CameraControlsImpl,
   Sky,
-  AccumulativeShadows,
-  RandomizedLight,
 } from "@react-three/drei";
 import {
   Bloom,
@@ -34,9 +30,14 @@ import {
 import { BlendFunction } from "postprocessing";
 import ModelPositioner from "./ModelPositioner";
 import MyLevaUI, { useSceneControls } from "./LevaUI";
-import { FaExpand, FaCompress, FaMountain } from "react-icons/fa";
+import { FaExpand, FaCompress } from "react-icons/fa";
 import { TbMountain } from "react-icons/tb";
 import CameraTargetDebug from "./CameraTargetDebug";
+
+// Import des hooks personnalisés
+import { useWebGLDetection, useFullscreen } from "./hooks";
+import { useSunPosition } from "./lighting";
+import { useCameraControls } from "./camera";
 
 interface Model {
   name: string;
@@ -55,140 +56,45 @@ interface ThreeSceneProps {
   selectedModels: string[];
 }
 
-// // Composant de fallback pour les appareils sans WebGL
-// function WebGLFallback() {
-//   return (
-//     <div className="flex items-center justify-center h-full bg-gray-100 rounded-lg">
-//       <div className="text-center p-8">
-//         <div className="text-6xl mb-4">🚫</div>
-//         <h3 className="text-xl font-semibold text-gray-800 mb-2">
-//           WebGL non supporté
-//         </h3>
-//         <p className="text-gray-600 mb-4">
-//           Votre navigateur ou appareil ne supporte pas WebGL, nécessaire pour
-//           afficher les visualisations 3D.
-//         </p>
-//         <div className="text-sm text-gray-500">
-//           <p>Essayez de :</p>
-//           <ul className="list-disc list-inside mt-2 text-left">
-//             <li>Mettre à jour votre navigateur</li>
-//             <li>Activer l'accélération matérielle dans les paramètres</li>
-//             <li>Utiliser un appareil plus récent</li>
-//           </ul>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
+// Composant de fallback pour les appareils sans WebGL
+function WebGLFallback() {
+  return (
+    <div className="flex items-center justify-center h-full bg-gray-100 rounded-lg">
+      <div className="text-center p-8">
+        <div className="text-6xl mb-4">🚫</div>
+        <h3 className="text-xl font-semibold text-gray-800 mb-2">
+          WebGL non supporté
+        </h3>
+        <p className="text-gray-600 mb-4">
+          Votre navigateur ou appareil ne supporte pas WebGL, nécessaire pour
+          afficher les visualisations 3D.
+        </p>
+        <div className="text-sm text-gray-500">
+          <p>Essayez de :</p>
+          <ul className="list-disc list-inside mt-2 text-left">
+            <li>Mettre à jour votre navigateur</li>
+            <li>Activer l'accélération matérielle dans les paramètres</li>
+            <li>Utiliser un appareil plus récent</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 // Composant interne qui utilise les contrôles de scène
 function SceneContent({ models, selectedModels }: ThreeSceneProps) {
   const controls = useSceneControls();
-  const { scene } = useThree();
-  const { ACTION } = CameraControlsImpl;
-  const cameraControlsRef = useRef<CameraControlsImpl | null>(null);
-  // GESTION DE L'APPUI DE LA TOUCHE SHIFT POUR CONTROLES CAMERA
-  const [isShiftPressed, setIsShiftPressed] = useState(false);
-  // État pour stocker les marqueurs de double-clic
-  const [clickMarkers, setClickMarkers] = useState<THREE.Vector3[]>([]);
+  
+  // Utilisation des hooks personnalisés
+  const {
+    cameraControlsRef,
+    mouseButtonsConfig,
+    handleMeshDoubleClick,
+    clickMarkers,
+  } = useCameraControls();
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Shift") setIsShiftPressed(true);
-    };
-    const handleKeyUp = (e: KeyboardEvent) => {
-      if (e.key === "Shift") setIsShiftPressed(false);
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    window.addEventListener("keyup", handleKeyUp);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      window.removeEventListener("keyup", handleKeyUp);
-    };
-  }, []);
-
-  // CONFIGURATION DYNAMIQUE DES BOUTONS
-  // On recalcule les boutons seulement quand isShiftPressed change
-  const mouseButtonsConfig = useMemo(
-    () => ({
-      left: isShiftPressed ? ACTION.ROTATE : ACTION.SCREEN_PAN,
-      right: ACTION.ROTATE,
-      middle: ACTION.TRUCK,
-      wheel: ACTION.DOLLY,
-    }),
-    [isShiftPressed, ACTION],
-  );
-
-  // Gestionnaire de double-clic pour "Fit To Mesh" avec dolly
-  const handleMeshDoubleClick = useCallback((event: any) => {
-    event.stopPropagation();
-    if (cameraControlsRef.current && event.point) {
-      // Ajoute un marqueur au point cliqué
-      setClickMarkers((prev) => [...prev, event.point.clone()]);
-
-      // Utilise moveTo pour animer la caméra vers le point cliqué
-      // moveTo(x, y, z, enableTransition)
-      cameraControlsRef.current.moveTo(
-        event.point.x,
-        event.point.y,
-        event.point.z,
-        true, // Animation smooth
-      );
-    }
-  }, []);
-
-  // Recentrer la caméra sur la bounding box des selectedModels
-  // useEffect(() => {
-  //   if (selectedModels.length === 0) return;
-
-  //   const timer = setTimeout(() => {
-  //     const worldBox = new THREE.Box3();
-  //     let hasMeshes = false;
-
-  //     scene.traverse((object) => {
-  //       if (
-  //         object instanceof THREE.Mesh &&
-  //         object.userData.url &&
-  //         selectedModels.includes(object.userData.url)
-  //       ) {
-  //         if (object.geometry && object.geometry.boundingBox) {
-  //           const localBox = object.geometry.boundingBox.clone();
-  //           localBox.applyMatrix4(object.matrixWorld);
-  //           worldBox.union(localBox);
-  //           hasMeshes = true;
-  //         }
-  //       }
-  //     });
-
-  //     if (hasMeshes && cameraControlsRef.current) {
-  //       const center = worldBox.getCenter(new THREE.Vector3());
-  //       cameraControlsRef.current.target.copy(center);
-  //     }
-  //   }, 1000); // Délai pour permettre le chargement des mesh
-
-  //   return () => clearTimeout(timer);
-  // }, [selectedModels, scene]);
-
-  // Conversion sphérique → cartésien
-  const getSunDirection = (
-    azimuth: number,
-    elevation: number,
-    distance = 10,
-  ) => {
-    const azRad = (azimuth * Math.PI) / 180;
-    const elRad = (elevation * Math.PI) / 180;
-
-    return [
-      distance * Math.cos(elRad) * Math.sin(azRad),
-      distance * Math.sin(elRad),
-      -distance * Math.cos(elRad) * Math.cos(azRad), // Inversion nord/sud
-    ] as [number, number, number];
-  };
-
-  const sunPosition = getSunDirection(
-    controls.sunAzimuth,
-    controls.sunElevation,
-  );
+  const sunPosition = useSunPosition(controls.sunAzimuth, controls.sunElevation);
 
   // Calcul de la direction de la lumière pour le shader (direction vers la surface)
   const lightDirection = new THREE.Vector3(...sunPosition).normalize();
@@ -355,36 +261,29 @@ export default function ThreeScene({
   models,
   selectedModels,
 }: ThreeSceneProps) {
-  const [isFullscreen, setIsFullscreen] = useState(false);
-  const [showAvalanchePentes, setShowAvalanchePentes] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [showAvalanchePentes, setShowAvalanchePentes] = useState(false);
 
-  // Fonction pour basculer en plein écran
-  const toggleFullscreen = useCallback(() => {
-    if (containerRef.current) {
-      if (!document.fullscreenElement) {
-        // Entrer en plein écran sur le conteneur
-        containerRef.current.requestFullscreen().catch((err) => {
-          console.error("Erreur lors du passage en plein écran:", err);
-        });
-      } else {
-        // Quitter le plein écran
-        document.exitFullscreen();
-      }
-    }
-  }, []);
+  // Utilisation des hooks personnalisés
+  const webglSupported = useWebGLDetection();
+  const { isFullscreen, toggleFullscreen } = useFullscreen(containerRef);
 
-  // Écouteur d'événement pour détecter les changements de mode plein écran
-  useEffect(() => {
-    const handleFullscreenChange = () => {
-      setIsFullscreen(!!document.fullscreenElement);
-    };
+  // Afficher un indicateur de chargement pendant la détection
+  if (webglSupported === null) {
+    return (
+      <div className="flex items-center justify-center h-full bg-gray-100 rounded-lg">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-2 text-gray-600">Vérification WebGL...</p>
+        </div>
+      </div>
+    );
+  }
 
-    document.addEventListener("fullscreenchange", handleFullscreenChange);
-    return () => {
-      document.removeEventListener("fullscreenchange", handleFullscreenChange);
-    };
-  }, []);
+  // Fallback si WebGL n'est pas supporté
+  if (!webglSupported) {
+    return <WebGLFallback />;
+  }
 
   return (
     <div ref={containerRef} className="relative w-full h-full">
