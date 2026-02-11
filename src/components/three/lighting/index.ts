@@ -3,3 +3,4 @@
  */
 
 export { useSunPosition } from "./useSunPosition";
+export { LightingSetup, useLightDirection } from "./LightingSetup";

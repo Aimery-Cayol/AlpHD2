@@ -3,3 +3,4 @@
  */
 
 export { useCameraControls } from "./useCameraControls";
+export { CameraSetup, useMeshDoubleClickHandler } from "./CameraSetup";
