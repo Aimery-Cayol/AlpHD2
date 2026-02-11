@@ -30,14 +30,20 @@ import {
 import { BlendFunction } from "postprocessing";
 import ModelPositioner from "./ModelPositioner";
 import MyLevaUI, { useSceneControls } from "./LevaUI";
-import { FaExpand, FaCompress } from "react-icons/fa";
-import { TbMountain } from "react-icons/tb";
 import CameraTargetDebug from "./CameraTargetDebug";
 
 // Import des hooks personnalisés
 import { useWebGLDetection, useFullscreen } from "./hooks";
 import { useSunPosition } from "./lighting";
 import { useCameraControls } from "./camera";
+
+// Import des composants UI
+import {
+  WebGLFallback,
+  FullscreenButton,
+  AvalancheButton,
+  LoadingIndicator,
+} from "./ui";
 
 interface Model {
   name: string;
@@ -54,32 +60,6 @@ interface Model {
 interface ThreeSceneProps {
   models: Model[];
   selectedModels: string[];
-}
-
-// Composant de fallback pour les appareils sans WebGL
-function WebGLFallback() {
-  return (
-    <div className="flex items-center justify-center h-full bg-gray-100 rounded-lg">
-      <div className="text-center p-8">
-        <div className="text-6xl mb-4">🚫</div>
-        <h3 className="text-xl font-semibold text-gray-800 mb-2">
-          WebGL non supporté
-        </h3>
-        <p className="text-gray-600 mb-4">
-          Votre navigateur ou appareil ne supporte pas WebGL, nécessaire pour
-          afficher les visualisations 3D.
-        </p>
-        <div className="text-sm text-gray-500">
-          <p>Essayez de :</p>
-          <ul className="list-disc list-inside mt-2 text-left">
-            <li>Mettre à jour votre navigateur</li>
-            <li>Activer l'accélération matérielle dans les paramètres</li>
-            <li>Utiliser un appareil plus récent</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  );
 }
 
 // Composant interne qui utilise les contrôles de scène
@@ -270,14 +250,7 @@ export default function ThreeScene({
 
   // Afficher un indicateur de chargement pendant la détection
   if (webglSupported === null) {
-    return (
-      <div className="flex items-center justify-center h-full bg-gray-100 rounded-lg">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-2 text-gray-600">Vérification WebGL...</p>
-        </div>
-      </div>
-    );
+    return <LoadingIndicator />;
   }
 
   // Fallback si WebGL n'est pas supporté
@@ -292,41 +265,15 @@ export default function ThreeScene({
           <SceneContent models={models} selectedModels={selectedModels} />
         </Canvas>
 
-        {/* Bouton plein écran dans le coin supérieur droit */}
-        <button
-          onClick={toggleFullscreen}
-          className="absolute top-4 right-4 z-50 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full shadow-lg border flex items-center justify-center hover:bg-white/95 transition-all duration-200"
-          title={
-            isFullscreen ? "Quitter le plein écran" : "Passer en plein écran"
-          }
-        >
-          {isFullscreen ? (
-            <FaCompress className="w-4 h-4 text-gray-600" />
-          ) : (
-            <FaExpand className="w-4 h-4 text-gray-600" />
-          )}
-        </button>
-
-        {/* Bouton pentes avalancheuses en bas à droite */}
-        <button
-          onClick={() => setShowAvalanchePentes(!showAvalanchePentes)}
-          className={`absolute bottom-4 right-4 z-50 w-10 h-10 backdrop-blur-sm rounded-full shadow-lg border flex items-center justify-center transition-all duration-200 ${
-            showAvalanchePentes
-              ? "bg-orange-500/90 hover:bg-orange-500/95 border-orange-600"
-              : "bg-white/90 hover:bg-white/95 border-gray-300"
-          }`}
-          title={
-            showAvalanchePentes
-              ? "Masquer les pentes avalancheuses"
-              : "Afficher les pentes avalancheuses"
-          }
-        >
-          <TbMountain
-            className={`w-6 h-6 ${
-              showAvalanchePentes ? "text-white" : "text-gray-600"
-            }`}
-          />
-        </button>
+        {/* Boutons de contrôle UI */}
+        <FullscreenButton
+          isFullscreen={isFullscreen}
+          onToggle={toggleFullscreen}
+        />
+        <AvalancheButton
+          isActive={showAvalanchePentes}
+          onToggle={() => setShowAvalanchePentes(!showAvalanchePentes)}
+        />
       </MyLevaUI>
     </div>
   );
