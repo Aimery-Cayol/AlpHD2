@@ -73,7 +73,8 @@ function Params() {
       render: (get) => get("Aspect.material") === "HauteMontagne",
     },
     rockColor: {
-      value: "#cf9e82",
+      //value: "#cf9e82",
+      value: "#b2a49c",
       label: "Couleur roche",
       render: (get) => get("Aspect.material") === "HauteMontagne",
     },

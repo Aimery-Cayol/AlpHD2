@@ -5,7 +5,7 @@ import * as THREE from "three";
 const HauteMontagne = shaderMaterial(
   {
     snowColor: new THREE.Color("#ffffff"),
-    rockColor: new THREE.Color("#404040"),
+    rockColor: new THREE.Color("#b2a49c"),
     slopeThreshold: 0.7,
     smoothness: 0.2,
     lightDirection: new THREE.Vector3(1, 1, 1).normalize(),
