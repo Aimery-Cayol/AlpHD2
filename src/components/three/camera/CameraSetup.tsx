@@ -1,12 +1,11 @@
 import { PerspectiveCamera, CameraControls, Stats } from "@react-three/drei";
-import { useCameraControls } from "./useCameraControls";
+import { useCameraContext } from "./CameraContext";
 import CameraTargetDebug from "../CameraTargetDebug";
 
 interface CameraSetupProps {
   fov: number;
   showCameraTarget: boolean;
   showStats: boolean;
-  onMeshDoubleClick?: (event: any) => void;
 }
 
 /**
@@ -14,18 +13,10 @@ interface CameraSetupProps {
  * Gère la caméra perspective, les contrôles CameraControls et les outils de debug
  */
 export function CameraSetup(props: CameraSetupProps) {
-  const { fov, showCameraTarget, showStats, onMeshDoubleClick } = props;
+  const { fov, showCameraTarget, showStats } = props;
 
-  const { cameraControlsRef, mouseButtonsConfig, handleMeshDoubleClick, clickMarkers } =
-    useCameraControls();
-
-  // Si un handler externe est fourni, on l'encapsule
-  const finalHandler = onMeshDoubleClick
-    ? (event: any) => {
-        handleMeshDoubleClick(event);
-        onMeshDoubleClick(event);
-      }
-    : handleMeshDoubleClick;
+  // Récupère les données depuis le Context partagé
+  const { cameraControlsRef, mouseButtonsConfig, clickMarkers } = useCameraContext();
 
   return (
     <>
@@ -69,10 +60,4 @@ export function CameraSetup(props: CameraSetupProps) {
       {showStats && <Stats />}
     </>
   );
-}
-
-// Export le handler de double-clic pour l'utiliser dans d'autres composants
-export function useMeshDoubleClickHandler() {
-  const { handleMeshDoubleClick } = useCameraControls();
-  return handleMeshDoubleClick;
 }

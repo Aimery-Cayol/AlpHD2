@@ -1,60 +1,38 @@
 "use client";
 
-import * as THREE from "three";
-
-import React, {
-  useRef,
-  useState,
-  useCallback,
-  useEffect,
-} from "react";
-
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import {
-  PerspectiveCamera,
-  Grid,
-  Stats,
-  CameraControls,
-  Sky,
-} from "@react-three/drei";
-import {
-  Bloom,
-  BrightnessContrast,
-  DepthOfField,
-  EffectComposer,
-  SMAA,
-  SSAO,
-  ToneMapping,
-  Vignette,
-} from "@react-three/postprocessing";
-import { BlendFunction } from "postprocessing";
-import ModelPositioner from "./ModelPositioner";
+import React, { useRef, useState } from "react";
+import { Canvas } from "@react-three/fiber";
 import MyLevaUI, { useSceneControls } from "./LevaUI";
-import CameraTargetDebug from "./CameraTargetDebug";
+import ModelPositioner from "./ModelPositioner";
 
 // Import des hooks personnalisés
 import { useWebGLDetection, useFullscreen } from "./hooks";
-import { useSunPosition } from "./lighting";
-import { useCameraControls } from "./camera";
+import { useLightDirection } from "./lighting";
+import { CameraProvider, useCameraContext } from "./camera";
 
 // Import des composants UI
 import {
   WebGLFallback,
-  FullscreenButton,
-  AvalancheButton,
   LoadingIndicator,
+  SceneOverlay,
 } from "./ui";
+
+// Import des composants de scène
+import { CameraSetup } from "./camera";
+import { LightingSetup } from "./lighting";
+import { EnvironmentSetup } from "./environment";
+import { PostProcessingSetup } from "./effects";
 
 interface Model {
   name: string;
-  url?: string; // Pour les meshes sans LoD
-  urlHigh?: string; // Pour les meshes avec LoD (niveau 11)
-  urlLow?: string; // Pour les meshes avec LoD (niveau 09)
-  urlUltraLow?: string; // Pour les meshes avec LoD (niveau 01)
+  url?: string;
+  urlHigh?: string;
+  urlLow?: string;
+  urlUltraLow?: string;
   format?: "ply" | "drc";
   coordinates?: { x: number; y: number };
   filesize?: number;
-  lodEnabled?: boolean; // Flag pour activer le LoD
+  lodEnabled?: boolean;
 }
 
 interface ThreeSceneProps {
@@ -62,171 +40,67 @@ interface ThreeSceneProps {
   selectedModels: string[];
 }
 
-// Composant interne qui utilise les contrôles de scène
+/**
+ * Composant interne qui utilise les contrôles de scène
+ * Orchestre tous les composants de la scène 3D
+ */
 function SceneContent({ models, selectedModels }: ThreeSceneProps) {
   const controls = useSceneControls();
-  
-  // Utilisation des hooks personnalisés
-  const {
-    cameraControlsRef,
-    mouseButtonsConfig,
-    handleMeshDoubleClick,
-    clickMarkers,
-  } = useCameraControls();
 
-  const sunPosition = useSunPosition(controls.sunAzimuth, controls.sunElevation);
+  // Hook pour obtenir le handler de double-clic depuis le Context
+  const { handleMeshDoubleClick } = useCameraContext();
 
-  // Calcul de la direction de la lumière pour le shader (direction vers la surface)
-  const lightDirection = new THREE.Vector3(...sunPosition).normalize();
-
-  function Ground() {
-    const gridConfig = {
-      cellSize: 0.2,
-      cellThickness: 0.5,
-      cellColor: "#6f6f6f",
-      sectionSize: 1,
-      sectionThickness: 1,
-      sectionColor: "#9d4b4b",
-      fadeDistance: 30,
-      fadeStrength: 2,
-      followCamera: false,
-      infiniteGrid: true,
-    };
-    return (
-      <Grid position={[0, -0.01, 0]} args={[10.5, 10.5]} {...gridConfig} />
-    );
-  }
+  // Hook pour obtenir la direction de la lumière pour les shaders
+  const lightDirection = useLightDirection(
+    controls.sunAzimuth,
+    controls.sunElevation
+  );
 
   return (
     <>
-      <EffectComposer
+      {/* Post-processing effects */}
+      <PostProcessingSetup
         enabled={controls.enablePostProcess}
-        enableNormalPass={true}
-      >
-        {controls.enableVignette && (
-          <Vignette
-            offset={0.3} // vignette offset
-            darkness={0.4} // vignette darkness
-            eskil={false} // Eskil's vignette technique
-            blendFunction={BlendFunction.NORMAL} // blend mode
-          />
-        )}
+        enableVignette={controls.enableVignette}
+        enableBrightnessContrast={controls.enableBrightnessContrast}
+        enableToneMapping={controls.enableToneMapping}
+        enableBloom={controls.enableBloom}
+        bloomThreshold={controls.bloomThreshold}
+        bloomLuminanceSmoothing={controls.bloomLuminanceSmoothing}
+        bloomIntensity={controls.bloomIntensity}
+      />
 
-        {controls.enableBrightnessContrast && (
-          <BrightnessContrast
-            brightness={0.1} // brightness. min: -1, max: 1
-            contrast={0.1} // contrast: min -1, max: 1
-          />
-        )}
-
-        {controls.enableToneMapping && (
-          <ToneMapping
-            blendFunction={BlendFunction.NORMAL} // blend mode
-            adaptive={true} // toggle adaptive luminance map usage
-            resolution={256} // texture resolution of the luminance map
-            middleGrey={0.9} // middle grey factor
-            maxLuminance={16.0} // maximum luminance
-            averageLuminance={1.0} // average luminance
-            adaptationRate={1.0} // luminance adaptation rate
-          />
-        )}
-
-        {controls.enableBloom && (
-          <Bloom
-            luminanceThreshold={controls.bloomThreshold}
-            luminanceSmoothing={controls.bloomLuminanceSmoothing}
-            intensity={controls.bloomIntensity}
-          />
-        )}
-      </EffectComposer>
-
-      <PerspectiveCamera
-        makeDefault
-        position={[0, 4, 2]} // 2ème coord = hauteur 3ème coord = recul
+      {/* Caméra et contrôles */}
+      <CameraSetup
         fov={controls.fov}
-        near={0.001}
-        far={100}
+        showCameraTarget={controls.showCameraTarget}
+        showStats={controls.showStats}
       />
 
-      <CameraControls
-        ref={cameraControlsRef}
-        makeDefault
-        mouseButtons={mouseButtonsConfig}
-        dollyToCursor={true}
-        minDistance={0.2}
-        maxDistance={6}
-        infinityDolly={true}
-        dollySpeed={0.8}
-        truckSpeed={0.8}
-        azimuthRotateSpeed={0.5}
-        polarRotateSpeed={0.5}
-        // dampingFactor={0.53}
-
-        draggingSmoothTime={0.4}
-      />
-
-      {/* Cube de debug pour la cible de la caméra */}
-      {controls.showCameraTarget && (
-        <CameraTargetDebug cameraControlsRef={cameraControlsRef} />
-      )}
-
-      {/* Marqueurs de double-clic */}
-      {controls.showCameraTarget &&
-        clickMarkers.map((position, index) => (
-          <mesh key={index} position={position} castShadow receiveShadow>
-            <sphereGeometry args={[0.02, 16, 16]} />
-            <meshStandardMaterial color="blue" />
-          </mesh>
-        ))}
-
-      {/* {controls.showGrid && <gridHelper args={[10, 10]} />} */}
-      {controls.showGrid && <Ground />}
+      {/* Helpers de debug */}
       {controls.showAxes && <axesHelper args={[2]} />}
-      {controls.showStats && <Stats />}
 
-      {controls.showAmbientLight && (
-        <ambientLight intensity={controls.ambientIntensity} />
-      )}
-
-      {controls.showDirectionalLight && (
-        <directionalLight
-          // position={[5, 5, 3]}
-          position={sunPosition}
-          intensity={controls.directionalIntensity}
-          castShadow={true}
-          receiveShadow={true}
-          shadow-mapSize-width={2048}
-          shadow-mapSize-height={2048}
-          shadow-camera-far={20}
-          shadow-camera-left={-10}
-          shadow-camera-right={10}
-          shadow-camera-top={10}
-          shadow-camera-bottom={-10}
-        />
-      )}
-
-      <Sky
-        distance={450000}
-        sunPosition={sunPosition}
+      {/* Éclairage et ciel */}
+      <LightingSetup
+        showAmbientLight={controls.showAmbientLight}
+        ambientIntensity={controls.ambientIntensity}
+        showDirectionalLight={controls.showDirectionalLight}
+        directionalIntensity={controls.directionalIntensity}
+        sunAzimuth={controls.sunAzimuth}
+        sunElevation={controls.sunElevation}
         turbidity={controls.turbidity}
         rayleigh={controls.rayleigh}
         mieCoefficient={controls.mieCoefficient}
         mieDirectionalG={controls.mieDirectionalG}
       />
 
-      {/* Mer */}
-      {controls.water && (
-        <mesh position={[0, 0.0005, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-          <planeGeometry args={[50, 50]} />
-          <meshStandardMaterial
-            color="lightblue"
-            roughness={0.6}
-            metalness={0.8}
-          />
-        </mesh>
-      )}
+      {/* Environnement (grille, eau) */}
+      <EnvironmentSetup
+        showGrid={controls.showGrid}
+        showWater={controls.water}
+      />
 
-      {/* Positionneur automatique de modèles */}
+      {/* Modèles 3D */}
       <ModelPositioner
         models={models}
         selectedModels={selectedModels}
@@ -237,6 +111,10 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
   );
 }
 
+/**
+ * Composant principal de la scène 3D
+ * Gère la détection WebGL, le mode plein écran et l'UI
+ */
 export default function ThreeScene({
   models,
   selectedModels,
@@ -244,11 +122,11 @@ export default function ThreeScene({
   const containerRef = useRef<HTMLDivElement>(null);
   const [showAvalanchePentes, setShowAvalanchePentes] = useState(false);
 
-  // Utilisation des hooks personnalisés
+  // Hooks personnalisés
   const webglSupported = useWebGLDetection();
   const { isFullscreen, toggleFullscreen } = useFullscreen(containerRef);
 
-  // Afficher un indicateur de chargement pendant la détection
+  // Indicateur de chargement pendant la détection
   if (webglSupported === null) {
     return <LoadingIndicator />;
   }
@@ -262,17 +140,17 @@ export default function ThreeScene({
     <div ref={containerRef} className="relative w-full h-full">
       <MyLevaUI showAvalanchePentes={showAvalanchePentes}>
         <Canvas className="w-full h-full" frameloop="demand">
-          <SceneContent models={models} selectedModels={selectedModels} />
+          <CameraProvider>
+            <SceneContent models={models} selectedModels={selectedModels} />
+          </CameraProvider>
         </Canvas>
 
-        {/* Boutons de contrôle UI */}
-        <FullscreenButton
+        {/* Overlay UI avec tous les boutons de contrôle */}
+        <SceneOverlay
           isFullscreen={isFullscreen}
-          onToggle={toggleFullscreen}
-        />
-        <AvalancheButton
-          isActive={showAvalanchePentes}
-          onToggle={() => setShowAvalanchePentes(!showAvalanchePentes)}
+          onToggleFullscreen={toggleFullscreen}
+          showAvalanchePentes={showAvalanchePentes}
+          onToggleAvalanchePentes={() => setShowAvalanchePentes(!showAvalanchePentes)}
         />
       </MyLevaUI>
     </div>
