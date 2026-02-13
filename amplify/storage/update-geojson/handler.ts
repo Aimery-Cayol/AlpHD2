@@ -44,25 +44,56 @@ export const handler: S3Handler = async (event) => {
 
   const response = await s3Client.send(listCommand);
 
-  const features = (response.Contents || [])
+  // Grouper les fichiers par coordonnées (x, y)
+  const tilesByCoords: Record<
+    string,
+    { x: number; y: number; files: { url: string; level: string; format: string }[] }
+  > = {};
+
+  (response.Contents || [])
     .filter(
       (obj) => obj.Key?.endsWith(".final.ply") || obj.Key?.endsWith(".drc")
     )
-    .map((obj) => {
+    .forEach((obj) => {
       const key = obj.Key!;
-      const match = key.match(/(\d{4})_(\d{4})/);
+      const match = key.match(/(\d{4})_(\d{4})_(\d+)\.(drc|final\.ply)$/);
       if (!match) {
-        console.warn(`⚠️ Fichier ignoré (pas de coordonnées) : ${key}`);
-        return null;
+        console.warn(`⚠️ Fichier ignoré (format invalide) : ${key}`);
+        return;
       }
 
       const x = parseInt(match[1]) * 1000;
       const y = parseInt(match[2]) * 1000;
+      const level = match[3];
+      const format = key.endsWith(".drc") ? "drc" : "ply";
+      const coordKey = `${x}_${y}`;
 
+      if (!tilesByCoords[coordKey]) {
+        tilesByCoords[coordKey] = { x, y, files: [] };
+      }
+
+      tilesByCoords[coordKey].files.push({
+        url: `https://${bucketName}.s3.${region}.amazonaws.com/${key}`,
+        level,
+        format,
+      });
+    });
+
+  // Créer les features avec tous les niveaux disponibles
+  const features = Object.entries(tilesByCoords).map(
+    ([coordKey, { x, y, files }]) => {
       const nw = lambert93ToWgs84(x, y);
       const ne = lambert93ToWgs84(x + 1000, y);
       const se = lambert93ToWgs84(x + 1000, y - 1000);
       const sw = lambert93ToWgs84(x, y - 1000);
+
+      // Extraire les niveaux disponibles et les trier
+      const levels = [...new Set(files.map((f) => f.level))].sort(
+        (a, b) => parseInt(a) - parseInt(b)
+      );
+
+      // URL par défaut (niveau le plus bas)
+      const defaultFile = files.find((f) => f.level === levels[0]) || files[0];
 
       return {
         type: "Feature",
@@ -71,20 +102,18 @@ export const handler: S3Handler = async (event) => {
           coordinates: [[sw, nw, ne, se, sw]],
         },
         properties: {
-          id: `${x}_${y}`,
+          id: coordKey,
           x,
           y,
-          url: `https://${bucketName}.s3.${region}.amazonaws.com/${key}`,
-          format: key.endsWith(".drc") ? "drc" : "ply",
-          name:
-            key
-              .split("/")
-              .pop()
-              ?.replace(/\.(final\.)?ply|\.drc/, "") || "",
+          url: defaultFile.url, // URL par défaut pour compatibilité
+          format: defaultFile.format,
+          name: coordKey,
+          levels, // Liste des niveaux disponibles
+          files, // Tous les fichiers avec leurs URLs et niveaux
         },
       };
-    })
-    .filter(Boolean);
+    }
+  );
 
   const geoJson = {
     type: "FeatureCollection",

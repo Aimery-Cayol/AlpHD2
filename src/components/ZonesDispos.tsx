@@ -5,6 +5,25 @@ import { useRouter } from "next/navigation";
 import { extractCoordinates } from "@/utils/fileUtils";
 import { useAppContext } from "@/contexts/AppContext";
 
+// Composant de tooltip personnalisé
+const Tooltip = ({ x, y, content }: { x: number; y: number; content: string }) => {
+  if (!content) return null;
+
+  return (
+    <div
+      className="absolute z-50 bg-black text-white px-3 py-2 rounded-lg shadow-lg font-mono text-xs whitespace-pre-line"
+      style={{
+        left: x + 15,
+        top: y - 10,
+        maxWidth: 250,
+        pointerEvents: "none",
+      }}
+    >
+      {content}
+    </div>
+  );
+};
+
 // Styles pour les tuiles
 const baseStyle = {
   color: "#00ff00",
@@ -25,101 +44,120 @@ const selectedStyle = {
 const maxSelectedTiles = 20;
 
 // Fonction pour charger et afficher la couche des tuiles
-const loadTilesLayer = async (
-  map: any,
-  L: any,
-  selectedTiles: string[],
-  setSelectedTiles: (tiles: string[] | ((prev: string[]) => string[])) => void
-) => {
-  try {
-    const response = await fetch("/api/tiles");
-    if (!response.ok) {
-      console.error("Erreur chargement GeoJSON:", response.status);
-      return;
+  const loadTilesLayer = async (
+    map: any,
+    L: any,
+    selectedTiles: string[],
+    setSelectedTiles: (tiles: string[] | ((prev: string[]) => string[])) => void,
+    setTooltip: (tooltip: { x: number; y: number; content: string }) => void
+  ) => {
+    try {
+      const response = await fetch("/api/tiles");
+      if (!response.ok) {
+        console.error("Erreur chargement GeoJSON:", response.status);
+        return;
+      }
+
+      const geojson = await response.json();
+      console.log("GeoJSON tuiles chargé:", geojson.features?.length, "tuiles");
+
+      // Créer la couche GeoJSON avec style et interactions
+      const tilesLayer = L.geoJSON(geojson, {
+        style: {
+          color: "#007bff",
+          weight: 2,
+          opacity: 0.8,
+          fillColor: "#0099ff",
+          fillOpacity: 0.3,
+        },
+        onEachFeature: (feature: any, layer: any) => {
+          const props = feature.properties;
+          const isSelected = selectedTiles.includes(props.url);
+
+          // Stocker l'état de sélection sur le layer lui-même
+          (layer as any)._isSelected = isSelected;
+
+          // Appliquer le style initial
+          layer.setStyle(isSelected ? selectedStyle : baseStyle);
+
+          // Clic pour toggle la sélection
+          layer.on("click", () => {
+            setSelectedTiles((prev) => {
+              if (prev.includes(props.url)) {
+                // Désélectionner
+                (layer as any)._isSelected = false;
+                layer.setStyle(baseStyle);
+                return prev.filter((url) => url !== props.url);
+              } else if (prev.length < maxSelectedTiles) {
+                // Sélectionner
+                (layer as any)._isSelected = true;
+                layer.setStyle(selectedStyle);
+                return [...prev, props.url];
+              }
+              return prev;
+            });
+          });
+
+          // Survol pour highlight et tooltip
+          layer.on("mouseover", (e: any) => {
+            (layer as L.Path).setStyle({
+              fillOpacity: 0.6,
+              weight: 3,
+            });
+
+            // Extraire les coordonnées depuis les propriétés
+            const coordText = props.name || props.id || "Coordonnées non disponibles";
+
+            // Extraire les niveaux de précision depuis les propriétés
+            const levels = props.levels || [];
+            const precisionText = levels.length > 0
+              ? `Niveaux disponibles: ${levels.join(", ")}`
+              : "Aucun niveau disponible";
+
+            // Position de la souris
+            const mousePos = map.mouseEventToContainerPoint(e.originalEvent);
+            setTooltip({
+              x: mousePos.x,
+              y: mousePos.y,
+              content: `Zone: ${coordText}\n${precisionText}`,
+            });
+          });
+
+          layer.on("mouseout", () => {
+            // Utiliser l'état stocké sur le layer
+            const currentlySelected = (layer as any)._isSelected;
+            (layer as L.Path).setStyle(
+              currentlySelected ? selectedStyle : baseStyle
+            );
+            setTooltip({ x: 0, y: 0, content: "" });
+          });
+        },
+      });
+
+      // Ajouter au contrôle des couches
+      const baseLayers = {
+        "Carte IGN": L.tileLayer(
+          "https://data.geopf.fr/wmts?SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}",
+          {
+            maxZoom: 18,
+            attribution: '&copy; <a href="https://www.ign.fr/">IGN</a>',
+          }
+        ),
+      };
+
+      const overlays = {
+        "Tuiles disponibles": tilesLayer,
+      };
+
+      L.control.layers(baseLayers, overlays).addTo(map);
+
+      // Ajouter la couche par défaut
+      tilesLayer.addTo(map);
+      return tilesLayer;
+    } catch (error) {
+      console.error("Erreur chargement couche tuiles:", error);
     }
-
-    const geojson = await response.json();
-    console.log("GeoJSON tuiles chargé:", geojson.features?.length, "tuiles");
-
-    // Créer la couche GeoJSON avec style et interactions
-    const tilesLayer = L.geoJSON(geojson, {
-      style: {
-        color: "#007bff",
-        weight: 2,
-        opacity: 0.8,
-        fillColor: "#0099ff",
-        fillOpacity: 0.3,
-      },
-      onEachFeature: (feature: any, layer: any) => {
-        const props = feature.properties;
-        const isSelected = selectedTiles.includes(props.url);
-
-        // Stocker l'état de sélection sur le layer lui-même
-        (layer as any)._isSelected = isSelected;
-
-        // Appliquer le style initial
-        layer.setStyle(isSelected ? selectedStyle : baseStyle);
-
-        // Clic pour toggle la sélection
-        layer.on("click", () => {
-          setSelectedTiles((prev) => {
-            if (prev.includes(props.url)) {
-              // Désélectionner
-              (layer as any)._isSelected = false;
-              layer.setStyle(baseStyle);
-              return prev.filter((url) => url !== props.url);
-            } else if (prev.length < maxSelectedTiles) {
-              // Sélectionner
-              (layer as any)._isSelected = true;
-              layer.setStyle(selectedStyle);
-              return [...prev, props.url];
-            }
-            return prev;
-          });
-        });
-
-        // Survol pour highlight
-        layer.on("mouseover", () => {
-          (layer as L.Path).setStyle({
-            fillOpacity: 0.6,
-            weight: 3,
-          });
-        });
-
-        layer.on("mouseout", () => {
-          // Utiliser l'état stocké sur le layer
-          const currentlySelected = (layer as any)._isSelected;
-          (layer as L.Path).setStyle(
-            currentlySelected ? selectedStyle : baseStyle
-          );
-        });
-      },
-    });
-
-    // Ajouter au contrôle des couches
-    const baseLayers = {
-      "Carte IGN": L.tileLayer(
-        "https://data.geopf.fr/wmts?SERVICE=WMTS&VERSION=1.0.0&REQUEST=GetTile&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}",
-        {
-          maxZoom: 18,
-          attribution: '&copy; <a href="https://www.ign.fr/">IGN</a>',
-        }
-      ),
-    };
-
-    const overlays = {
-      "Tuiles disponibles": tilesLayer,
-    };
-
-    L.control.layers(baseLayers, overlays).addTo(map);
-
-    // Ajouter la couche par défaut
-    tilesLayer.addTo(map);
-    return tilesLayer;
-  } catch (error) {
-    console.error("Erreur chargement couche tuiles:", error);
-  }
-};
+  };
 
 export default function MapPage() {
   const router = useRouter();
@@ -136,6 +174,7 @@ export default function MapPage() {
   const tilesLayerRef = useRef<L.GeoJSON | null>(null);
   const [tilesVisible, setTilesVisible] = useState(true);
   const [isClient, setIsClient] = useState(false);
+  const [tooltip, setTooltip] = useState({ x: 0, y: 0, content: "" });
 
   useEffect(() => {
     setIsClient(true);
@@ -198,7 +237,7 @@ export default function MapPage() {
           // popupRef.current = L.popup();
 
           // Charger et afficher les tuiles disponibles
-          loadTilesLayer(map, L, selectedTiles, setSelectedTiles).then(
+          loadTilesLayer(map, L, selectedTiles, setSelectedTiles, setTooltip).then(
             (layer) => {
               if (layer) {
                 tilesLayerRef.current = layer;
@@ -374,6 +413,13 @@ export default function MapPage() {
           Total: {availableModels.length} modèles
         </p>
       </div>
+
+      {/* Tooltip au survol */}
+      <Tooltip
+        x={tooltip.x}
+        y={tooltip.y}
+        content={tooltip.content}
+      />
     </div>
   );
 }
