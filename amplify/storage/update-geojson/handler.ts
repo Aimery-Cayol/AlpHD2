@@ -62,11 +62,13 @@ export const handler: S3Handler = async (event) => {
         return;
       }
 
-      const x = parseInt(match[1]) * 1000;
-      const y = parseInt(match[2]) * 1000;
+      const xCoord = match[1]; // Garder en string pour l'ID
+      const yCoord = match[2]; // Garder en string pour l'ID
+      const x = parseInt(match[1]) * 1000; // Pour les calculs géographiques
+      const y = parseInt(match[2]) * 1000; // Pour les calculs géographiques
       const level = match[3];
       const format = key.endsWith(".drc") ? "drc" : "ply";
-      const coordKey = `${x}_${y}`;
+      const coordKey = `${xCoord}_${yCoord}`; // ID avec les coordonnées du fichier
 
       if (!tilesByCoords[coordKey]) {
         tilesByCoords[coordKey] = { x, y, files: [] };

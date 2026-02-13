@@ -11,12 +11,13 @@ const Tooltip = ({ x, y, content }: { x: number; y: number; content: string }) =
 
   return (
     <div
-      className="absolute z-50 bg-black text-white px-3 py-2 rounded-lg shadow-lg font-mono text-xs whitespace-pre-line"
+      className="absolute bg-black text-white px-3 py-2 rounded-lg shadow-lg font-mono text-xs whitespace-pre-line"
       style={{
         left: x + 15,
         top: y - 10,
         maxWidth: 250,
         pointerEvents: "none",
+        zIndex: 9999,
       }}
     >
       {content}
