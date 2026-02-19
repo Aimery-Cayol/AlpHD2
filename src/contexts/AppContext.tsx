@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 
 interface Model {
   name: string;
@@ -57,6 +57,13 @@ interface AppContextType {
   measurementData: MeasurementData;
   setMeasurementData: (data: MeasurementData | ((prev: MeasurementData) => MeasurementData)) => void;
   resetMeasurement: () => void;
+
+  // Chargement de la scène 3D (progression)
+  pendingLoads: number;
+  loadingProgress: number; // 0 à 1
+  incrementPendingLoads: () => void;
+  decrementPendingLoads: () => void;
+  resetLoadingProgress: () => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -102,6 +109,15 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     setMeasurementData(defaultMeasurementData);
   };
 
+  // Chargement scène 3D avec progression
+  const [totalLoads, setTotalLoads] = useState(0);
+  const [completedLoads, setCompletedLoads] = useState(0);
+  const pendingLoads = totalLoads - completedLoads;
+  const loadingProgress = totalLoads > 0 ? Math.min(1, completedLoads / totalLoads) : 0;
+  const incrementPendingLoads = useCallback(() => setTotalLoads(n => n + 1), []);
+  const decrementPendingLoads = useCallback(() => setCompletedLoads(n => n + 1), []);
+  const resetLoadingProgress = useCallback(() => { setTotalLoads(0); setCompletedLoads(0); }, []);
+
   // Charger depuis localStorage au démarrage (côté client uniquement)
   useEffect(() => {
     try {
@@ -146,6 +162,12 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     measurementData,
     setMeasurementData,
     resetMeasurement,
+    // Chargement scène
+    pendingLoads,
+    loadingProgress,
+    incrementPendingLoads,
+    decrementPendingLoads,
+    resetLoadingProgress,
   };
 
   return (

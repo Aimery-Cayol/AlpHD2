@@ -308,68 +308,6 @@ export default function MeasurementTool() {
     ]);
   }
 
-  // Calcul de la distance totale
-  const getTotalDistance = () => {
-    let total = 0;
-    for (let i = 0; i < points.length - 1; i++) {
-      total += points[i].position.distanceTo(points[i + 1].position);
-    }
-    if (points.length > 0 && hoverPoint && isPlacingPoints) {
-      total += points[points.length - 1].position.distanceTo(hoverPoint);
-    }
-    return total;
-  };
-
-  const currentDistance = getTotalDistance();
-
-  // Pente du dernier segment
-  const getCurrentSlope = () => {
-    let start: THREE.Vector3 | null = null;
-    let end: THREE.Vector3 | null = null;
-
-    if (points.length > 0 && hoverPoint && isPlacingPoints) {
-      start = points[points.length - 1].position;
-      end = hoverPoint;
-    } else if (points.length >= 2) {
-      start = points[points.length - 2].position;
-      end = points[points.length - 1].position;
-    }
-
-    if (start && end) {
-      const elevationDiff = Math.abs(end.y - start.y) * SCALE_TO_METERS;
-      const distance2D = Math.sqrt(
-        Math.pow(end.x - start.x, 2) + Math.pow(end.z - start.z, 2)
-      ) * SCALE_TO_METERS;
-      return Math.atan2(elevationDiff, distance2D) * (180 / Math.PI);
-    }
-    return null;
-  };
-
-  const currentSlope = getCurrentSlope();
-
-  // Point central pour le label
-  const getMidPoint = () => {
-    if (points.length > 0 && hoverPoint && isPlacingPoints) {
-      const last = points[points.length - 1].position;
-      return new THREE.Vector3(
-        (last.x + hoverPoint.x) / 2,
-        (last.y + hoverPoint.y) / 2 + 0.05,
-        (last.z + hoverPoint.z) / 2
-      );
-    } else if (points.length >= 2) {
-      const p1 = points[points.length - 2].position;
-      const p2 = points[points.length - 1].position;
-      return new THREE.Vector3(
-        (p1.x + p2.x) / 2,
-        (p1.y + p2.y) / 2 + 0.05,
-        (p1.z + p2.z) / 2
-      );
-    }
-    return null;
-  };
-
-  const midPoint = getMidPoint();
-
   return (
     <group>
       {/* Points de mesure */}
@@ -408,38 +346,6 @@ export default function MeasurementTool() {
         />
       ))}
 
-      {/* Label compact */}
-      {midPoint && currentDistance > 0 && (
-        <Html position={midPoint} center>
-          <div className="bg-slate-900/95 backdrop-blur text-white px-3 py-2 rounded-lg text-xs font-bold shadow-xl border border-white/20 whitespace-nowrap flex flex-col items-center gap-1">
-            <div className="flex items-center gap-2">
-              <span className="text-blue-400">↔</span>
-              <span>
-                {currentDistance >= 1
-                  ? `${currentDistance.toFixed(2)} km`
-                  : `${(currentDistance * 1000).toFixed(0)} m`
-                }
-              </span>
-              {points.length > 1 && (
-                <span className="text-slate-400 text-[10px]">
-                  ({points.length} pts)
-                </span>
-              )}
-            </div>
-            {currentSlope !== null && (
-              <div className="flex items-center gap-2 text-orange-400">
-                <span>∠</span>
-                <span>{currentSlope.toFixed(1)}°</span>
-              </div>
-            )}
-            {!isPlacingPoints && (
-              <div className="text-green-400 text-[9px] mt-1">
-                ✓ Mesure terminée
-              </div>
-            )}
-          </div>
-        </Html>
-      )}
     </group>
   );
 }

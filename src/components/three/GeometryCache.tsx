@@ -92,11 +92,11 @@ class GeometryCache {
     // Nettoyer le cache si nécessaire
     this.evictIfNeeded(size);
 
-    // Créer une copie de la géométrie pour éviter les références partagées
-    const geometryClone = geometry.clone();
-
+    // Stocker la géométrie directement (pas de clone) :
+    // les géométries ne sont pas modifiées après chargement, le clone doublait
+    // la mémoire et le temps CPU inutilement
     const entry: CacheEntry = {
-      geometry: geometryClone,
+      geometry,
       timestamp: Date.now(),
       size
     };

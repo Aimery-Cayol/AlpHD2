@@ -77,7 +77,7 @@ export default function IGNBasemap({
   opacity = 1,
   yOffset = 0,
   layer = 'PLANIGNV2',
-  resolution = 2048,
+  resolution = 1024,
 }: IGNBasemapProps) {
   const basemapData = useMemo(() => {
     if (tiles.length === 0) return null;

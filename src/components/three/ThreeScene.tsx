@@ -150,19 +150,48 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
     }
   }, []);
 
+  // Centrer la caméra sur les colliders chargés (fitToBox)
+  const { collidersRef, version } = useColliders();
+  const fitCameraToScene = useCallback(() => {
+    if (!cameraControlsRef.current || collidersRef.current.length === 0) return;
+
+    const box = new THREE.Box3();
+    for (const mesh of collidersRef.current) {
+      mesh.geometry.computeBoundingBox();
+      const meshBox = mesh.geometry.boundingBox!.clone();
+      meshBox.applyMatrix4(mesh.matrixWorld);
+      box.union(meshBox);
+    }
+
+    if (box.isEmpty()) return;
+
+    // Agrandir légèrement la boîte pour un peu de marge
+    const padding = 0.5;
+    box.expandByScalar(padding);
+    cameraControlsRef.current.fitToBox(box, true, {
+      paddingTop: padding,
+      paddingRight: padding,
+      paddingBottom: padding,
+      paddingLeft: padding,
+    });
+  }, [collidersRef]);
+
   // Écouter les événements de reset
   useEffect(() => {
     const handleResetCamera = () => resetCameraToDefault();
     const handleResetNorth = () => resetCameraToNorth();
+    const handleFitCamera = () => fitCameraToScene();
 
     window.addEventListener("reset-camera", handleResetCamera);
     window.addEventListener("reset-camera-north", handleResetNorth);
+    window.addEventListener("fit-camera", handleFitCamera);
 
     return () => {
       window.removeEventListener("reset-camera", handleResetCamera);
       window.removeEventListener("reset-camera-north", handleResetNorth);
+      window.removeEventListener("fit-camera", handleFitCamera);
     };
-  }, [resetCameraToDefault, resetCameraToNorth]);
+  }, [resetCameraToDefault, resetCameraToNorth, fitCameraToScene]);
 
   // Position initiale de la caméra au chargement
   useEffect(() => {

@@ -19,11 +19,13 @@ import {
   Sun,
   Grid3X3,
   ExternalLink,
-  Ruler
+  Ruler,
+  ArrowUpDown
 } from "lucide-react";
 import { useAppContext } from "@/contexts/AppContext";
 import ThreeScene from "@/components/three/ThreeScene";
 import Compass3D from "@/components/three/Compass3D";
+import LoadingOverlay from "@/components/LoadingOverlay";
 import Link from "next/link";
 
 // --- LOGO OFFICIEL CAMPTOCAMP ---
@@ -249,7 +251,7 @@ function Compass() {
 // Identifie si c'est un massif racine (niveau 0)
 const ROOT_MASSIF_IDS = ["massif-mont-blanc", "massif-ecrins", "massif-sainte-victoire"];
 
-// Composant pour le profil altimétrique détaillé avec tous les points de mesure
+// Composant pour le profil altimétrique détaillé avec ratio 1:1 (angles réels)
 function ElevationProfilePanel({ profile, userPoints }: {
   profile: { distance: number; altitude: number }[];
   userPoints?: { altitude: number }[];
@@ -264,35 +266,48 @@ function ElevationProfilePanel({ profile, userPoints }: {
     const altRange = maxAlt - minAlt || 1;
     const maxDist = Math.max(...distances);
 
-    // Générer les points SVG normalisés
-    const points = profile.map(p => {
-      const x = (p.distance / maxDist) * 100;
-      const y = 100 - ((p.altitude - minAlt) / altRange) * 85 - 7.5;
-      return { x, y, distance: p.distance, altitude: p.altitude };
-    });
+    // Marge en altitude (5% en haut et en bas)
+    const altMargin = altRange * 0.05;
+    const displayMinAlt = minAlt - altMargin;
+    const displayMaxAlt = maxAlt + altMargin;
+    const displayAltRange = displayMaxAlt - displayMinAlt;
 
-    // Path pour la ligne (courbe lissée avec les vraies données du terrain)
+    // Ratio 1:1 — mêmes unités (mètres) sur les deux axes
+    // pour que les angles de pente soient fidèles à la réalité
+    const viewWidth = maxDist;
+    const viewHeight = displayAltRange;
+
+    // Hauteur du conteneur SVG adaptée au ratio réel
+    // La largeur disponible dans le panneau est ~280px
+    const chartWidthPx = 280;
+    const realRatio = viewHeight / viewWidth;
+    // Clamper entre 80px et 320px pour rester utilisable
+    const chartHeightPx = Math.min(320, Math.max(80, Math.round(chartWidthPx * realRatio)));
+
+    // Points en coordonnées réelles (mètres)
+    const points = profile.map(p => ({
+      x: p.distance,
+      y: viewHeight - (p.altitude - displayMinAlt),
+      distance: p.distance,
+      altitude: p.altitude
+    }));
+
+    // Path pour la ligne du profil
     const linePath = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x},${p.y}`).join(' ');
 
-    // Path pour le remplissage
-    const areaPath = `M 0,100 L 0,${points[0].y} ` +
+    // Path pour le remplissage sous la courbe
+    const areaPath = `M 0,${viewHeight} L 0,${points[0].y} ` +
       points.map(p => `L ${p.x},${p.y}`).join(' ') +
-      ` L 100,${points[points.length - 1].y} L 100,100 Z`;
+      ` L ${viewWidth},${points[points.length - 1].y} L ${viewWidth},${viewHeight} Z`;
 
-    // Trouver les indices des points utilisateur dans le profil
-    // On cherche les points où la distance correspond à un point de mesure
+    // Points utilisateur positionnés sur le profil
     const userPointsInProfile: { x: number; y: number; index: number }[] = [];
     if (userPoints && userPoints.length > 0) {
-      // Le premier point est à distance 0
       userPointsInProfile.push({ ...points[0], index: 0 });
-
-      // Les points intermédiaires et le dernier
       if (userPoints.length > 1) {
-        // On distribue les points uniformément sur la distance
         const distPerPoint = maxDist / (userPoints.length - 1);
         for (let i = 1; i < userPoints.length; i++) {
           const targetDist = distPerPoint * i;
-          // Trouver le point le plus proche dans le profil
           let closestIdx = 0;
           let closestDiff = Infinity;
           for (let j = 0; j < points.length; j++) {
@@ -307,15 +322,21 @@ function ElevationProfilePanel({ profile, userPoints }: {
       }
     }
 
+    // Labels Y-axis
+    const numYLabels = 4;
+    const yLabels = [];
+    for (let i = 0; i < numYLabels; i++) {
+      yLabels.push(Math.round(minAlt + (altRange * i) / (numYLabels - 1)));
+    }
+
     return {
-      points,
-      linePath,
-      areaPath,
+      points, linePath, areaPath,
       minAlt: Math.round(minAlt),
       maxAlt: Math.round(maxAlt),
       maxDist: Math.round(maxDist),
       altRange: Math.round(altRange),
-      userPointsInProfile
+      viewWidth, viewHeight, chartHeightPx,
+      yLabels, userPointsInProfile
     };
   }, [profile, userPoints]);
 
@@ -329,7 +350,7 @@ function ElevationProfilePanel({ profile, userPoints }: {
 
   return (
     <div className="bg-white rounded-xl border border-slate-200 p-4">
-      {/* Infos du graphique */}
+      {/* Infos */}
       <div className="flex justify-between text-[9px] text-slate-400 mb-2">
         <span>Dénivelé : {chartData.altRange}m</span>
         <span>Distance : {chartData.maxDist}m</span>
@@ -338,33 +359,32 @@ function ElevationProfilePanel({ profile, userPoints }: {
       {/* Graphique */}
       <div className="relative">
         {/* Labels Y-axis */}
-        <div className="absolute left-0 top-0 bottom-6 w-10 flex flex-col justify-between text-[8px] text-slate-400 pr-1">
-          <span className="text-right">{chartData.maxAlt}m</span>
-          <span className="text-right">{Math.round((chartData.maxAlt + chartData.minAlt) / 2)}m</span>
-          <span className="text-right">{chartData.minAlt}m</span>
+        <div className="absolute left-0 top-0 w-10 flex flex-col justify-between text-[8px] text-slate-400 pr-1" style={{ height: chartData.chartHeightPx }}>
+          {[...chartData.yLabels].reverse().map((alt, i) => (
+            <span key={i} className="text-right">{alt}m</span>
+          ))}
         </div>
 
-        {/* Chart area */}
-        <div className="ml-11 h-40 bg-gradient-to-b from-amber-50/50 via-slate-50 to-emerald-50/30 rounded-lg overflow-hidden border border-slate-200">
-          <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="w-full h-full">
-            {/* Grille horizontale */}
-            <line x1="0" y1="25" x2="100" y2="25" stroke="#e2e8f0" strokeWidth="0.2" strokeDasharray="2,2" />
-            <line x1="0" y1="50" x2="100" y2="50" stroke="#e2e8f0" strokeWidth="0.2" strokeDasharray="2,2" />
-            <line x1="0" y1="75" x2="100" y2="75" stroke="#e2e8f0" strokeWidth="0.2" strokeDasharray="2,2" />
+        {/* Chart — ratio 1:1 via xMidYMid meet */}
+        <div className="ml-11 bg-gradient-to-b from-amber-50/50 via-slate-50 to-emerald-50/30 rounded-lg overflow-hidden border border-slate-200">
+          <svg
+            viewBox={`0 0 ${chartData.viewWidth} ${chartData.viewHeight}`}
+            preserveAspectRatio="xMidYMid meet"
+            className="w-full"
+            style={{ height: chartData.chartHeightPx }}
+          >
+            {/* Grille */}
+            {[0.25, 0.5, 0.75].map(f => (
+              <line key={`h${f}`} x1="0" y1={chartData.viewHeight * f} x2={chartData.viewWidth} y2={chartData.viewHeight * f} stroke="#e2e8f0" strokeWidth="0.5" strokeDasharray="4,4" vectorEffect="non-scaling-stroke" />
+            ))}
+            {[0.25, 0.5, 0.75].map(f => (
+              <line key={`v${f}`} x1={chartData.viewWidth * f} y1="0" x2={chartData.viewWidth * f} y2={chartData.viewHeight} stroke="#e2e8f0" strokeWidth="0.5" strokeDasharray="4,4" vectorEffect="non-scaling-stroke" />
+            ))}
 
-            {/* Grille verticale */}
-            <line x1="25" y1="0" x2="25" y2="100" stroke="#e2e8f0" strokeWidth="0.2" strokeDasharray="2,2" />
-            <line x1="50" y1="0" x2="50" y2="100" stroke="#e2e8f0" strokeWidth="0.2" strokeDasharray="2,2" />
-            <line x1="75" y1="0" x2="75" y2="100" stroke="#e2e8f0" strokeWidth="0.2" strokeDasharray="2,2" />
+            {/* Remplissage terrain */}
+            <path d={chartData.areaPath} fill="url(#terrainGradientProfile)" opacity="0.7" />
 
-            {/* Zone de remplissage - effet terrain */}
-            <path
-              d={chartData.areaPath}
-              fill="url(#terrainGradient)"
-              opacity="0.7"
-            />
-
-            {/* Ligne du profil - aspérités du terrain réel */}
+            {/* Ligne du profil */}
             <path
               d={chartData.linePath}
               fill="none"
@@ -375,37 +395,24 @@ function ElevationProfilePanel({ profile, userPoints }: {
               vectorEffect="non-scaling-stroke"
             />
 
-            {/* Tous les points de mesure utilisateur */}
+            {/* Points utilisateur */}
             {chartData.userPointsInProfile.map((p, i) => (
               <g key={i}>
-                {/* Ligne verticale pour marquer le point */}
                 <line
-                  x1={p.x}
-                  y1={p.y}
-                  x2={p.x}
-                  y2="100"
+                  x1={p.x} y1={p.y} x2={p.x} y2={chartData.viewHeight}
                   stroke={i === 0 ? "#22c55e" : i === chartData.userPointsInProfile.length - 1 ? "#ef4444" : "#3b82f6"}
-                  strokeWidth="0.5"
-                  strokeDasharray="1,1"
-                  opacity="0.5"
-                  vectorEffect="non-scaling-stroke"
+                  strokeWidth="1" strokeDasharray="3,3" opacity="0.5" vectorEffect="non-scaling-stroke"
                 />
-                {/* Point */}
                 <circle
-                  cx={p.x}
-                  cy={p.y}
-                  r="2.5"
+                  cx={p.x} cy={p.y} r="4"
                   fill={i === 0 ? "#22c55e" : i === chartData.userPointsInProfile.length - 1 ? "#ef4444" : "#3b82f6"}
-                  stroke="white"
-                  strokeWidth="1"
-                  vectorEffect="non-scaling-stroke"
+                  stroke="white" strokeWidth="1.5" vectorEffect="non-scaling-stroke"
                 />
               </g>
             ))}
 
-            {/* Gradient definition - effet terrain montagneux */}
             <defs>
-              <linearGradient id="terrainGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+              <linearGradient id="terrainGradientProfile" x1="0%" y1="0%" x2="0%" y2="100%">
                 <stop offset="0%" stopColor="#a8a29e" stopOpacity="0.6" />
                 <stop offset="30%" stopColor="#78716c" stopOpacity="0.4" />
                 <stop offset="70%" stopColor="#57534e" stopOpacity="0.3" />
@@ -418,9 +425,7 @@ function ElevationProfilePanel({ profile, userPoints }: {
         {/* Labels X-axis */}
         <div className="ml-11 flex justify-between text-[8px] text-slate-400 mt-1">
           <span>0m</span>
-          <span>{Math.round(chartData.maxDist / 4)}m</span>
           <span>{Math.round(chartData.maxDist / 2)}m</span>
-          <span>{Math.round(chartData.maxDist * 3 / 4)}m</span>
           <span>{chartData.maxDist}m</span>
         </div>
       </div>
@@ -490,10 +495,11 @@ interface AvailableTile {
 }
 
 function HomePageContent() {
-  const { selectedModels, setSelectedModels, selectedTiles, setSelectedTiles, measurementEnabled, setMeasurementEnabled, measurementData } = useAppContext();
+  const { selectedModels, setSelectedModels, selectedTiles, setSelectedTiles, measurementEnabled, setMeasurementEnabled, measurementData, pendingLoads, loadingProgress, resetLoadingProgress } = useAppContext();
   const [showHelp, setShowHelp] = useState(false);
   const [showDetails, setShowDetails] = useState(true);
   const [showSummitInfo, setShowSummitInfo] = useState(false); // Contrôle l'affichage des infos du sommet
+  const [showTileInfo, setShowTileInfo] = useState(false); // Contrôle l'affichage des infos des dalles
   const [showTilesPanel, setShowTilesPanel] = useState(false);
   const [availableTiles, setAvailableTiles] = useState<AvailableTile[]>([]);
   const [tilesLoading, setTilesLoading] = useState(false);
@@ -531,6 +537,21 @@ function HomePageContent() {
         });
     }
   }, [showTilesPanel, availableTiles.length]);
+
+  // Quand le chargement passe de >0 à 0 : recentrer la caméra et reset le compteur
+  const [wasLoading, setWasLoading] = useState(false);
+  useEffect(() => {
+    if (pendingLoads > 0) {
+      setWasLoading(true);
+    } else if (wasLoading) {
+      // Toutes les dalles sont chargées : centrer la caméra sur la scène
+      setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('fit-camera'));
+        resetLoadingProgress();
+      }, 300);
+      setWasLoading(false);
+    }
+  }, [pendingLoads]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const selectedRouteInfo = useMemo(() => {
     if (!selectedModels || selectedModels.length === 0) return null;
@@ -609,6 +630,7 @@ function HomePageContent() {
   const handleToggle = (id: string) => {
     // Désélectionner les dalles directes quand on sélectionne un sommet
     setSelectedTiles([]);
+    setShowTileInfo(false);
     setSelectedModels(selectedModels.includes(id) ? [] : [id]);
     // Désactiver la mesure quand on sélectionne un sommet
     setMeasurementEnabled(false);
@@ -626,6 +648,7 @@ function HomePageContent() {
 
   const clearAllTiles = () => {
     setSelectedTiles([]);
+    setShowTileInfo(false);
   };
 
   return (
@@ -765,6 +788,7 @@ function HomePageContent() {
             {threeModels.length > 0 ? (
                 <>
                     <ThreeScene models={threeModels} selectedModels={effectiveSelectedModels} />
+                    <LoadingOverlay visible={pendingLoads > 0} progress={loadingProgress} />
                     {/* Barre d'outils en haut à droite */}
                     <div className="absolute top-6 right-6 z-40 flex gap-2">
                         {/* Bouton Infos sur le sommet - visible uniquement si un sommet est sélectionné */}
@@ -783,6 +807,24 @@ function HomePageContent() {
                           >
                               <Info className={`h-4 w-4 ${showSummitInfo ? "text-white" : "text-orange-500 group-hover:text-white"}`} />
                               <span className="text-[10px] font-black uppercase tracking-widest">Infos sommet</span>
+                          </button>
+                        )}
+                        {/* Bouton Infos dalles - visible uniquement si des dalles sont sélectionnées */}
+                        {selectedTiles.length > 0 && !selectedRouteInfo && !measurementEnabled && (
+                          <button
+                              onClick={() => {
+                                const newState = !showTileInfo;
+                                setShowTileInfo(newState);
+                                if (newState) setShowDetails(true);
+                              }}
+                              className={`flex items-center gap-2 px-4 py-3 backdrop-blur border rounded-xl shadow-xl transition-all group ${
+                                showTileInfo
+                                  ? "bg-green-500 text-white border-green-600"
+                                  : "bg-white/90 border-slate-200 hover:bg-green-500 hover:text-white"
+                              }`}
+                          >
+                              <Info className={`h-4 w-4 ${showTileInfo ? "text-white" : "text-green-500 group-hover:text-white"}`} />
+                              <span className="text-[10px] font-black uppercase tracking-widest">Infos dalles</span>
                           </button>
                         )}
                         <button
@@ -849,7 +891,7 @@ function HomePageContent() {
         </section>
 
         {/* Panneau de droite : Mesure OU Infos sommet OU Dalles */}
-        {((hasMeasurement && measurementEnabled) || (selectedRouteInfo && showSummitInfo) || (selectedTiles.length > 0 && !selectedRouteInfo)) && showDetails && (
+        {((hasMeasurement && measurementEnabled) || (selectedRouteInfo && showSummitInfo) || (selectedTiles.length > 0 && !selectedRouteInfo && showTileInfo)) && showDetails && (
           <aside className="w-[380px] flex-shrink-0 animate-in slide-in-from-right-4 duration-500">
             <div className="bg-white border border-slate-200 rounded-[2rem] h-full shadow-2xl flex flex-col overflow-hidden">
               {/* Header du panneau */}
@@ -858,7 +900,7 @@ function HomePageContent() {
                   <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 bg-slate-50 px-3 py-1 rounded-full border border-slate-100">
                     {(hasMeasurement && measurementEnabled) ? "Mesure de distance" : selectedRouteInfo ? "Détails Relief" : "Dalles sélectionnées"}
                   </span>
-                  <button onClick={() => { setShowDetails(false); setShowSummitInfo(false); }} className="p-2 hover:bg-slate-100 rounded-full transition-colors group"><X className="h-5 w-5 text-slate-300 group-hover:text-slate-600" /></button>
+                  <button onClick={() => { setShowDetails(false); setShowSummitInfo(false); setShowTileInfo(false); }} className="p-2 hover:bg-slate-100 rounded-full transition-colors group"><X className="h-5 w-5 text-slate-300 group-hover:text-slate-600" /></button>
                 </div>
                 {(hasMeasurement && measurementEnabled) ? (
                   <>
@@ -882,7 +924,7 @@ function HomePageContent() {
                 {(hasMeasurement && measurementEnabled) ? (
                   <>
                     {/* Stats principales */}
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-3 gap-3">
                       <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
                         <div className="flex items-center gap-1.5 text-blue-400 mb-1">
                           <Ruler className="h-3 w-3" />
@@ -891,6 +933,17 @@ function HomePageContent() {
                         <p className="text-xl font-black text-slate-900">
                           {measurementData.distance !== null
                             ? (measurementData.distance >= 1 ? `${measurementData.distance.toFixed(2)} km` : `${(measurementData.distance * 1000).toFixed(0)} m`)
+                            : "—"}
+                        </p>
+                      </div>
+                      <div className="bg-purple-50 rounded-xl p-4 border border-purple-100">
+                        <div className="flex items-center gap-1.5 text-purple-400 mb-1">
+                          <ArrowUpDown className="h-3 w-3" />
+                          <span className="text-[9px] font-bold uppercase tracking-wider">Dist. vert.</span>
+                        </div>
+                        <p className="text-xl font-black text-slate-900">
+                          {measurementData.elevationDiff !== null
+                            ? `${Math.abs(Math.round(measurementData.elevationDiff))} m`
                             : "—"}
                         </p>
                       </div>

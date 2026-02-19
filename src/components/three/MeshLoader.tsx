@@ -12,12 +12,25 @@ import { isLocalUrl, revokeBlobUrl } from "@/utils/fileUtils";
 import HauteMontagne from "./HauteMontagneShader";
 import BasseMontagne from "./BasseMontagneShader";
 import { useColliders } from "@/contexts/ColliderContext";
+import { useAppContext } from "@/contexts/AppContext";
 import { computeBoundsTree, disposeBoundsTree, acceleratedRaycast } from "three-mesh-bvh";
 
 // Extension du prototype pour BVH accéléré (cast pour compatibilité TypeScript)
 (THREE.BufferGeometry.prototype as any).computeBoundsTree = computeBoundsTree;
 (THREE.BufferGeometry.prototype as any).disposeBoundsTree = disposeBoundsTree;
 (THREE.Mesh.prototype as any).raycast = acceleratedRaycast;
+
+// Singleton DRACOLoader : initialisé paresseusement côté client uniquement
+// (ProgressEvent n'existe pas en SSR Next.js)
+let sharedDracoLoader: DRACOLoader | null = null;
+function getDracoLoader(): DRACOLoader {
+  if (!sharedDracoLoader) {
+    sharedDracoLoader = new DRACOLoader();
+    sharedDracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.7/');
+    sharedDracoLoader.preload();
+  }
+  return sharedDracoLoader;
+}
 
 // Helper simple pour la Bounding Box (si tu ne l'as pas ailleurs)
 function BoundingBoxHelper({ box, color }: { box: THREE.Box3, color: string }) {
@@ -33,6 +46,7 @@ export default function MeshLoader({ url, format, onDoubleClick, lightDirection 
   const meshRef = useRef<Mesh>(null);
   const controls = useSceneControls();
   const { addCollider, removeCollider } = useColliders();
+  const { incrementPendingLoads, decrementPendingLoads } = useAppContext();
 
   // 🎯 OPTIMISATION 1: Créer les matériaux une seule fois
   const materials = useMemo(() => ({
@@ -74,10 +88,17 @@ export default function MeshLoader({ url, format, onDoubleClick, lightDirection 
     }
   }, [activeMaterial, controls, lightDirection]);
 
-  // 🎯 OPTIMISATION 4: Chargement avec Draco/PLY et Cache
+  // 🎯 OPTIMISATION 4: Chargement avec Draco/PLY, Cache et BVH différé
   useEffect(() => {
     if (!url) return;
     let cancelled = false;
+    let loaded = false;
+
+    incrementPendingLoads();
+
+    const markLoaded = () => {
+      if (!loaded) { loaded = true; decrementPendingLoads(); }
+    };
 
     const loadGeometry = async () => {
       setLoading(true);
@@ -88,37 +109,45 @@ export default function MeshLoader({ url, format, onDoubleClick, lightDirection 
         setCacheStatus("cache");
         setGeometry(cachedGeometry);
         setLoading(false);
+        markLoaded();
         return;
       }
 
       setCacheStatus(isLocalUrl(url) ? "local" : "network");
 
-      const loader = format === "drc" ? new DRACOLoader() : new PLYLoader();
-      if (format === "drc") {
-        (loader as DRACOLoader).setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.7/');
-      }
+      try {
+        // Utiliser le singleton DRACOLoader (décodeur WASM déjà préchargé)
+        const loader = format === "drc" ? getDracoLoader() : new PLYLoader();
+        const geo = await (loader as any).loadAsync(url) as BufferGeometry;
 
-      loader.load(url, (geo: BufferGeometry) => {
         if (cancelled) return;
 
         // SURTOUT PAS DE .center() : on garde les coordonnées Lambert
         geo.computeVertexNormals();
         geo.computeBoundingBox();
-        (geo as any).computeBoundsTree(); // BVH pour raycasting accéléré
 
         geometryCache.set(url, geo);
         setGeometry(geo);
         setLoading(false);
-      }, undefined, (err) => {
+        markLoaded();
+
+        // BVH différé : calculé après le rendu initial pour ne pas bloquer l'affichage
+        setTimeout(() => {
+          if (!cancelled) {
+            (geo as any).computeBoundsTree();
+          }
+        }, 0);
+      } catch (err) {
         if (cancelled) return;
         setError("Erreur chargement");
         setLoading(false);
-      });
+        markLoaded();
+      }
     };
 
     loadGeometry();
-    return () => { cancelled = true; };
-  }, [url, format]);
+    return () => { cancelled = true; markLoaded(); };
+  }, [url, format]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Enregistrement du mesh comme collider pour la collision caméra
   useEffect(() => {
