@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef, ReactNode } from 'react';
 
 interface Model {
   name: string;
@@ -34,6 +34,16 @@ interface MeasurementData {
   elevationProfile: { distance: number; altitude: number }[]; // profil altimétrique complet
 }
 
+export interface Poi {
+  id: string;
+  name: string;
+  type: "sommet" | "col" | "refuge";
+  position: { x: number; y: number; z: number };
+  tileIds: string[];
+  lx?: number; // Coordonnée Lambert 93 absolue en km (x)
+  ly?: number; // Coordonnée Lambert 93 absolue en km (y)
+}
+
 interface AppContextType {
   // État des modèles pour Three.js
   selectedModels: string[];
@@ -57,6 +67,16 @@ interface AppContextType {
   measurementData: MeasurementData;
   setMeasurementData: (data: MeasurementData | ((prev: MeasurementData) => MeasurementData)) => void;
   resetMeasurement: () => void;
+
+  // État POI (points d'intérêt)
+  poiEnabled: boolean;
+  setPoiEnabled: (enabled: boolean) => void;
+  poiPlacing: boolean;
+  setPoiPlacing: (placing: boolean) => void;
+  pois: Poi[];
+  addPoi: (poi: Omit<Poi, "id">) => void;
+  updatePoi: (id: string, updates: Partial<Omit<Poi, "id">>) => void;
+  removePoi: (id: string) => void;
 
   // Chargement de la scène 3D (progression)
   pendingLoads: number;
@@ -109,6 +129,26 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     setMeasurementData(defaultMeasurementData);
   };
 
+  // État POI
+  const [poiEnabled, setPoiEnabled] = useState(false);
+  const [poiPlacing, setPoiPlacing] = useState(false);
+  const [pois, setPois] = useState<Poi[]>([]);
+  // true uniquement si le chargement initial depuis S3 a réussi (évite d'écraser S3 en cas d'erreur réseau)
+  const poisLoadedRef = useRef(false);
+
+  const addPoi = useCallback((poi: Omit<Poi, "id">) => {
+    const newPoi: Poi = { ...poi, id: crypto.randomUUID() };
+    setPois(prev => [...prev, newPoi]);
+  }, []);
+
+  const updatePoi = useCallback((id: string, updates: Partial<Omit<Poi, "id">>) => {
+    setPois(prev => prev.map(p => p.id === id ? { ...p, ...updates } : p));
+  }, []);
+
+  const removePoi = useCallback((id: string) => {
+    setPois(prev => prev.filter(p => p.id !== id));
+  }, []);
+
   // Chargement scène 3D avec progression
   const [totalLoads, setTotalLoads] = useState(0);
   const [completedLoads, setCompletedLoads] = useState(0);
@@ -134,6 +174,43 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     setIsHydrated(true);
   }, []);
 
+  // Charger les POIs au démarrage : S3 en priorité (partage), localStorage en fallback
+  useEffect(() => {
+    fetch('/api/pois')
+      .then(res => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          // S3 a des données → les utiliser (source de vérité partagée)
+          setPois(data);
+          localStorage.setItem('pois', JSON.stringify(data));
+        } else {
+          // S3 vide ou pas encore de fichier → charger depuis localStorage
+          try {
+            const local = localStorage.getItem('pois');
+            if (local) {
+              const parsed = JSON.parse(local);
+              if (Array.isArray(parsed) && parsed.length > 0) setPois(parsed);
+            }
+          } catch {}
+        }
+        poisLoadedRef.current = true;
+      })
+      .catch(() => {
+        // S3 inaccessible → fallback localStorage uniquement
+        try {
+          const local = localStorage.getItem('pois');
+          if (local) {
+            const parsed = JSON.parse(local);
+            if (Array.isArray(parsed)) setPois(parsed);
+          }
+        } catch {}
+        poisLoadedRef.current = true;
+      });
+  }, []);
+
   // Sauvegarder dans localStorage quand l'état change (après hydratation)
   useEffect(() => {
     if (isHydrated) {
@@ -146,6 +223,17 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
       localStorage.setItem('selectedTiles', JSON.stringify(selectedTiles));
     }
   }, [selectedTiles, isHydrated]);
+
+  // Sauvegarder les POIs : localStorage immédiatement (fiable), S3 en parallèle (partage)
+  useEffect(() => {
+    if (!poisLoadedRef.current) return;
+    localStorage.setItem('pois', JSON.stringify(pois));
+    fetch('/api/pois', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(pois),
+    }).catch(() => {}); // S3 best-effort, pas bloquant
+  }, [pois]);
 
   const value: AppContextType = {
     selectedModels,
@@ -162,6 +250,15 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     measurementData,
     setMeasurementData,
     resetMeasurement,
+    // POI
+    poiEnabled,
+    setPoiEnabled,
+    poiPlacing,
+    setPoiPlacing,
+    pois,
+    addPoi,
+    updatePoi,
+    removePoi,
     // Chargement scène
     pendingLoads,
     loadingProgress,

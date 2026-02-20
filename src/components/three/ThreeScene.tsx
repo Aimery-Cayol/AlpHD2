@@ -27,7 +27,13 @@ import MyLevaUI, { useSceneControls } from "./LevaUI";
 import CameraTargetDebug from "./CameraTargetDebug";
 import JEasingsComponent from "./JEasings";
 import MeasurementTool from "./MeasurementTool";
-import { useAppContext } from "@/contexts/AppContext";
+import PoiTool from "./PoiTool";
+import TileExpander from "./TileExpander";
+import { useAppContext, Poi } from "@/contexts/AppContext";
+
+type PoiType = "sommet" | "col" | "refuge";
+const COLOR_BY_TYPE: Record<PoiType, string> = { sommet: "#f97316", col: "#3b82f6", refuge: "#22c55e" };
+const ICON_BY_TYPE: Record<PoiType, string> = { sommet: "▲", col: "⛰", refuge: "⌂" };
 
 // Position caméra par défaut
 const DEFAULT_CAMERA_POSITION = { x: 0, y: 4, z: 4 };
@@ -44,6 +50,8 @@ interface Model {
 interface ThreeSceneProps {
   models: Model[];
   selectedModels: string[];
+  onExpandTile?: (nx: number, ny: number, url: string) => void;
+  tileUrlMap?: Map<string, string>;
 }
 
 // Système de collision caméra avec raycasting multi-directionnel
@@ -102,7 +110,7 @@ function CameraCollisionSystem({ cameraControlsRef }: { cameraControlsRef: React
   return null;
 }
 
-function SceneContent({ models, selectedModels }: ThreeSceneProps) {
+function SceneContent({ models, selectedModels, onExpandTile, tileUrlMap }: ThreeSceneProps) {
   const controls = useSceneControls();
   const { ACTION } = CameraControlsImpl;
   const cameraControlsRef = useRef<CameraControls>(null);
@@ -181,15 +189,21 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
     const handleResetCamera = () => resetCameraToDefault();
     const handleResetNorth = () => resetCameraToNorth();
     const handleFitCamera = () => fitCameraToScene();
+    const handlePoiLookAt = (e: Event) => {
+      const { x, y, z } = (e as CustomEvent).detail;
+      cameraControlsRef.current?.setTarget(x, y, z, true);
+    };
 
     window.addEventListener("reset-camera", handleResetCamera);
     window.addEventListener("reset-camera-north", handleResetNorth);
     window.addEventListener("fit-camera", handleFitCamera);
+    window.addEventListener("poi-look-at", handlePoiLookAt);
 
     return () => {
       window.removeEventListener("reset-camera", handleResetCamera);
       window.removeEventListener("reset-camera-north", handleResetNorth);
       window.removeEventListener("fit-camera", handleFitCamera);
+      window.removeEventListener("poi-look-at", handlePoiLookAt);
     };
   }, [resetCameraToDefault, resetCameraToNorth, fitCameraToScene]);
 
@@ -275,30 +289,118 @@ function SceneContent({ models, selectedModels }: ThreeSceneProps) {
       />
 
       <MeasurementTool />
+      <PoiTool models={models} />
+      {onExpandTile && <TileExpander models={models} onExpand={onExpandTile} availableTileUrls={tileUrlMap} />}
     </>
   );
 }
 
-export default function ThreeScene({ models, selectedModels }: ThreeSceneProps) {
-  const { measurementEnabled, setMeasurementEnabled } = useAppContext();
+export default function ThreeScene({ models, selectedModels, onExpandTile, tileUrlMap }: ThreeSceneProps) {
+  const { measurementEnabled, setMeasurementEnabled, poiEnabled, setPoiEnabled, poiPlacing, setPoiPlacing, addPoi, updatePoi, removePoi, pois } = useAppContext();
 
-  // Écouter l'événement toggle-measurement (pour compatibilité avec le bouton existant)
+  // État du formulaire POI (géré ici dans le DOM, pas dans le Canvas)
+  const [poiPendingPos, setPoiPendingPos] = useState<{ x: number; y: number; z: number } | null>(null);
+  const poiPendingTileId = useRef<string>("");
+  const [poiEditingId, setPoiEditingId] = useState<string | null>(null);
+  const [poiFormName, setPoiFormName] = useState("");
+  const [poiFormType, setPoiFormType] = useState<PoiType>("sommet");
+  const poiInputRef = useRef<HTMLInputElement>(null);
+
+  // Écouter l'événement toggle-measurement
   useEffect(() => {
     const handleToggleMeasurement = () => setMeasurementEnabled(!measurementEnabled);
     window.addEventListener("toggle-measurement", handleToggleMeasurement);
     return () => window.removeEventListener("toggle-measurement", handleToggleMeasurement);
   }, [measurementEnabled, setMeasurementEnabled]);
 
+  // Écouter l'événement toggle-poi
+  useEffect(() => {
+    const handleTogglePoi = () => setPoiEnabled(!poiEnabled);
+    window.addEventListener("toggle-poi", handleTogglePoi);
+    return () => window.removeEventListener("toggle-poi", handleTogglePoi);
+  }, [poiEnabled, setPoiEnabled]);
+
+  // Écouter les événements POI émis par PoiTool
+  useEffect(() => {
+    const handlePending = (e: Event) => {
+      const { tileId, ...pos } = (e as CustomEvent).detail;
+      poiPendingTileId.current = tileId ?? "";
+      setPoiPendingPos(pos);
+      setPoiEditingId(null);
+      setPoiFormName("");
+      setPoiFormType("sommet");
+      setTimeout(() => poiInputRef.current?.focus(), 50);
+    };
+    const handleEdit = (e: Event) => {
+      const poi = (e as CustomEvent).detail as Poi;
+      setPoiEditingId(poi.id);
+      setPoiPendingPos(null);
+      setPoiFormName(poi.name);
+      setPoiFormType(poi.type as PoiType);
+      setTimeout(() => poiInputRef.current?.focus(), 50);
+    };
+    const handleCancel = () => {
+      setPoiPendingPos(null);
+      setPoiEditingId(null);
+    };
+    window.addEventListener("poi-pending", handlePending);
+    window.addEventListener("poi-edit", handleEdit);
+    window.addEventListener("poi-cancel", handleCancel);
+    return () => {
+      window.removeEventListener("poi-pending", handlePending);
+      window.removeEventListener("poi-edit", handleEdit);
+      window.removeEventListener("poi-cancel", handleCancel);
+    };
+  }, []);
+
+  const handleConfirmAdd = () => {
+    if (!poiPendingPos || !poiFormName.trim()) return;
+    const tileId = poiPendingTileId.current;
+    // Coordonnées Lambert 93 absolues : position scène + référence de la session
+    // models[0] est l'origine de la scène (ModelPositioner utilise le 1er modèle comme référence)
+    const refX = (models as any[]).length > 0 ? ((models as any[])[0].x ?? 0) : 0;
+    const refY = (models as any[]).length > 0 ? ((models as any[])[0].y ?? 0) : 0;
+    const lx = poiPendingPos.x + refX;
+    const ly = -poiPendingPos.z + refY;
+    addPoi({ name: poiFormName.trim(), type: poiFormType, position: poiPendingPos, tileIds: tileId ? [tileId] : [], lx, ly });
+    window.dispatchEvent(new CustomEvent("poi-confirm"));
+    setPoiPendingPos(null);
+    setPoiPlacing(false);
+  };
+
+  const handleConfirmEdit = () => {
+    if (!poiEditingId || !poiFormName.trim()) return;
+    updatePoi(poiEditingId, { name: poiFormName.trim(), type: poiFormType });
+    setPoiEditingId(null);
+  };
+
+  const handleDelete = () => {
+    if (!poiEditingId) return;
+    removePoi(poiEditingId);
+    setPoiEditingId(null);
+  };
+
+  const handleCancelForm = () => {
+    window.dispatchEvent(new CustomEvent("poi-cancel"));
+    setPoiPendingPos(null);
+    setPoiEditingId(null);
+    setPoiPlacing(false);
+  };
+
+  const editingPoi = poiEditingId ? pois.find(p => p.id === poiEditingId) : null;
+  const showForm = poiPendingPos !== null || poiEditingId !== null;
+  const isCrosshair = measurementEnabled || poiEnabled;
+
   return (
     <div className="relative w-full h-full outline-none">
       <ColliderProvider>
         <MyLevaUI>
           <Canvas
-            className={`w-full h-full ${measurementEnabled ? "cursor-crosshair" : ""}`}
+            className={`w-full h-full ${isCrosshair ? "cursor-crosshair" : ""}`}
             shadows
             gl={{ antialias: true, logarithmicDepthBuffer: true }}
           >
-            <SceneContent models={models} selectedModels={selectedModels} />
+            <SceneContent models={models} selectedModels={selectedModels} onExpandTile={onExpandTile} tileUrlMap={tileUrlMap} />
           </Canvas>
           <SceneUI models={models} selectedModels={selectedModels} />
         </MyLevaUI>
@@ -310,6 +412,77 @@ export default function ThreeScene({ models, selectedModels }: ThreeSceneProps) 
           <div className="bg-blue-600 text-white px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest shadow-lg flex items-center gap-2">
             <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
             Clic gauche : ajouter un point | Clic droit : terminer
+          </div>
+        </div>
+      )}
+
+      {/* Indicateur mode POI */}
+      {poiEnabled && !showForm && (
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50">
+          <div className="bg-orange-500 text-white px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest shadow-lg flex items-center gap-2">
+            <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
+            Clic sur le terrain pour placer un lieu | Échap : annuler
+          </div>
+        </div>
+      )}
+
+      {/* Formulaire POI — rendu dans le DOM pour garantir le focus clavier */}
+      {showForm && (
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-50 w-64">
+          <div className="bg-slate-900/95 backdrop-blur-xl border border-slate-700 rounded-2xl p-5 shadow-2xl flex flex-col gap-3">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+              {poiEditingId ? `Modifier — ${editingPoi?.name ?? ""}` : "Nouveau lieu"}
+            </p>
+            <input
+              ref={poiInputRef}
+              className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400"
+              value={poiFormName}
+              onChange={(e) => setPoiFormName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") poiEditingId ? handleConfirmEdit() : handleConfirmAdd();
+                if (e.key === "Escape") handleCancelForm();
+              }}
+              placeholder="Nom du lieu"
+              autoComplete="off"
+            />
+            <div className="flex gap-2">
+              {(["sommet", "col", "refuge"] as PoiType[]).map((t) => (
+                <button
+                  key={t}
+                  onClick={() => setPoiFormType(t)}
+                  className="flex-1 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wide border transition-all"
+                  style={poiFormType === t
+                    ? { background: COLOR_BY_TYPE[t], borderColor: COLOR_BY_TYPE[t], color: "#fff" }
+                    : { background: "transparent", borderColor: "rgba(148,163,184,0.2)", color: "#94a3b8" }
+                  }
+                >
+                  {ICON_BY_TYPE[t]} {t}
+                </button>
+              ))}
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={poiEditingId ? handleConfirmEdit : handleConfirmAdd}
+                disabled={!poiFormName.trim()}
+                className="flex-1 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-lg text-[11px] font-bold uppercase tracking-wide transition-all"
+              >
+                {poiEditingId ? "Enregistrer" : "Valider"}
+              </button>
+              {poiEditingId && (
+                <button
+                  onClick={handleDelete}
+                  className="py-2 px-3 bg-red-600 hover:bg-red-500 text-white rounded-lg text-[11px] font-bold transition-all"
+                >
+                  ✕
+                </button>
+              )}
+              <button
+                onClick={handleCancelForm}
+                className="py-2 px-3 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg text-[11px] font-bold transition-all"
+              >
+                Annuler
+              </button>
+            </div>
           </div>
         </div>
       )}

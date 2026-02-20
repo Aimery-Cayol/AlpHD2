@@ -115,20 +115,6 @@ export default function LoadingOverlay({ visible, progress }: LoadingOverlayProp
             animation: "mountain-draw 1.5s ease-out forwards 0.4s",
           }}
         />
-        {/* Petite montagne derriere */}
-        <path
-          d="M170 170 L210 110 L250 170"
-          stroke="white"
-          strokeWidth="1"
-          strokeLinejoin="round"
-          fill="none"
-          opacity="0.3"
-          style={{
-            strokeDasharray: 600,
-            strokeDashoffset: 0,
-            animation: "mountain-draw 1.5s ease-out forwards 0.6s",
-          }}
-        />
         {/* Sol */}
         <line
           x1="30" y1="170" x2="270" y2="170"

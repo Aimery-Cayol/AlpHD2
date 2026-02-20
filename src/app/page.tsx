@@ -20,7 +20,9 @@ import {
   Grid3X3,
   ExternalLink,
   Ruler,
-  ArrowUpDown
+  ArrowUpDown,
+  MapPin,
+  Search
 } from "lucide-react";
 import { useAppContext } from "@/contexts/AppContext";
 import ThreeScene from "@/components/three/ThreeScene";
@@ -80,27 +82,27 @@ const MOUNTAIN_TREE = [
         id: "secteur-tour-argentiere",
         name: "1. Secteur Tour - Argentière",
         children: [
-          { id: "tour", name: "Aiguille du Tour (3540m)", altitude: "3540m", c2c: "https://www.camptocamp.org/waypoints/37508/fr/aiguille-du-tour", description: "Sommet très classique, point de vue exceptionnel sur le bassin d'Argentière.", dalles: [{ path: "meshes/1010_6552_11.drc", x: 1010, y: 6552 }] },
-          { id: "chardonnet", name: "Aiguille du Chardonnet (3824m)", altitude: "3824m", c2c: "https://www.camptocamp.org/waypoints/37433/fr/aiguille-du-chardonnet", description: "Une des plus belles arêtes mixtes du massif : l'arête Forbes.", dalles: [{ path: "meshes/1009_6549_11.drc", x: 1009, y: 6549 }, { path: "meshes/1009_6550_11.drc", x: 1009, y: 6550 }, { path: "meshes/1010_6549_11.drc", x: 1010, y: 6549 }, { path: "meshes/1010_6550_11.drc", x: 1010, y: 6550 }, { path: "meshes/1011_6550_11.drc", x: 1011, y: 6550 }] },
+          { id: "tour", name: "Aiguille du Tour (3540m)", altitude: "3540m", c2c: "https://www.camptocamp.org/waypoints/37508/fr/aiguille-du-tour", firstAscent: "1864 — J.-J. Maquignaz, A. Maquignaz et J.-P. Maquignaz", description: "Sommet très classique et accessible du massif du Mont-Blanc, idéal pour une première haute montagne. Son panorama depuis la cime offre une vue exceptionnelle sur le bassin d'Argentière, la mer de Glace et les sommets environnants.", dalles: [{ path: "meshes/1010_6552_11.drc", x: 1010, y: 6552 }] },
+          { id: "chardonnet", name: "Aiguille du Chardonnet (3824m)", altitude: "3824m", c2c: "https://www.camptocamp.org/waypoints/37433/fr/aiguille-du-chardonnet", firstAscent: "1865 — Edward Whymper avec les guides Michel Croz et Christian Almer", description: "L'une des plus belles courses mixtes du massif. Son arête Forbes, longue arête neigeuse et aérienne, est une classique de toute première catégorie. Le versant nord offre des itinéraires glaciaires exigeants.", dalles: [{ path: "meshes/1009_6549_11.drc", x: 1009, y: 6549 }, { path: "meshes/1009_6550_11.drc", x: 1009, y: 6550 }, { path: "meshes/1010_6549_11.drc", x: 1010, y: 6549 }, { path: "meshes/1010_6550_11.drc", x: 1010, y: 6550 }, { path: "meshes/1011_6550_11.drc", x: 1011, y: 6550 }] },
         ],
       },
       {
         id: "secteur-verte-drus",
         name: "2. Secteur Verte - Drus - Droites",
         children: [
-          { id: "verte", name: "Aiguille Verte (4122m)", altitude: "4122m", c2c: "https://www.camptocamp.org/waypoints/37435/fr/aiguille-verte", description: "L'aiguille Verte est un sommet mythique. Avant la Verte on est alpiniste, après la Verte on devient montagnard.", waypoints: [{name: "Couloir Whymper", type: "Couloir"}, {name: "Arête des Grands Montets", type: "Arête"}], dalles: [{ path: "meshes/1006_6545_11.drc", x: 1006, y: 6545 }, { path: "meshes/1006_6546_11.drc", x: 1006, y: 6546 }, { path: "meshes/1006_6547_11.drc", x: 1006, y: 6547 }, { path: "meshes/1007_6545_11.drc", x: 1007, y: 6545 }, { path: "meshes/1007_6546_11.drc", x: 1007, y: 6546 }, { path: "meshes/1007_6547_11.drc", x: 1007, y: 6547 }, { path: "meshes/1008_6546_11.drc", x: 1008, y: 6546 }] },
-          { id: "drus", name: "Les Drus (3754m)", altitude: "3754m", c2c: "https://www.camptocamp.org/waypoints/37431/fr/les-drus", description: "Les Drus sont célèbres pour leur face Ouest vertigineuse et le Pilier Bonatti.", dalles: [{ path: "meshes/1006_6545_11.drc", x: 1006, y: 6545 }] },
-          { id: "droites", name: "Les Droites (4001m)", altitude: "4001m", c2c: "https://www.camptocamp.org/waypoints/37434/fr/les-droites", description: "Un mur de glace et de roc dominant le bassin d'Argentière.", dalles: [{ path: "meshes/1008_6545_11.drc", x: 1008, y: 6545 }, { path: "meshes/1008_6546_11.drc", x: 1008, y: 6546 }, { path: "meshes/1009_6545_11.drc", x: 1009, y: 6545 }, { path: "meshes/1009_6546_11.drc", x: 1009, y: 6546 }] },
-          { id: "courtes", name: "Les Courtes (3856m)", altitude: "3856m", c2c: "https://www.camptocamp.org/waypoints/37432/fr/les-courtes", description: "Célèbre pour sa face Nord rectiligne.", dalles: [{ path: "meshes/1009_6544_11.drc", x: 1009, y: 6544 }, { path: "meshes/1009_6545_11.drc", x: 1009, y: 6545 }, { path: "meshes/1010_6544_11.drc", x: 1010, y: 6544 }, { path: "meshes/1010_6545_11.drc", x: 1010, y: 6545 }] },
-          { id: "moine", name: "Aiguille du Moine (3412m)", altitude: "3412m", c2c: "https://www.camptocamp.org/waypoints/37505/fr/aiguille-du-moine", dalles: [{ path: "meshes/1006_6543_11.drc", x: 1006, y: 6543 }, { path: "meshes/1006_6544_11.drc", x: 1006, y: 6544 }, { path: "meshes/1007_6543_11.drc", x: 1007, y: 6543 }, { path: "meshes/1007_6544_11.drc", x: 1007, y: 6544 }] },
+          { id: "verte", name: "Aiguille Verte (4122m)", altitude: "4122m", c2c: "https://www.camptocamp.org/waypoints/37435/fr/aiguille-verte", firstAscent: "1865 — Edward Whymper avec les guides Michel Croz, Christian Almer et Franz Biener, par le couloir Whymper", description: "L'Aiguille Verte est un sommet mythique du massif du Mont-Blanc. Avant la Verte on est alpiniste, après la Verte on devient montagnard. Son ascension par le couloir Whymper ou l'arête des Grands Montets constitue une référence en alpinisme de haute montagne.", waypoints: [{name: "Couloir Whymper", type: "Couloir"}, {name: "Arête des Grands Montets", type: "Arête"}], dalles: [{ path: "meshes/1006_6545_11.drc", x: 1006, y: 6545 }, { path: "meshes/1006_6546_11.drc", x: 1006, y: 6546 }, { path: "meshes/1006_6547_11.drc", x: 1006, y: 6547 }, { path: "meshes/1007_6545_11.drc", x: 1007, y: 6545 }, { path: "meshes/1007_6546_11.drc", x: 1007, y: 6546 }, { path: "meshes/1007_6547_11.drc", x: 1007, y: 6547 }, { path: "meshes/1008_6546_11.drc", x: 1008, y: 6546 }] },
+          { id: "drus", name: "Les Drus (3754m)", altitude: "3754m", c2c: "https://www.camptocamp.org/waypoints/221771/fr/les-drus", firstAscent: "Grand Dru 1878 — Clinton Dent et J.-W. Hartley avec les guides Alexander Burgener et Kaspar Maurer ; Petit Dru 1879 — J. Charlet-Straton, P. Payot et F. Folliguet", description: "Les Drus sont deux aiguilles jumelles d'une verticalité saisissante dominant Chamonix. La face ouest du Petit Dru, avec le légendaire Pilier Bonatti gravi en solitaire en 1955, est l'une des grandes faces rocheuses des Alpes. Un éboulement massif en 2005 en a profondément remodélé la silhouette.", youtube: "https://www.youtube.com/watch?v=nYQ5NgP3GGw", dalles: [{ path: "meshes/1006_6545_11.drc", x: 1006, y: 6545 }] },
+          { id: "droites", name: "Les Droites (4001m)", altitude: "4001m", c2c: "https://www.camptocamp.org/waypoints/37434/fr/les-droites", firstAscent: "1876 — A. Adams-Reilly et A.W. Moore avec les guides Johann Jaun et Ulrich Almer", description: "Les Droites forment avec les Courtes et l'Aiguille Verte la trilogie des grands sommets du bassin d'Argentière. Leur face nord constitue un mur de glace et de roc de 1 000 m, parmi les plus redoutables des Alpes.", dalles: [{ path: "meshes/1008_6545_11.drc", x: 1008, y: 6545 }, { path: "meshes/1008_6546_11.drc", x: 1008, y: 6546 }, { path: "meshes/1009_6545_11.drc", x: 1009, y: 6545 }, { path: "meshes/1009_6546_11.drc", x: 1009, y: 6546 }] },
+          { id: "courtes", name: "Les Courtes (3856m)", altitude: "3856m", c2c: "https://www.camptocamp.org/waypoints/37432/fr/les-courtes", firstAscent: "1876 — A. Adams-Reilly et A.W. Moore avec les guides Johann Jaun et Ulrich Almer", description: "Les Courtes se distinguent par leur face nord d'une rectitude parfaite, classique de glace PD+ à AD. Situées entre le glacier d'Argentière et le glacier du Tour Noir, elles offrent une course glaciaire élégante et engagée.", dalles: [{ path: "meshes/1009_6544_11.drc", x: 1009, y: 6544 }, { path: "meshes/1009_6545_11.drc", x: 1009, y: 6545 }, { path: "meshes/1010_6544_11.drc", x: 1010, y: 6544 }, { path: "meshes/1010_6545_11.drc", x: 1010, y: 6545 }] },
+          { id: "moine", name: "Aiguille du Moine (3412m)", altitude: "3412m", c2c: "https://www.camptocamp.org/waypoints/37505/fr/aiguille-du-moine", firstAscent: "1881 — C.E. Eaton avec les guides Michel et Jean Simond", description: "L'Aiguille du Moine est une pyramide rocheuse élégante dominant le glacier de Talèfre et d'Argentière. Sa voie normale par l'arête sud est une classique en rocher offrant de belles vues sur l'Aiguille Verte et les Drus.", dalles: [{ path: "meshes/1006_6543_11.drc", x: 1006, y: 6543 }, { path: "meshes/1006_6544_11.drc", x: 1006, y: 6544 }, { path: "meshes/1007_6543_11.drc", x: 1007, y: 6543 }, { path: "meshes/1007_6544_11.drc", x: 1007, y: 6544 }] },
         ],
       },
       {
         id: "secteur-aiguilles-chamonix",
         name: "3. Secteur Aiguilles de Chamonix",
         children: [
-          { id: "midi", name: "Aiguille du Midi (3842m)", altitude: "3842m", c2c: "https://www.camptocamp.org/waypoints/37402/fr/aiguille-du-midi", dalles: [{ path: "meshes/1000_6539_11.drc", x: 1000, y: 6539 }, { path: "meshes/1001_6539_11.drc", x: 1001, y: 6539 }, { path: "meshes/1001_6540_11.drc", x: 1001, y: 6540 }] },
-          { id: "plan", name: "Aiguille du Plan (3673m)", altitude: "3673m", c2c: "https://www.camptocamp.org/waypoints/37427/fr/aiguille-du-plan", dalles: [{ path: "meshes/1002_6540_11.drc", x: 1002, y: 6540 }, { path: "meshes/1002_6541_11.drc", x: 1002, y: 6541 }, { path: "meshes/1003_6540_11.drc", x: 1003, y: 6540 }, { path: "meshes/1003_6541_11.drc", x: 1003, y: 6541 }] },
+          { id: "midi", name: "Aiguille du Midi (3842m)", altitude: "3842m", c2c: "https://www.camptocamp.org/waypoints/37402/fr/aiguille-du-midi", firstAscent: "1818 — les frères Joseph-Marie et Jacques-Michel Balmat", description: "L'Aiguille du Midi est le belvédère emblématique de Chamonix, reliée à la vallée par le téléphérique le plus haut d'Europe. Son arête sommitale, exposée et aérienne, conduit à 3 842 m avec une vue panoramique à 360° sur le Mont-Blanc, la Vallée Blanche et les Grandes Jorasses.", dalles: [{ path: "meshes/1000_6539_11.drc", x: 1000, y: 6539 }, { path: "meshes/1001_6539_11.drc", x: 1001, y: 6539 }, { path: "meshes/1001_6540_11.drc", x: 1001, y: 6540 }] },
+          { id: "plan", name: "Aiguille du Plan (3673m)", altitude: "3673m", c2c: "https://www.camptocamp.org/waypoints/37427/fr/aiguille-du-plan", firstAscent: "1871 — G.E. Foster avec les guides Melchior et Andreas Imseng", description: "L'Aiguille du Plan est une des aiguilles de Chamonix les plus prisées des alpinistes confirmés. Son versant nord présente plusieurs voies de glace et mixte de haut niveau, dont le couloir des Frendo. La vue depuis la cime sur la Vallée Blanche et le Mont-Blanc est saisissante.", dalles: [{ path: "meshes/1002_6540_11.drc", x: 1002, y: 6540 }, { path: "meshes/1002_6541_11.drc", x: 1002, y: 6541 }, { path: "meshes/1003_6540_11.drc", x: 1003, y: 6540 }, { path: "meshes/1003_6541_11.drc", x: 1003, y: 6541 }] },
           { id: "chamonix-needles", name: "Aiguilles de Chamonix", altitude: "3400m-3842m", dalles: [{ path: "meshes/1002_6541_11.drc", x: 1002, y: 6541 }, { path: "meshes/1002_6542_11.drc", x: 1002, y: 6542 }, { path: "meshes/1003_6541_11.drc", x: 1003, y: 6541 }, { path: "meshes/1003_6542_11.drc", x: 1003, y: 6542 }, { path: "meshes/1003_6543_11.drc", x: 1003, y: 6543 }, { path: "meshes/1004_6542_11.drc", x: 1004, y: 6542 }] },
         ],
       },
@@ -108,19 +110,19 @@ const MOUNTAIN_TREE = [
         id: "secteur-mont-blanc",
         name: "4. Secteur Mont-Blanc",
         children: [
-          { id: "mont-blanc", name: "Mont Blanc (4810m)", altitude: "4810m", c2c: "https://www.camptocamp.org/waypoints/37399/fr/mont-blanc", dalles: [{ path: "meshes/0999_6533_11.drc", x: 999, y: 6533 }, { path: "meshes/0999_6534_11.drc", x: 999, y: 6534 }, { path: "meshes/1000_6533_11.drc", x: 1000, y: 6533 }, { path: "meshes/1000_6534_11.drc", x: 1000, y: 6534 }] },
-          { id: "tacul", name: "Mont Blanc du Tacul (4248m)", altitude: "4248m", c2c: "https://www.camptocamp.org/waypoints/37400/fr/mont-blanc-du-tacul", waypoints: [{name: "Pilier Gervasutti", type: "Sommet"}, {name: "Aiguilles du Diable", type: "Crête"}], dalles: [{ path: "meshes/1002_6536_11.drc", x: 1002, y: 6536 }, { path: "meshes/1002_6537_11.drc", x: 1002, y: 6537 }, { path: "meshes/1001_6536_11.drc", x: 1001, y: 6536 }, { path: "meshes/1001_6537_11.drc", x: 1001, y: 6537 }] },
-          { id: "maudit", name: "Mont Maudit (4465m)", altitude: "4465m", dalles: [{ path: "meshes/1000_6535_11.drc", x: 1000, y: 6535 }, { path: "meshes/1000_6536_11.drc", x: 1000, y: 6536 }, { path: "meshes/1001_6536_11.drc", x: 1001, y: 6536 }] },
-          { id: "dome-gouter", name: "Dôme du Goûter (4304m)", altitude: "4304m", dalles: [{ path: "meshes/0997_6534_11.drc", x: 997, y: 6534 }, { path: "meshes/0997_6535_11.drc", x: 997, y: 6535 }, { path: "meshes/0998_6534_11.drc", x: 998, y: 6534 }, { path: "meshes/0998_6535_11.drc", x: 998, y: 6535 }] },
+          { id: "mont-blanc", name: "Mont Blanc (4810m)", altitude: "4810m", c2c: "https://www.camptocamp.org/waypoints/37399/fr/mont-blanc", firstAscent: "8 août 1786 — Jacques Balmat et le Dr Michel-Gabriel Paccard", description: "Le Mont Blanc est le toit de l'Europe occidentale et l'une des montagnes les plus emblématiques du monde. Son ascension par la voie normale des Grands Mulets ou du Goûter est le rêve de milliers d'alpinistes chaque année. Sa cime, à 4 810 m, offre un panorama unique sur les Alpes.", dalles: [{ path: "meshes/0999_6533_11.drc", x: 999, y: 6533 }, { path: "meshes/0999_6534_11.drc", x: 999, y: 6534 }, { path: "meshes/1000_6533_11.drc", x: 1000, y: 6533 }, { path: "meshes/1000_6534_11.drc", x: 1000, y: 6534 }] },
+          { id: "tacul", name: "Mont Blanc du Tacul (4248m)", altitude: "4248m", c2c: "https://www.camptocamp.org/waypoints/37400/fr/mont-blanc-du-tacul", firstAscent: "1855 — Charles Hudson et C.E. Mathews avec les guides Balmat", description: "Le Mont Blanc du Tacul est un sommet incontournable sur la voie du Mont Blanc par les Trois Monts. Ses faces nord et est abritent de nombreuses voies de glace et mixte de haute difficulté, dont la célèbre voie des Arêtes du Diable sur les Aiguilles du Diable.", waypoints: [{name: "Pilier Gervasutti", type: "Sommet"}, {name: "Aiguilles du Diable", type: "Crête"}], dalles: [{ path: "meshes/1002_6536_11.drc", x: 1002, y: 6536 }, { path: "meshes/1002_6537_11.drc", x: 1002, y: 6537 }, { path: "meshes/1001_6536_11.drc", x: 1001, y: 6536 }, { path: "meshes/1001_6537_11.drc", x: 1001, y: 6537 }] },
+          { id: "maudit", name: "Mont Maudit (4465m)", altitude: "4465m", c2c: "https://www.camptocamp.org/waypoints/37401/fr/mont-maudit", firstAscent: "1878 — W.E. Davidson avec les guides J.-P. Cachat et A. Simond", description: "Le Mont Maudit, troisième plus haut sommet de France, est une étape souvent boudée mais indispensable sur la traversée des Trois Monts. Son arête reliant le Mont Blanc du Tacul est une classique glaciaire exposée aux séracs de la face nord.", dalles: [{ path: "meshes/1000_6535_11.drc", x: 1000, y: 6535 }, { path: "meshes/1000_6536_11.drc", x: 1000, y: 6536 }, { path: "meshes/1001_6536_11.drc", x: 1001, y: 6536 }] },
+          { id: "dome-gouter", name: "Dôme du Goûter (4304m)", altitude: "4304m", c2c: "https://www.camptocamp.org/waypoints/37403/fr/dome-du-gouter", firstAscent: "1784 — Marie Paradis, première femme à atteindre un sommet alpin majeur ; voie normale du côté de l'Aiguille du Goûter établie dès 1786", description: "Étape incontournable sur la voie normale du Mont-Blanc par le refuge du Goûter. Son vaste dôme neigeux à 4 304 m marque la frontière franco-italienne et offre un panorama exceptionnel sur le massif. On y distingue clairement le tracé de la voie des Bosses menant au sommet.", dalles: [{ path: "meshes/0997_6534_11.drc", x: 997, y: 6534 }, { path: "meshes/0997_6535_11.drc", x: 997, y: 6535 }, { path: "meshes/0998_6534_11.drc", x: 998, y: 6534 }, { path: "meshes/0998_6535_11.drc", x: 998, y: 6535 }] },
         ],
       },
       {
         id: "secteur-geant-vallee-blanche",
         name: "5. Secteur Géant - Vallée Blanche",
         children: [
-          { id: "geant", name: "Dent du Géant (4013m)", altitude: "4013m", dalles: [{ path: "meshes/1006_6537_11.drc", x: 1006, y: 6537 }] },
-          { id: "rochefort", name: "Arête de Rochefort", altitude: "4001m", dalles: [{ path: "meshes/1006_6537_11.drc", x: 1006, y: 6537 }, { path: "meshes/1006_6538_11.drc", x: 1006, y: 6538 }, { path: "meshes/1007_6537_11.drc", x: 1007, y: 6537 }, { path: "meshes/1007_6538_11.drc", x: 1007, y: 6538 }] },
-          { id: "tour-ronde", name: "Tour Ronde (3792m)", altitude: "3792m", dalles: [{ path: "meshes/1002_6535_11.drc", x: 1002, y: 6535 }, { path: "meshes/1003_6535_11.drc", x: 1003, y: 6535 }] },
+          { id: "geant", name: "Dent du Géant (4013m)", altitude: "4013m", c2c: "https://www.camptocamp.org/waypoints/37407/fr/dent-du-geant", firstAscent: "1882 — W.W. Graham avec Jean-Joseph et Baptiste Maquignaz", description: "Obélisque granitique de 4 013 m dominant le glacier du Géant côté italien. Longtemps réputée absolument inaccessible, la Dent du Géant est désormais une grande classique grâce aux cordes fixes installées sur son ressaut sommital. La vue sur la Vallée Blanche et les sommets environnants y est spectaculaire.", dalles: [{ path: "meshes/1006_6537_11.drc", x: 1006, y: 6537 }] },
+          { id: "rochefort", name: "Arête de Rochefort", altitude: "4001m", c2c: "https://www.camptocamp.org/waypoints/37416/fr/arete-de-rochefort", firstAscent: "1873 — J. Eccles avec les guides Michel et Alphonse Payot", description: "Longue arête neigeuse et aérienne à 4 001 m reliant la Dent du Géant en direction des Grandes Jorasses. L'un des itinéraires glaciaires les plus esthétiques du massif, avec une vue imprenable sur la Vallée Blanche d'un côté et les glaciers italiens de l'autre.", dalles: [{ path: "meshes/1006_6537_11.drc", x: 1006, y: 6537 }, { path: "meshes/1006_6538_11.drc", x: 1006, y: 6538 }, { path: "meshes/1007_6537_11.drc", x: 1007, y: 6537 }, { path: "meshes/1007_6538_11.drc", x: 1007, y: 6538 }] },
+          { id: "tour-ronde", name: "Tour Ronde (3792m)", altitude: "3792m", c2c: "https://www.camptocamp.org/waypoints/37404/fr/tour-ronde", firstAscent: "1867 — F.C. Grove, W.E. Mathews et J.C. Jacomb avec les guides Melchior et Jakob Anderegg", description: "Sommet rocheux et neigeux de 3 792 m au cœur de la Vallée Blanche, entre l'Aiguille du Midi et le Col du Géant. Sa voie normale est accessible depuis le refuge Torino côté italien ; son versant nord, en glace raide, offre des courses très prisées des amateurs de glace.", dalles: [{ path: "meshes/1002_6535_11.drc", x: 1002, y: 6535 }, { path: "meshes/1003_6535_11.drc", x: 1003, y: 6535 }] },
           { id: "periades", name: "Les Périades (3549m)", altitude: "3549m", c2c: "https://www.camptocamp.org/waypoints/37520/fr/les-periades", description: "Crête acérée et très découpée s'étendant du Col du Tacul au Col du Mont Mallet.", dalles: [{ path: "meshes/1006_6539_11.drc", x: 1006, y: 6539 }, { path: "meshes/1006_6540_11.drc", x: 1006, y: 6540 }, { path: "meshes/1007_6539_11.drc", x: 1007, y: 6539 }, { path: "meshes/1007_6540_11.drc", x: 1007, y: 6540 }] },
           { id: "leschaux-geant", name: "Aiguille de Leschaux (3759m)", altitude: "3759m", c2c: "https://www.camptocamp.org/waypoints/37512/fr/aiguille-de-leschaux", description: "Vue depuis le secteur Géant, sur la crête entre Mont Dolent et Grandes Jorasses.", dalles: [{ path: "meshes/1006_6539_11.drc", x: 1006, y: 6539 }, { path: "meshes/1006_6540_11.drc", x: 1006, y: 6540 }, { path: "meshes/1007_6539_11.drc", x: 1007, y: 6539 }, { path: "meshes/1007_6540_11.drc", x: 1007, y: 6540 }] },
         ]
@@ -129,7 +131,7 @@ const MOUNTAIN_TREE = [
         id: "secteur-jorasses",
         name: "6. Secteur Grandes Jorasses",
         children: [
-          { id: "jorasses", name: "Grandes Jorasses (4208m)", altitude: "4208m", c2c: "https://www.camptocamp.org/waypoints/37419/fr/grandes-jorasses", waypoints: [{name: "Pointe Walker", type: "Sommet"}, {name: "Éperon Walker", type: "Pilier"}], dalles: [{ path: "meshes/1008_6538_11.drc", x: 1008, y: 6538 }, { path: "meshes/1008_6539_11.drc", x: 1008, y: 6539 }, { path: "meshes/1009_6538_11.drc", x: 1009, y: 6538 }, { path: "meshes/1009_6539_11.drc", x: 1009, y: 6539 }] },
+          { id: "jorasses", name: "Grandes Jorasses (4208m)", altitude: "4208m", c2c: "https://www.camptocamp.org/waypoints/37419/fr/grandes-jorasses", firstAscent: "Pointe Whymper 1865 — Edward Whymper avec les guides Michel Croz, C. Almer et F. Biener ; Pointe Walker 1868 — Horace Walker avec les guides Johann Jaun et Melchior Anderegg", description: "Les Grandes Jorasses sont l'un des six grands défis classiques des Alpes. Leur face nord, haute de 1 200 m, domine le glacier de Leschaux d'une verticalité terrifiante. L'Éperon Walker, premier gravi par Riccardo Cassin en 1938, est considéré comme l'une des plus grandes réalisations de l'alpinisme.", waypoints: [{name: "Pointe Walker", type: "Sommet"}, {name: "Éperon Walker", type: "Pilier"}], dalles: [{ path: "meshes/1008_6538_11.drc", x: 1008, y: 6538 }, { path: "meshes/1008_6539_11.drc", x: 1008, y: 6539 }, { path: "meshes/1009_6538_11.drc", x: 1009, y: 6538 }, { path: "meshes/1009_6539_11.drc", x: 1009, y: 6539 }] },
           { id: "petites-jorasses", name: "Petites Jorasses (3650m)", altitude: "3650m", c2c: "https://www.camptocamp.org/waypoints/37513/fr/petites-jorasses", description: "Sommet voisin des Grandes Jorasses, situé entre les glaciers de Leschaux et de Frébouze.", dalles: [{ path: "meshes/1009_6539_11.drc", x: 1009, y: 6539 }, { path: "meshes/1009_6540_11.drc", x: 1009, y: 6540 }, { path: "meshes/1010_6539_11.drc", x: 1010, y: 6539 }, { path: "meshes/1010_6540_11.drc", x: 1010, y: 6540 }] },
           { id: "leschaux", name: "Aiguille de Leschaux (3759m)", altitude: "3759m", c2c: "https://www.camptocamp.org/waypoints/37512/fr/aiguille-de-leschaux", description: "Située sur la crête entre le Mont Dolent et les Grandes Jorasses, à la frontière franco-italienne.", dalles: [{ path: "meshes/1009_6539_11.drc", x: 1009, y: 6539 }, { path: "meshes/1009_6540_11.drc", x: 1009, y: 6540 }, { path: "meshes/1010_6539_11.drc", x: 1010, y: 6539 }, { path: "meshes/1010_6540_11.drc", x: 1010, y: 6540 }] },
           { id: "talefre", name: "Aiguille de Talèfre (3730m)", altitude: "3730m", c2c: "https://www.camptocamp.org/waypoints/37530/fr/aiguille-de-talefre", description: "Domine le glacier de Talèfre au nord et les glaciers de Pierre-Joseph et de Leschaux au sud-ouest.", dalles: [{ path: "meshes/1009_6541_11.drc", x: 1009, y: 6541 }, { path: "meshes/1009_6542_11.drc", x: 1009, y: 6542 }, { path: "meshes/1010_6541_11.drc", x: 1010, y: 6541 }, { path: "meshes/1010_6542_11.drc", x: 1010, y: 6542 }] },
@@ -145,62 +147,62 @@ const MOUNTAIN_TREE = [
         id: "secteur-meije",
         name: "1. Secteur La Meije",
         children: [
-          { id: "meije", name: "La Meije (3984m)", altitude: "3984m", c2c: "https://www.camptocamp.org/waypoints/38988/fr/la-meije-grand-pic", description: "Sommet mythique des Alpes, dernière grande cime française à avoir été gravie.", dalles: [{ path: "meshes/0959_6439_11.drc", x: 959, y: 6439 }, { path: "meshes/0959_6440_11.drc", x: 959, y: 6440 }, { path: "meshes/0960_6439_11.drc", x: 960, y: 6439 }, { path: "meshes/0960_6440_11.drc", x: 960, y: 6440 }, { path: "meshes/0961_6439_11.drc", x: 961, y: 6439 }, { path: "meshes/0961_6440_11.drc", x: 961, y: 6440 }] },
-          { id: "rateau", name: "Le Râteau (3809m)", altitude: "3809m", c2c: "https://www.camptocamp.org/waypoints/38989/fr/le-rateau", description: "Voisin de la Meije, offre une vue exceptionnelle sur le massif.", dalles: [{ path: "meshes/0957_6438_11.drc", x: 957, y: 6438 }, { path: "meshes/0958_6438_11.drc", x: 958, y: 6438 }, { path: "meshes/0958_6439_11.drc", x: 958, y: 6439 }] },
-          { id: "pic-grave", name: "Pic de la Grave (3667m)", altitude: "3667m", description: "Sommet accessible depuis La Grave.", dalles: [{ path: "meshes/0956_6439_11.drc", x: 956, y: 6439 }, { path: "meshes/0956_6440_11.drc", x: 956, y: 6440 }] },
-          { id: "gandoliere", name: "Tête de la Gandolière (3609m)", altitude: "3609m", description: "Belle vue sur le versant nord de la Meije.", dalles: [{ path: "meshes/0955_6439_11.drc", x: 955, y: 6439 }, { path: "meshes/0955_6440_11.drc", x: 955, y: 6440 }] },
-          { id: "plaret", name: "Le Plaret (3563m)", altitude: "3563m", description: "Sommet voisin de la Gandolière.", dalles: [{ path: "meshes/0955_6438_11.drc", x: 955, y: 6438 }, { path: "meshes/0955_6439_11.drc", x: 955, y: 6439 }] },
-          { id: "pic-geny", name: "Pic Gény (3423m)", altitude: "3423m", description: "Point de vue sur le glacier de la Girose.", dalles: [{ path: "meshes/0956_6437_11.drc", x: 956, y: 6437 }, { path: "meshes/0957_6437_11.drc", x: 957, y: 6437 }] },
-          { id: "pic-gaspard", name: "Pic Gaspard (3883m)", altitude: "3883m", description: "Sommet proche de la Meije avec vue panoramique.", dalles: [{ path: "meshes/0958_6438_11.drc", x: 958, y: 6438 }, { path: "meshes/0958_6439_11.drc", x: 958, y: 6439 }] },
-          { id: "combeynot", name: "Pic de Combeynot (3155m)", altitude: "3155m", description: "Sommet au-dessus du col du Lautaret.", dalles: [{ path: "meshes/0961_6437_11.drc", x: 961, y: 6437 }, { path: "meshes/0961_6438_11.drc", x: 961, y: 6438 }] },
-          { id: "neige-cordier", name: "Pic de Neige Cordier (3614m)", altitude: "3614m", description: "Accessible depuis le glacier de la Plate des Agneaux.", dalles: [{ path: "meshes/0962_6436_11.drc", x: 962, y: 6436 }, { path: "meshes/0961_6437_11.drc", x: 961, y: 6437 }] },
+          { id: "meije", name: "La Meije (3984m)", altitude: "3984m", c2c: "https://www.camptocamp.org/waypoints/38988/fr/la-meije-grand-pic", firstAscent: "16 août 1877 — Pierre Boileau de Castelnau avec les guides Emmanuel et Pierre Gaspard père et fils, après 8 tentatives infructueuses", description: "La Meije est l'un des sommets les plus mythiques des Alpes françaises, dernière grande cime à avoir résisté aux alpinistes du XIXe siècle. Sa traversée intégrale, de la Brèche de la Meije à la Cime du Doigt, est un itinéraire de haute montagne exceptionnel qui suscite le respect et l'admiration.", dalles: [{ path: "meshes/0959_6439_11.drc", x: 959, y: 6439 }, { path: "meshes/0959_6440_11.drc", x: 959, y: 6440 }, { path: "meshes/0960_6439_11.drc", x: 960, y: 6439 }, { path: "meshes/0960_6440_11.drc", x: 960, y: 6440 }, { path: "meshes/0961_6439_11.drc", x: 961, y: 6439 }, { path: "meshes/0961_6440_11.drc", x: 961, y: 6440 }] },
+          { id: "rateau", name: "Le Râteau (3809m)", altitude: "3809m", c2c: "https://www.camptocamp.org/waypoints/38989/fr/le-rateau", firstAscent: "1876 — A.W. Moore avec les guides Jakob et Andreas Imseng", description: "Voisin immédiat de la Meije, le Râteau en est le contrefort occidental. Sa face nord présente un imposant mur de glace dominant le glacier du Tabuchet. Depuis son sommet, la vue sur la Meije et la brèche homonyme est saisissante.", dalles: [{ path: "meshes/0957_6438_11.drc", x: 957, y: 6438 }, { path: "meshes/0958_6438_11.drc", x: 958, y: 6438 }, { path: "meshes/0958_6439_11.drc", x: 958, y: 6439 }] },
+          { id: "pic-grave", name: "Pic de la Grave (3667m)", altitude: "3667m", c2c: "https://www.camptocamp.org/waypoints/38987/fr/pic-de-la-grave", firstAscent: "Fin XIXe siècle", description: "Sommet dominant directement la station de La Grave et le célèbre téléphérique des Glaciers de la Meije. Son versant nord plonge sur l'immense glacier de la Girose, domaine glaciaire hors-piste parmi les plus sauvages des Alpes françaises.", dalles: [{ path: "meshes/0956_6439_11.drc", x: 956, y: 6439 }, { path: "meshes/0956_6440_11.drc", x: 956, y: 6440 }] },
+          { id: "gandoliere", name: "Tête de la Gandolière (3609m)", altitude: "3609m", firstAscent: "Fin XIXe siècle", description: "Sommet secondaire de la chaîne frontière entre la Meije et le Râteau. Son panorama s'étend du glacier de Tsanfleuron aux sommets italiens du Gran Paradiso. Accessible par des pentes mixtes depuis le col de la Gandolière.", dalles: [{ path: "meshes/0955_6439_11.drc", x: 955, y: 6439 }, { path: "meshes/0955_6440_11.drc", x: 955, y: 6440 }] },
+          { id: "plaret", name: "Le Plaret (3563m)", altitude: "3563m", firstAscent: "XIXe siècle", description: "Petit sommet rocheux aux abords du glacier du Râteau, entre la Tête de la Gandolière et la vallée de la Romanche. Accessible en randonnée depuis La Grave par les pentes herbeuses du versant sud.", dalles: [{ path: "meshes/0955_6438_11.drc", x: 955, y: 6438 }, { path: "meshes/0955_6439_11.drc", x: 955, y: 6439 }] },
+          { id: "pic-geny", name: "Pic Gény (3423m)", altitude: "3423m", firstAscent: "Fin XIXe siècle", description: "Point de vue sur le vaste glacier de la Girose et le cirque glaciaire autour de la Meije. Accessible depuis La Grave, il offre un beau belvédère sur les faces nord des grands sommets du massif.", dalles: [{ path: "meshes/0956_6437_11.drc", x: 956, y: 6437 }, { path: "meshes/0957_6437_11.drc", x: 957, y: 6437 }] },
+          { id: "pic-gaspard", name: "Pic Gaspard (3883m)", altitude: "3883m", c2c: "https://www.camptocamp.org/waypoints/38986/fr/pic-gaspard", firstAscent: "1877 — Emmanuel et Pierre Gaspard père et fils, vainqueurs de la Meije", description: "Sommet voisin de la Meije portant le nom de la famille de guides qui en a réalisé la première ascension. Sa silhouette rocheuse caractéristique offre une vue directe sur la face nord de la Meije et les glaciers qui l'entourent.", dalles: [{ path: "meshes/0958_6438_11.drc", x: 958, y: 6438 }, { path: "meshes/0958_6439_11.drc", x: 958, y: 6439 }] },
+          { id: "combeynot", name: "Pic de Combeynot (3155m)", altitude: "3155m", firstAscent: "XIXe siècle", description: "Massif calcaire au-dessus du col du Lautaret, ponctué de lacs d'altitude et de pelouses alpines. Excellent belvédère sur la face nord de la Meije et le massif des Écrins, accessible en randonnée depuis le col du Lautaret.", dalles: [{ path: "meshes/0961_6437_11.drc", x: 961, y: 6437 }, { path: "meshes/0961_6438_11.drc", x: 961, y: 6438 }] },
+          { id: "neige-cordier", name: "Pic de Neige Cordier (3614m)", altitude: "3614m", firstAscent: "Début XXe siècle", description: "Sommet glaciaire accessible depuis le plateau de la Plate des Agneaux. Vue plongeante sur les séracs du glacier du Casset et les vallées du Briançonnais. Itinéraire mixte exigeant depuis le col du Lautaret.", dalles: [{ path: "meshes/0962_6436_11.drc", x: 962, y: 6436 }, { path: "meshes/0961_6437_11.drc", x: 961, y: 6437 }] },
         ],
       },
       {
         id: "secteur-ecrins",
         name: "2. Secteur Barre des Écrins",
         children: [
-          { id: "barre-ecrins", name: "Barre des Écrins (4102m)", altitude: "4102m", c2c: "https://www.camptocamp.org/waypoints/38929/fr/barre-des-ecrins", description: "Point culminant du massif, 4000m le plus méridional des Alpes.", dalles: [{ path: "meshes/0964_6431_11.drc", x: 964, y: 6431 }, { path: "meshes/0964_6432_11.drc", x: 964, y: 6432 }, { path: "meshes/0965_6431_11.drc", x: 965, y: 6431 }, { path: "meshes/0965_6432_11.drc", x: 965, y: 6432 }] },
-          { id: "dome-neige", name: "Dôme de Neige des Écrins (4015m)", altitude: "4015m", c2c: "https://www.camptocamp.org/waypoints/38930/fr/dome-de-neige-des-ecrins", description: "Le 4000m le plus accessible du massif.", dalles: [{ path: "meshes/0964_6431_11.drc", x: 964, y: 6431 }, { path: "meshes/0964_6432_11.drc", x: 964, y: 6432 }, { path: "meshes/0965_6431_11.drc", x: 965, y: 6431 }, { path: "meshes/0965_6432_11.drc", x: 965, y: 6432 }] },
-          { id: "roche-faurio", name: "Roche Faurio (3730m)", altitude: "3730m", description: "Sommet classique, accès depuis le refuge des Écrins.", dalles: [{ path: "meshes/0957_6434_11.drc", x: 957, y: 6434 }, { path: "meshes/0958_6434_11.drc", x: 958, y: 6434 }] },
-          { id: "pic-cavales", name: "Pic des Cavales (3385m)", altitude: "3385m", description: "Sommet rocheux au-dessus du pré de Mme Carle.", dalles: [{ path: "meshes/0964_6430_11.drc", x: 964, y: 6430 }, { path: "meshes/0965_6430_11.drc", x: 965, y: 6430 }] },
-          { id: "roche-meane", name: "Roche Méane (3500m)", altitude: "3500m", description: "Sommet entre glacier Blanc et glacier Noir.", dalles: [{ path: "meshes/0963_6431_11.drc", x: 963, y: 6431 }, { path: "meshes/0964_6431_11.drc", x: 964, y: 6431 }] },
-          { id: "agneaux", name: "Montagne des Agneaux (3664m)", altitude: "3664m", description: "Belle course glaciaire depuis le refuge du Pavé.", dalles: [{ path: "meshes/0958_6435_11.drc", x: 958, y: 6435 }, { path: "meshes/0958_6436_11.drc", x: 958, y: 6436 }] },
-          { id: "pic-coolidge", name: "Pic Coolidge (3775m)", altitude: "3775m", description: "Nommé en hommage à l'alpiniste américain W.A.B. Coolidge.", dalles: [{ path: "meshes/0964_6430_11.drc", x: 964, y: 6430 }, { path: "meshes/0965_6430_11.drc", x: 965, y: 6430 }] },
+          { id: "barre-ecrins", name: "Barre des Écrins (4102m)", altitude: "4102m", c2c: "https://www.camptocamp.org/waypoints/38929/fr/barre-des-ecrins", firstAscent: "25 juin 1864 — Edward Whymper et A.W. Moore avec les guides guides Michel Croz et Christian Almer", description: "Point culminant du massif des Écrins et 4000m le plus méridional des Alpes, la Barre des Écrins est un sommet glaciaire majestueux. Son ascension par le glacier Blanc est une grande course classique, tandis que sa face nord offre des itinéraires de haute difficulté sur la glace et le mixte.", dalles: [{ path: "meshes/0964_6431_11.drc", x: 964, y: 6431 }, { path: "meshes/0964_6432_11.drc", x: 964, y: 6432 }, { path: "meshes/0965_6431_11.drc", x: 965, y: 6431 }, { path: "meshes/0965_6432_11.drc", x: 965, y: 6432 }] },
+          { id: "dome-neige", name: "Dôme de Neige des Écrins (4015m)", altitude: "4015m", c2c: "https://www.camptocamp.org/waypoints/38930/fr/dome-de-neige-des-ecrins", firstAscent: "1864 — Edward Whymper et A.W. Moore avec les guides Michel Croz et Christian Almer, lors de la même course que la première de la Barre", description: "Le 4000 m le plus accessible du massif des Écrins. Son large dôme neigeux se situe quelques mètres en contrebas de la Barre des Écrins et constitue une étape naturelle sur la voie normale par le glacier Blanc. Panorama exceptionnel sur l'ensemble du massif.", dalles: [{ path: "meshes/0964_6431_11.drc", x: 964, y: 6431 }, { path: "meshes/0964_6432_11.drc", x: 964, y: 6432 }, { path: "meshes/0965_6431_11.drc", x: 965, y: 6431 }, { path: "meshes/0965_6432_11.drc", x: 965, y: 6432 }] },
+          { id: "roche-faurio", name: "Roche Faurio (3730m)", altitude: "3730m", firstAscent: "1878 — T. Middlemore avec les guides J. Jaun et J. Fischer", description: "Sommet rocheux face à la Barre des Écrins, de l'autre côté du glacier Blanc. Point de repère visuel emblématique depuis le refuge des Écrins (Cézanne) ; son ascension constitue une belle course rocheuse PD en haute montagne.", dalles: [{ path: "meshes/0957_6434_11.drc", x: 957, y: 6434 }, { path: "meshes/0958_6434_11.drc", x: 958, y: 6434 }] },
+          { id: "pic-cavales", name: "Pic des Cavales (3385m)", altitude: "3385m", firstAscent: "Début XXe siècle", description: "Sommet rocheux dominant le pré de Madame Carle et la vallée d'Ailefroide. Accès par des pentes herbeuses et rocheuses depuis Ailefroide ; beau point de vue sur les faces sud de la Barre des Écrins et du Pelvoux.", dalles: [{ path: "meshes/0964_6430_11.drc", x: 964, y: 6430 }, { path: "meshes/0965_6430_11.drc", x: 965, y: 6430 }] },
+          { id: "roche-meane", name: "Roche Méane (3500m)", altitude: "3500m", firstAscent: "Fin XIXe siècle", description: "Crête rocheuse austère entre le glacier Blanc et le glacier Noir, typique du style minéral des Écrins. Elle offre un beau point d'observation sur ces deux immenses glaciers qui descendent de la Barre des Écrins.", dalles: [{ path: "meshes/0963_6431_11.drc", x: 963, y: 6431 }, { path: "meshes/0964_6431_11.drc", x: 964, y: 6431 }] },
+          { id: "agneaux", name: "Montagne des Agneaux (3664m)", altitude: "3664m", firstAscent: "1878", description: "Belle course glaciaire depuis le refuge du Pavé. L'itinéraire classique traverse les névés du plateau des Agneaux avant de rejoindre la cime rocheuse. Vue panoramique sur les Écrins, le Pelvoux et les sommets du Briançonnais.", dalles: [{ path: "meshes/0958_6435_11.drc", x: 958, y: 6435 }, { path: "meshes/0958_6436_11.drc", x: 958, y: 6436 }] },
+          { id: "pic-coolidge", name: "Pic Coolidge (3775m)", altitude: "3775m", firstAscent: "1881 — W.A.B. Coolidge avec les guides Christian Almer père et fils", description: "Nommé en hommage au grand alpiniste et historien américain W.A.B. Coolidge, qui contribua à l'exploration systématique des Écrins à la fin du XIXe siècle. Course rocheuse élégante avec vue directe sur le cirque de la Barre des Écrins.", dalles: [{ path: "meshes/0964_6430_11.drc", x: 964, y: 6430 }, { path: "meshes/0965_6430_11.drc", x: 965, y: 6430 }] },
         ],
       },
       {
         id: "secteur-pelvoux",
         name: "3. Secteur Pelvoux - Ailefroide",
         children: [
-          { id: "pelvoux", name: "Mont Pelvoux (3946m)", altitude: "3946m", c2c: "https://www.camptocamp.org/waypoints/38925/fr/mont-pelvoux", description: "Longtemps considéré comme le point culminant du Dauphiné.", dalles: [{ path: "meshes/0964_6428_11.drc", x: 964, y: 6428 }, { path: "meshes/0964_6429_11.drc", x: 964, y: 6429 }, { path: "meshes/0965_6428_11.drc", x: 965, y: 6428 }, { path: "meshes/0965_6429_11.drc", x: 965, y: 6429 }] },
-          { id: "ailefroide", name: "Ailefroide (3954m)", altitude: "3954m", c2c: "https://www.camptocamp.org/waypoints/38926/fr/ailefroide", description: "Troisième plus haut sommet du Dauphiné, trois pointes distinctes.", dalles: [{ path: "meshes/0964_6426_11.drc", x: 964, y: 6426 }, { path: "meshes/0964_6427_11.drc", x: 964, y: 6427 }, { path: "meshes/0964_6428_11.drc", x: 964, y: 6428 }, { path: "meshes/0965_6426_11.drc", x: 965, y: 6426 }, { path: "meshes/0965_6427_11.drc", x: 965, y: 6427 }, { path: "meshes/0965_6428_11.drc", x: 965, y: 6428 }] },
-          { id: "pic-sans-nom", name: "Pic Sans Nom (3913m)", altitude: "3913m", description: "Entre le Pelvoux et l'Ailefroide sur une crête impressionnante.", dalles: [{ path: "meshes/0964_6428_11.drc", x: 964, y: 6428 }, { path: "meshes/0965_6428_11.drc", x: 965, y: 6428 }] },
-          { id: "coup-sabre", name: "Pic du Coup de Sabre (3699m)", altitude: "3699m", description: "Arête acérée entre Ailefroide et Pelvoux.", dalles: [{ path: "meshes/0964_6428_11.drc", x: 964, y: 6428 }, { path: "meshes/0965_6428_11.drc", x: 965, y: 6428 }] },
-          { id: "pointe-sele", name: "Pointe du Sélé (3557m)", altitude: "3557m", description: "Dominant le glacier du Sélé.", dalles: [{ path: "meshes/0964_6427_11.drc", x: 964, y: 6427 }, { path: "meshes/0965_6427_11.drc", x: 965, y: 6427 }] },
-          { id: "pic-temple", name: "Pic de la Temple (3682m)", altitude: "3682m", description: "Sommet élancé du secteur sud.", dalles: [{ path: "meshes/0964_6429_11.drc", x: 964, y: 6429 }, { path: "meshes/0965_6429_11.drc", x: 965, y: 6429 }] },
-          { id: "pic-paveoux", name: "Pic des Pavéous (3548m)", altitude: "3548m", description: "Vue panoramique sur le vallon de Claphouse.", dalles: [{ path: "meshes/0964_6427_11.drc", x: 964, y: 6427 }] },
-          { id: "grande-sagne", name: "Pointe de la Grande Sagne (3660m)", altitude: "3660m", description: "Accès depuis le refuge du Sélé.", dalles: [{ path: "meshes/0964_6427_11.drc", x: 964, y: 6427 }, { path: "meshes/0965_6427_11.drc", x: 965, y: 6427 }] },
+          { id: "pelvoux", name: "Mont Pelvoux (3946m)", altitude: "3946m", c2c: "https://www.camptocamp.org/waypoints/38925/fr/mont-pelvoux", firstAscent: "1848 — H.W. Tuckett avec les guides Pierre Reynaud et Michel Croz", description: "Longtemps considéré comme le point culminant du Dauphiné avant la découverte que la Barre des Écrins le dépasse. Massif imposant dominant Ailefroide, le Pelvoux offre des courses variées sur rocher et glace, de l'arête du Coup de Sabre aux couloirs nord.", dalles: [{ path: "meshes/0964_6428_11.drc", x: 964, y: 6428 }, { path: "meshes/0964_6429_11.drc", x: 964, y: 6429 }, { path: "meshes/0965_6428_11.drc", x: 965, y: 6428 }, { path: "meshes/0965_6429_11.drc", x: 965, y: 6429 }] },
+          { id: "ailefroide", name: "Ailefroide (3954m)", altitude: "3954m", c2c: "https://www.camptocamp.org/waypoints/38926/fr/ailefroide", firstAscent: "1870 — E. Whymper avec les guides Almer et Moore", description: "Troisième plus haut sommet du Dauphiné, constitué de trois pointes distinctes (Centrale, Orientale, Occidentale). Ses faces rocheuses offrent des voies variées de tout niveau au-dessus du hameau d'Ailefroide, point de départ classique des courses dans les Écrins.", dalles: [{ path: "meshes/0964_6426_11.drc", x: 964, y: 6426 }, { path: "meshes/0964_6427_11.drc", x: 964, y: 6427 }, { path: "meshes/0964_6428_11.drc", x: 964, y: 6428 }, { path: "meshes/0965_6426_11.drc", x: 965, y: 6426 }, { path: "meshes/0965_6427_11.drc", x: 965, y: 6427 }, { path: "meshes/0965_6428_11.drc", x: 965, y: 6428 }] },
+          { id: "pic-sans-nom", name: "Pic Sans Nom (3913m)", altitude: "3913m", firstAscent: "Fin XIXe siècle", description: "Érigé sur la crête reliant le Pelvoux à l'Ailefroide, ce sommet au nom énigmatique se distingue par sa silhouette rocheuse acérée. Course engagée avec des passages mixtes caractéristiques du style Écrins.", dalles: [{ path: "meshes/0964_6428_11.drc", x: 964, y: 6428 }, { path: "meshes/0965_6428_11.drc", x: 965, y: 6428 }] },
+          { id: "coup-sabre", name: "Pic du Coup de Sabre (3699m)", altitude: "3699m", firstAscent: "Fin XIXe siècle", description: "Son nom évoque la netteté de l'arête rocheuse qui le caractérise, entre l'Ailefroide et le Pelvoux. Course technique sur rocher avec un accès depuis le vallon de Claphouse.", dalles: [{ path: "meshes/0964_6428_11.drc", x: 964, y: 6428 }, { path: "meshes/0965_6428_11.drc", x: 965, y: 6428 }] },
+          { id: "pointe-sele", name: "Pointe du Sélé (3557m)", altitude: "3557m", firstAscent: "Fin XIXe siècle", description: "Dominant le glacier du Sélé entre Ailefroide et le vallon du Sélé. Accès par les pentes neigeuses du glacier depuis le refuge du Sélé, avec vue sur les faces ouest des Écrins.", dalles: [{ path: "meshes/0964_6427_11.drc", x: 964, y: 6427 }, { path: "meshes/0965_6427_11.drc", x: 965, y: 6427 }] },
+          { id: "pic-temple", name: "Pic de la Temple (3682m)", altitude: "3682m", firstAscent: "Fin XIXe siècle", description: "Sommet élancé du secteur sud du Pelvoux, dominant le vallon de Claphouse. Vue dégagée sur l'ensemble du secteur Pelvoux-Ailefroide et les glaciers environnants.", dalles: [{ path: "meshes/0964_6429_11.drc", x: 964, y: 6429 }, { path: "meshes/0965_6429_11.drc", x: 965, y: 6429 }] },
+          { id: "pic-paveoux", name: "Pic des Pavéous (3548m)", altitude: "3548m", firstAscent: "Fin XIXe siècle", description: "Sommet rocheux offrant un large panorama sur le vallon de Claphouse et les contreforts méridionaux du Pelvoux. Itinéraire de randonnée alpinistique accessible depuis Ailefroide.", dalles: [{ path: "meshes/0964_6427_11.drc", x: 964, y: 6427 }] },
+          { id: "grande-sagne", name: "Pointe de la Grande Sagne (3660m)", altitude: "3660m", firstAscent: "Début XXe siècle", description: "Sommet isolé du secteur sud du massif des Écrins, accessible depuis le refuge du Sélé. La Grande Sagne se distingue par ses pentes rocheuses austères typiques des Écrins méridionaux.", dalles: [{ path: "meshes/0964_6427_11.drc", x: 964, y: 6427 }, { path: "meshes/0965_6427_11.drc", x: 965, y: 6427 }] },
         ],
       },
       {
         id: "secteur-valgaudemar",
         name: "4. Secteur Valgaudemar - Olan",
         children: [
-          { id: "olan", name: "L'Olan (3564m)", altitude: "3564m", c2c: "https://www.camptocamp.org/waypoints/38955/fr/l-olan", description: "Sommet majestueux dominant le Valgaudemar, face nord mythique.", dalles: [{ path: "meshes/0948_6423_11.drc", x: 948, y: 6423 }, { path: "meshes/0952_6423_11.drc", x: 952, y: 6423 }] },
-          { id: "les-bans", name: "Les Bans (3669m)", altitude: "3669m", description: "Sommet élancé, course classique du Valgaudemar.", dalles: [{ path: "meshes/0957_6424_11.drc", x: 957, y: 6424 }] },
-          { id: "les-rouies", name: "Les Rouies (3589m)", altitude: "3589m", description: "Sommet rocheux au-dessus du vallon de la Pilatte.", dalles: [{ path: "meshes/0955_6434_11.drc", x: 955, y: 6434 }, { path: "meshes/0955_6435_11.drc", x: 955, y: 6435 }] },
-          { id: "pointe-guyard", name: "Pointe Guyard (3461m)", altitude: "3461m", description: "Sommet voisin de l'Olan.", dalles: [{ path: "meshes/0948_6423_11.drc", x: 948, y: 6423 }] },
-          { id: "boeufs-rouges", name: "Pointe des Boeufs Rouges (3517m)", altitude: "3517m", description: "Entre le Valgaudemar et le Vénéon.", dalles: [{ path: "meshes/0955_6434_11.drc", x: 955, y: 6434 }] },
-          { id: "cime-orgieres", name: "Cime d'Orgières (2755m)", altitude: "2755m", description: "Sommet accessible en randonnée.", dalles: [{ path: "meshes/0952_6423_11.drc", x: 952, y: 6423 }] },
-          { id: "sirac", name: "Le Sirac (3441m)", altitude: "3441m", description: "Sentinelle sud du Valgaudemar.", dalles: [{ path: "meshes/0948_6423_11.drc", x: 948, y: 6423 }] },
+          { id: "olan", name: "L'Olan (3564m)", altitude: "3564m", c2c: "https://www.camptocamp.org/waypoints/38955/fr/l-olan", firstAscent: "1877 — W.A.B. Coolidge avec les guides Christian et Rudolf Almer", description: "Sommet majestueux dominant le Valgaudemar, surnommé le 'toit du Valgaudemar'. Sa face nord, haute de plus de 1 000 m, est l'une des grandes faces de glace des Écrins et un objectif mythique pour les amateurs de courses de haute difficulté.", dalles: [{ path: "meshes/0948_6423_11.drc", x: 948, y: 6423 }, { path: "meshes/0952_6423_11.drc", x: 952, y: 6423 }] },
+          { id: "les-bans", name: "Les Bans (3669m)", altitude: "3669m", firstAscent: "1878 — T. Middlemore avec les guides J. Jaun et J. Fischer", description: "Sommet élancé dominant la haute vallée du Valgaudemar. Course classique du secteur, avec une belle arête mixte menant au sommet. Le versant nord offre de beaux couloirs de glace en conditions hivernales.", dalles: [{ path: "meshes/0957_6424_11.drc", x: 957, y: 6424 }] },
+          { id: "les-rouies", name: "Les Rouies (3589m)", altitude: "3589m", firstAscent: "1876 — A.W. Moore avec les guides Jakob Anderegg et Andreas Maurer", description: "Sommet rocheux au-dessus du vallon de la Pilatte. Son caractère sauvage et isolé en fait un sommet recherché par les alpinistes souhaitant s'éloigner des itinéraires fréquentés. Beau panorama sur la face ouest de l'Olan.", dalles: [{ path: "meshes/0955_6434_11.drc", x: 955, y: 6434 }, { path: "meshes/0955_6435_11.drc", x: 955, y: 6435 }] },
+          { id: "pointe-guyard", name: "Pointe Guyard (3461m)", altitude: "3461m", firstAscent: "Fin XIXe siècle", description: "Sommet voisin de l'Olan dominant la confluence des vallons du Valgaudemar. Itinéraire rocheux sur crête avec vue sur la face nord de l'Olan et les vallées environnantes.", dalles: [{ path: "meshes/0948_6423_11.drc", x: 948, y: 6423 }] },
+          { id: "boeufs-rouges", name: "Pointe des Bœufs Rouges (3517m)", altitude: "3517m", firstAscent: "Fin XIXe siècle", description: "Sommet entre le Valgaudemar et le Vénéon, aux pentes rocheuses teintées d'ocre caractéristiques des Écrins. Accessible depuis le refuge de la Pilatte, avec vue sur les grandes faces nord du secteur.", dalles: [{ path: "meshes/0955_6434_11.drc", x: 955, y: 6434 }] },
+          { id: "cime-orgieres", name: "Cime d'Orgières (2755m)", altitude: "2755m", firstAscent: "XIXe siècle", description: "Sommet accessible en randonnée depuis le Valgaudemar. Belvédère remarquable sur le cirque de l'Olan et les hauts sommets environnants, idéal pour une première approche du massif sans équipement alpinistique.", dalles: [{ path: "meshes/0952_6423_11.drc", x: 952, y: 6423 }] },
+          { id: "sirac", name: "Le Sirac (3441m)", altitude: "3441m", firstAscent: "1878 — T. Middlemore avec J. Jaun", description: "Sentinelle méridionale du Valgaudemar, visible depuis La Chapelle-en-Valgaudemar. Course rocheuse élégante sur crête avec quelques passages d'escalade ; vue plongeante sur les gorges du Valgaudemar et les villages en contrebas.", dalles: [{ path: "meshes/0948_6423_11.drc", x: 948, y: 6423 }] },
         ],
       },
       {
         id: "secteur-muzelle",
         name: "5. Secteur Muzelle - Vénéon",
         children: [
-          { id: "muzelle", name: "La Muzelle (3465m)", altitude: "3465m", description: "Belle pyramide rocheuse au-dessus du lac de la Muzelle.", dalles: [{ path: "meshes/0955_6438_11.drc", x: 955, y: 6438 }, { path: "meshes/0955_6439_11.drc", x: 955, y: 6439 }] },
+          { id: "muzelle", name: "La Muzelle (3465m)", altitude: "3465m", c2c: "https://www.camptocamp.org/waypoints/38957/fr/la-muzelle", firstAscent: "1878 — W. Coolidge avec les guides Christian et Rudolf Almer", description: "Belle pyramide rocheuse au-dessus du lac de la Muzelle, accessible depuis Les Deux Alpes par le GR 54. Course classique du secteur Vénéon alliant randonnée alpine et terrain rocheux avec une vue plongeante sur le lac turquoise en contrebas.", dalles: [{ path: "meshes/0955_6438_11.drc", x: 955, y: 6438 }, { path: "meshes/0955_6439_11.drc", x: 955, y: 6439 }] },
         ],
       },
     ],
@@ -213,10 +215,10 @@ const MOUNTAIN_TREE = [
         id: "secteur-sainte-victoire",
         name: "Crête Sainte-Victoire",
         children: [
-          { id: "pic-mouches", name: "Pic des Mouches (1011m)", altitude: "1011m", description: "Point culminant de la Montagne Sainte-Victoire, célèbre par les peintures de Cézanne.", dalles: [{ path: "meshes/0895_6238_11.drc", x: 895, y: 6238 }, { path: "meshes/0896_6238_11.drc", x: 896, y: 6238 }] },
-          { id: "signal", name: "Le Signal (943m)", altitude: "943m", description: "Sommet visible depuis Aix-en-Provence avec la Croix de Provence.", dalles: [{ path: "meshes/0893_6238_11.drc", x: 893, y: 6238 }, { path: "meshes/0894_6238_11.drc", x: 894, y: 6238 }] },
-          { id: "bau-cezanne", name: "Bau Cézanne (900m)", altitude: "900m", description: "Belvédère offrant une vue sur le versant sud de la montagne.", dalles: [{ path: "meshes/0894_6238_11.drc", x: 894, y: 6238 }, { path: "meshes/0894_6239_11.drc", x: 894, y: 6239 }] },
-          { id: "plan-crau", name: "Plan de la Crau (850m)", altitude: "850m", description: "Plateau sommital entre le Signal et le Pic des Mouches.", dalles: [{ path: "meshes/0894_6238_11.drc", x: 894, y: 6238 }, { path: "meshes/0895_6238_11.drc", x: 895, y: 6238 }] },
+          { id: "pic-mouches", name: "Pic des Mouches (1011m)", altitude: "1011m", description: "Point culminant de la Montagne Sainte-Victoire, rendu célèbre par les toiles de Paul Cézanne qui peignit cette montagne plus de quatre-vingts fois. Depuis le sommet, panorama à 360° sur la Provence, Aix-en-Provence, l'Étang de Berre et, par temps clair, la mer Méditerranée.", dalles: [{ path: "meshes/0895_6238_11.drc", x: 895, y: 6238 }, { path: "meshes/0896_6238_11.drc", x: 896, y: 6238 }] },
+          { id: "signal", name: "Le Signal (943m)", altitude: "943m", description: "Sommet dominant la partie centrale de la Sainte-Victoire, visible depuis Aix-en-Provence. La Croix de Provence, érigée en 1875, en signale l'emplacement depuis la vallée. Accès depuis le prieuré de Sainte-Victoire par le sentier des Venturiers.", dalles: [{ path: "meshes/0893_6238_11.drc", x: 893, y: 6238 }, { path: "meshes/0894_6238_11.drc", x: 894, y: 6238 }] },
+          { id: "bau-cezanne", name: "Bau Cézanne (900m)", altitude: "900m", description: "Belvédère calcaire offrant une vue magnifique sur le versant sud de la Sainte-Victoire et la plaine du Var. Le terme 'bau' désigne en provençal une falaise ou un escarpement rocheux abrupt, caractéristique du paysage karstique de la montagne.", dalles: [{ path: "meshes/0894_6238_11.drc", x: 894, y: 6238 }, { path: "meshes/0894_6239_11.drc", x: 894, y: 6239 }] },
+          { id: "plan-crau", name: "Plan de la Crau (850m)", altitude: "850m", description: "Plateau sommital intermédiaire entre le Signal et le Pic des Mouches, caractérisé par un plateau calcaire ouvert. Lieu de passage incontournable sur la crête principale de la Sainte-Victoire, offrant de larges vues sur la plaine provençale et les massifs environnants.", dalles: [{ path: "meshes/0894_6238_11.drc", x: 894, y: 6238 }, { path: "meshes/0895_6238_11.drc", x: 895, y: 6238 }] },
         ],
       },
     ],
@@ -495,14 +497,16 @@ interface AvailableTile {
 }
 
 function HomePageContent() {
-  const { selectedModels, setSelectedModels, selectedTiles, setSelectedTiles, measurementEnabled, setMeasurementEnabled, measurementData, pendingLoads, loadingProgress, resetLoadingProgress } = useAppContext();
+  const { selectedModels, setSelectedModels, selectedTiles, setSelectedTiles, measurementEnabled, setMeasurementEnabled, measurementData, pendingLoads, loadingProgress, resetLoadingProgress, poiEnabled, setPoiEnabled, poiPlacing, setPoiPlacing, pois } = useAppContext();
   const [showHelp, setShowHelp] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const [showDetails, setShowDetails] = useState(true);
   const [showSummitInfo, setShowSummitInfo] = useState(false); // Contrôle l'affichage des infos du sommet
   const [showTileInfo, setShowTileInfo] = useState(false); // Contrôle l'affichage des infos des dalles
   const [showTilesPanel, setShowTilesPanel] = useState(false);
   const [availableTiles, setAvailableTiles] = useState<AvailableTile[]>([]);
   const [tilesLoading, setTilesLoading] = useState(false);
+  const [extraTiles, setExtraTiles] = useState<Array<{ id: string; name: string; url: string; format: "drc"; x: number; y: number }>>([]);
 
   // Vérifier si on a une mesure avec au moins 2 points
   const hasMeasurement = measurementData.points.length >= 2;
@@ -514,29 +518,69 @@ function HomePageContent() {
     }
   }, [hasMeasurement, measurementEnabled]);
 
-  // Charger les dalles disponibles depuis l'API
+  // Charger les dalles disponibles depuis l'API (au démarrage, pas seulement au clic)
   useEffect(() => {
-    if (showTilesPanel && availableTiles.length === 0) {
-      setTilesLoading(true);
-      fetch('/api/tiles')
-        .then(res => res.json())
-        .then(geojson => {
-          const tiles = geojson.features?.map((f: any) => ({
-            id: f.properties.id,
-            name: f.properties.name,
-            url: f.properties.url,
-            x: f.properties.x / 1000, // Convertir en km
-            y: f.properties.y / 1000,
-          })) || [];
-          setAvailableTiles(tiles);
-          setTilesLoading(false);
-        })
-        .catch(err => {
-          console.error('Erreur chargement dalles:', err);
-          setTilesLoading(false);
-        });
+    if (availableTiles.length > 0) return;
+    setTilesLoading(true);
+    fetch('/api/tiles')
+      .then(res => res.json())
+      .then(geojson => {
+        const tiles = geojson.features?.map((f: any) => ({
+          id: f.properties.id,
+          name: f.properties.name,
+          url: f.properties.url,
+          x: f.properties.x / 1000, // Convertir en km
+          y: f.properties.y / 1000,
+        })) || [];
+        setAvailableTiles(tiles);
+        setTilesLoading(false);
+      })
+      .catch(err => {
+        console.error('Erreur chargement dalles:', err);
+        setTilesLoading(false);
+      });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Table de correspondance "x_y" → URL proxy pour les dalles disponibles
+  const tileUrlMap = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const t of availableTiles) {
+      // Math.floor : robuste que le GeoJSON stocke les coordonnées en coin bas-gauche ou en centre
+      const x = Math.floor(t.x);
+      const y = Math.floor(t.y);
+      const key = `${x}_${y}`;
+      // Convertir en URL proxy si nécessaire
+      let url = t.url || '';
+      if (url && !url.startsWith('/api/')) {
+        const pathMatch = url.match(/meshes\/[\w/_-]+\.drc/);
+        if (pathMatch) url = `/api/tiles?path=${encodeURIComponent(pathMatch[0])}`;
+      }
+      if (url) map.set(key, url);
     }
-  }, [showTilesPanel, availableTiles.length]);
+    return map;
+  }, [availableTiles]);
+
+  // --- Moteur de recherche : index plat des feuilles MOUNTAIN_TREE ---
+  const summitSearchItems = useMemo(() => {
+    const items: { kind: "summit"; id: string; name: string; altitude?: string }[] = [];
+    function flatten(nodes: any[]) {
+      for (const n of nodes) {
+        if (n.children) flatten(n.children);
+        else if (n.dalles) items.push({ kind: "summit", id: n.id, name: n.name, altitude: n.altitude });
+      }
+    }
+    flatten(MOUNTAIN_TREE);
+    return items;
+  }, []);
+
+  const searchResults = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    if (q.length < 2) return [];
+    const norm = (s: string) => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    const summits = summitSearchItems.filter(i => norm(i.name).includes(q));
+    const poiResults = pois.map(p => ({ kind: "poi" as const, ...p })).filter(p => norm(p.name).includes(q));
+    return [...summits, ...poiResults].slice(0, 8);
+  }, [searchQuery, summitSearchItems, pois]);
 
   // Quand le chargement passe de >0 à 0 : recentrer la caméra et reset le compteur
   const [wasLoading, setWasLoading] = useState(false);
@@ -614,31 +658,30 @@ function HomePageContent() {
     });
   }, [selectedTiles]);
 
-  // Combiner les deux sources de modèles
+  // Combiner les deux sources de modèles + dalles extra (ajoutées via "+")
   const threeModels = useMemo(() => {
-    if (threeModelsFromSummits.length > 0) return threeModelsFromSummits;
-    return threeModelsFromTiles;
-  }, [threeModelsFromSummits, threeModelsFromTiles]);
+    const base = threeModelsFromSummits.length > 0 ? threeModelsFromSummits : threeModelsFromTiles;
+    const baseSet = new Set(base.map((m: any) => `${m.x}_${m.y}`));
+    const extras = extraTiles.filter(t => !baseSet.has(`${t.x}_${t.y}`));
+    return [...base, ...extras];
+  }, [threeModelsFromSummits, threeModelsFromTiles, extraTiles]);
 
-  // IDs effectifs pour le rendu (sommets ou dalles directes)
+  // IDs effectifs pour le rendu (tous les modèles chargés)
   const effectiveSelectedModels = useMemo(() => {
-    if (selectedModels.length > 0) return selectedModels;
-    // Pour les dalles directes, on utilise leurs IDs
-    return threeModelsFromTiles.map(m => m.id);
-  }, [selectedModels, threeModelsFromTiles]);
+    return threeModels.map((m: any) => m.id);
+  }, [threeModels]);
 
   const handleToggle = (id: string) => {
-    // Désélectionner les dalles directes quand on sélectionne un sommet
     setSelectedTiles([]);
+    setExtraTiles([]);
     setShowTileInfo(false);
     setSelectedModels(selectedModels.includes(id) ? [] : [id]);
-    // Désactiver la mesure quand on sélectionne un sommet
     setMeasurementEnabled(false);
   };
 
   const handleTileToggle = (url: string) => {
-    // Désélectionner les sommets quand on sélectionne une dalle
     setSelectedModels([]);
+    setExtraTiles([]);
     setSelectedTiles((prev: string[]) =>
       prev.includes(url)
         ? prev.filter((u: string) => u !== url)
@@ -646,9 +689,39 @@ function HomePageContent() {
     );
   };
 
+  const handleExpandTile = (nx: number, ny: number, url: string) => {
+    setExtraTiles(prev => {
+      if (prev.some(t => t.x === nx && t.y === ny)) return prev;
+      return [...prev, { id: `tile-${nx}-${ny}-extra`, name: `${nx}_${ny}`, url, format: "drc" as const, x: nx, y: ny }];
+    });
+  };
+
   const clearAllTiles = () => {
     setSelectedTiles([]);
     setShowTileInfo(false);
+  };
+
+  const handleSearchSelect = (item: any) => {
+    setSearchQuery("");
+    if (item.kind === "summit") {
+      handleToggle(item.id);
+    } else {
+      const tileId = item.tileIds?.[0];
+      let foundId: string | null = null;
+      const findSummit = (nodes: any[]) => {
+        for (const n of nodes) {
+          if (n.children) findSummit(n.children);
+          else if (n.dalles?.some((d: any) => `${d.x}_${d.y}` === tileId)) foundId = n.id;
+        }
+      };
+      if (tileId) findSummit(MOUNTAIN_TREE);
+      if (foundId) {
+        handleToggle(foundId);
+      } else if (tileId) {
+        const url = tileUrlMap.get(tileId);
+        if (url) { setSelectedModels([]); setExtraTiles([]); setSelectedTiles([url]); }
+      }
+    }
   };
 
   return (
@@ -667,7 +740,49 @@ function HomePageContent() {
 
       <main className="flex-1 flex gap-3 overflow-hidden">
         <aside className="w-[300px] flex-shrink-0 bg-white border border-slate-200 rounded-3xl p-6 shadow-sm overflow-hidden flex flex-col">
-          <p className="text-[10px] font-bold text-slate-900 uppercase tracking-[0.2em] mb-6 border-b border-slate-100 pb-3 flex items-center gap-2"><Mountain className="h-3 w-3 text-orange-500" /> Répertoire</p>
+          <p className="text-[10px] font-bold text-slate-900 uppercase tracking-[0.2em] mb-3 border-b border-slate-100 pb-3 flex items-center gap-2"><Mountain className="h-3 w-3 text-orange-500" /> Répertoire</p>
+
+          {/* --- Moteur de recherche --- */}
+          <div className="relative mb-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 pointer-events-none" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                placeholder="Rechercher un sommet ou lieu…"
+                className="w-full pl-8 pr-7 py-2 text-[11px] bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-blue-300 focus:ring-2 focus:ring-blue-100 placeholder:text-slate-400"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-base leading-none"
+                >
+                  ×
+                </button>
+              )}
+            </div>
+            {searchResults.length > 0 && (
+              <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-2xl shadow-xl overflow-hidden z-50 max-h-64 overflow-y-auto">
+                {searchResults.map((item: any, i: number) => (
+                  <button
+                    key={i}
+                    onClick={() => handleSearchSelect(item)}
+                    className="w-full text-left px-3 py-2 hover:bg-slate-50 flex items-center gap-2 text-[11px] border-b border-slate-50 last:border-0"
+                  >
+                    {item.kind === "summit"
+                      ? <Mountain className="h-3 w-3 text-orange-400 flex-shrink-0" />
+                      : <MapPin className="h-3 w-3 text-blue-400 flex-shrink-0" />}
+                    <span className="font-medium text-slate-800 truncate">{item.name}</span>
+                    {item.kind === "poi" && (
+                      <span className="ml-auto text-[10px] text-slate-400 capitalize flex-shrink-0">{item.type}</span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
           <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar-light">
             {MOUNTAIN_TREE.map((root) => (
               <TreeElement key={root.id} item={root} selectedIds={selectedModels} onToggle={handleToggle} />
@@ -787,64 +902,56 @@ function HomePageContent() {
         <section className="flex-1 relative bg-slate-900 rounded-[2rem] overflow-hidden shadow-2xl border border-slate-800">
             {threeModels.length > 0 ? (
                 <>
-                    <ThreeScene models={threeModels} selectedModels={effectiveSelectedModels} />
+                    <ThreeScene models={threeModels} selectedModels={effectiveSelectedModels} onExpandTile={handleExpandTile} tileUrlMap={tileUrlMap} />
                     <LoadingOverlay visible={pendingLoads > 0} progress={loadingProgress} />
-                    {/* Barre d'outils en haut à droite */}
-                    <div className="absolute top-6 right-6 z-40 flex gap-2">
-                        {/* Bouton Infos sur le sommet - visible uniquement si un sommet est sélectionné */}
+                    {/* Barre d'outils à droite — icônes compactes */}
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 z-40 flex flex-col gap-1.5">
                         {selectedRouteInfo && !measurementEnabled && (
                           <button
-                              onClick={() => {
-                                const newState = !showSummitInfo;
-                                setShowSummitInfo(newState);
-                                if (newState) setShowDetails(true); // S'assurer que le panneau est visible
-                              }}
-                              className={`flex items-center gap-2 px-4 py-3 backdrop-blur border rounded-xl shadow-xl transition-all group ${
-                                showSummitInfo
-                                  ? "bg-orange-500 text-white border-orange-600"
-                                  : "bg-white/90 border-slate-200 hover:bg-orange-500 hover:text-white"
-                              }`}
+                              title="Infos sommet"
+                              onClick={() => { const s = !showSummitInfo; setShowSummitInfo(s); if (s) setShowDetails(true); }}
+                              className={`relative group p-2.5 backdrop-blur border rounded-xl shadow-xl transition-all ${showSummitInfo ? "bg-orange-500 text-white border-orange-600" : "bg-white/90 border-slate-200 hover:bg-orange-500 hover:text-white"}`}
                           >
-                              <Info className={`h-4 w-4 ${showSummitInfo ? "text-white" : "text-orange-500 group-hover:text-white"}`} />
-                              <span className="text-[10px] font-black uppercase tracking-widest">Infos sommet</span>
+                              <Info className="h-4 w-4" />
+                              <span className="pointer-events-none absolute right-full mr-2 top-1/2 -translate-y-1/2 whitespace-nowrap bg-slate-900/90 text-white text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">Infos sommet</span>
                           </button>
                         )}
-                        {/* Bouton Infos dalles - visible uniquement si des dalles sont sélectionnées */}
                         {selectedTiles.length > 0 && !selectedRouteInfo && !measurementEnabled && (
                           <button
-                              onClick={() => {
-                                const newState = !showTileInfo;
-                                setShowTileInfo(newState);
-                                if (newState) setShowDetails(true);
-                              }}
-                              className={`flex items-center gap-2 px-4 py-3 backdrop-blur border rounded-xl shadow-xl transition-all group ${
-                                showTileInfo
-                                  ? "bg-green-500 text-white border-green-600"
-                                  : "bg-white/90 border-slate-200 hover:bg-green-500 hover:text-white"
-                              }`}
+                              title="Infos dalles"
+                              onClick={() => { const s = !showTileInfo; setShowTileInfo(s); if (s) setShowDetails(true); }}
+                              className={`relative group p-2.5 backdrop-blur border rounded-xl shadow-xl transition-all ${showTileInfo ? "bg-green-500 text-white border-green-600" : "bg-white/90 border-slate-200 hover:bg-green-500 hover:text-white"}`}
                           >
-                              <Info className={`h-4 w-4 ${showTileInfo ? "text-white" : "text-green-500 group-hover:text-white"}`} />
-                              <span className="text-[10px] font-black uppercase tracking-widest">Infos dalles</span>
+                              <Info className="h-4 w-4" />
+                              <span className="pointer-events-none absolute right-full mr-2 top-1/2 -translate-y-1/2 whitespace-nowrap bg-slate-900/90 text-white text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">Infos dalles</span>
                           </button>
                         )}
                         <button
+                            title="Mesure"
                             onClick={() => setMeasurementEnabled(!measurementEnabled)}
-                            className={`flex items-center gap-2 px-4 py-3 backdrop-blur border rounded-xl shadow-xl transition-all group ${
-                              measurementEnabled
-                                ? "bg-blue-600 text-white border-blue-700"
-                                : "bg-white/90 border-slate-200 hover:bg-blue-600 hover:text-white"
-                            }`}
+                            className={`relative group p-2.5 backdrop-blur border rounded-xl shadow-xl transition-all ${measurementEnabled ? "bg-blue-600 text-white border-blue-700" : "bg-white/90 border-slate-200 hover:bg-blue-600 hover:text-white"}`}
                         >
-                            <Ruler className={`h-4 w-4 ${measurementEnabled ? "text-white" : "text-blue-600 group-hover:text-white"}`} />
-                            <span className="text-[10px] font-black uppercase tracking-widest">Mesure</span>
+                            <Ruler className="h-4 w-4" />
+                            <span className="pointer-events-none absolute right-full mr-2 top-1/2 -translate-y-1/2 whitespace-nowrap bg-slate-900/90 text-white text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">Mesure</span>
                         </button>
                         <button
-                            onClick={() => window.dispatchEvent(new CustomEvent('reset-camera'))}
-                            className="flex items-center gap-2 px-4 py-3 bg-white/90 backdrop-blur border border-slate-200 rounded-xl shadow-xl hover:bg-blue-600 hover:text-white transition-all group"
+                            title="Lieux"
+                            onClick={() => { setPoiEnabled(!poiEnabled); if (poiEnabled) setPoiPlacing(false); }}
+                            className={`relative group p-2.5 backdrop-blur border rounded-xl shadow-xl transition-all ${poiEnabled ? "bg-orange-500 text-white border-orange-600" : "bg-white/90 border-slate-200 hover:bg-orange-500 hover:text-white"}`}
                         >
-                            <Move className="h-4 w-4 text-blue-600 group-hover:text-white" />
-                            <span className="text-[10px] font-black uppercase tracking-widest">Réinitialiser</span>
+                            <MapPin className="h-4 w-4" />
+                            <span className="pointer-events-none absolute right-full mr-2 top-1/2 -translate-y-1/2 whitespace-nowrap bg-slate-900/90 text-white text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">Lieux</span>
                         </button>
+                        {poiEnabled && (
+                          <button
+                            title={poiPlacing ? "Annuler" : "Ajouter un lieu"}
+                            onClick={() => setPoiPlacing(!poiPlacing)}
+                            className={`relative group p-2.5 backdrop-blur border rounded-xl shadow-xl transition-all text-sm font-bold leading-none ${poiPlacing ? "bg-orange-600 text-white border-orange-700" : "bg-white/90 border-orange-200 text-orange-500 hover:bg-orange-500 hover:text-white"}`}
+                          >
+                            {poiPlacing ? "✕" : "+"}
+                            <span className="pointer-events-none absolute right-full mr-2 top-1/2 -translate-y-1/2 whitespace-nowrap bg-slate-900/90 text-white text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">{poiPlacing ? "Annuler" : "Ajouter un lieu"}</span>
+                          </button>
+                        )}
                     </div>
                     {/* Boussole 3D */}
                     <Compass3D />
@@ -1020,10 +1127,23 @@ function HomePageContent() {
                 ) : selectedRouteInfo ? (
                   /* Contenu Infos Sommet */
                   <>
+                    {/* Description */}
                     <section>
                         <h3 className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-4 flex items-center gap-2"><Info className="h-3 w-3 text-blue-600" /> Description</h3>
                         <p className="text-sm leading-relaxed text-slate-700">{selectedRouteInfo.description || "Données topographiques en cours d'indexation."}</p>
                     </section>
+
+                    {/* Première ascension */}
+                    {selectedRouteInfo.firstAscent && (
+                      <section className="bg-slate-50 p-5 rounded-2xl border border-slate-100">
+                        <h3 className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2 flex items-center gap-2">
+                          <Mountain className="h-3 w-3 text-orange-500" /> Première ascension
+                        </h3>
+                        <p className="text-sm text-slate-700 leading-relaxed">{selectedRouteInfo.firstAscent}</p>
+                      </section>
+                    )}
+
+                    {/* Points d'intérêt */}
                     {selectedRouteInfo.waypoints && (
                         <section className="bg-slate-50 p-6 rounded-2xl border border-slate-100">
                             <h3 className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-4">Points d'intérêt</h3>
@@ -1037,6 +1157,32 @@ function HomePageContent() {
                             </div>
                         </section>
                     )}
+
+                    {/* Vidéo YouTube */}
+                    {selectedRouteInfo.youtube && (
+                      <section>
+                        <h3 className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-3 flex items-center gap-2">
+                          <span className="text-red-500">▶</span> Vidéo ascension
+                        </h3>
+                        <a
+                          href={selectedRouteInfo.youtube}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-3 p-4 bg-red-50 border border-red-100 rounded-xl hover:bg-red-100 transition-colors group"
+                        >
+                          <div className="w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <span className="text-white text-lg leading-none">▶</span>
+                          </div>
+                          <div>
+                            <p className="text-[11px] font-bold text-slate-800">Regarder sur YouTube</p>
+                            <p className="text-[10px] text-slate-500 mt-0.5">Ascension de {selectedRouteInfo.name.split('(')[0].trim()}</p>
+                          </div>
+                          <ExternalLink className="h-4 w-4 text-slate-400 ml-auto group-hover:text-red-600 transition-colors" />
+                        </a>
+                      </section>
+                    )}
+
+                    {/* Lien Camptocamp */}
                     {selectedRouteInfo.c2c && (
                         <a href={selectedRouteInfo.c2c} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-5 bg-white border-2 border-blue-600 text-blue-600 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-blue-600 hover:text-white transition-all shadow-lg shadow-blue-100 active:scale-95 group">
                             <div className="flex items-center gap-3"><CamptocampLogo /> <span>Fiche Camptocamp</span></div>
