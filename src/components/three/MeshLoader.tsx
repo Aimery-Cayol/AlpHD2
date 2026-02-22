@@ -37,12 +37,11 @@ export default function MeshLoader({
     return tileData?.files.find((f) => f.level === level)?.url ?? null;
   }, [tilesData, coord, level]);
 
-  // URL pour le mesh de raycast léger : priorité niveau "06", sinon "01"
+  // URL pour le mesh de raycast léger : niveau "01"
   const urlRaycast = useMemo(() => {
     const tileData = tilesData.get(coord);
     if (!tileData) return null;
     return (
-      tileData.files.find((f) => f.level === "06")?.url ??
       tileData.files.find((f) => f.level === "01")?.url ??
       null
     );
