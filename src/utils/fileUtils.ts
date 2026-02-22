@@ -1,12 +1,31 @@
 /**
- * Utilitaires pour gérer les fichiers uploadés localement
+ * Utilitaires pour gérer les fichiers et les coordonnées de tuiles
  */
+
+// Type pour les coordonnées d'une zone (format "XXXX_YYYY")
+export type TileCoord = string;
+
+/**
+ * Construire l'URL S3 d'un mesh à partir de ses coordonnées et niveau
+ */
+export function buildMeshUrl(coord: TileCoord, level: string, bucketUrl: string): string {
+  return `${bucketUrl}/meshes/${coord}_${level}.drc`;
+}
+
+/**
+ * Extraire les coordonnées TileCoord depuis un nom de fichier ou URL
+ * Retourne le format "XXXX_YYYY" ou null
+ */
+export function extractTileCoord(input: string): TileCoord | null {
+  const match = input.match(/(\d{4})_(\d{4})/);
+  return match ? `${match[1]}_${match[2]}` : null;
+}
 
 export interface FileInfo {
   name: string;
   size: number;
   type: string;
-  format: 'ply' | 'drc';
+  format: 'drc';
   url: string; // URL blob temporaire
 }
 
@@ -29,17 +48,13 @@ export function revokeBlobUrl(url: string): void {
 /**
  * Détermine le format du fichier à partir de son extension
  */
-export function getFileFormat(filename: string): 'ply' | 'drc' {
+export function getFileFormat(filename: string): 'drc' {
   const extension = filename.toLowerCase().split('.').pop();
   
-  switch (extension) {
-    case 'ply':
-      return 'ply';
-    case 'drc':
-      return 'drc';
-    default:
-      throw new Error(`Format non supporté: ${extension}`);
+  if (extension === 'drc') {
+    return 'drc';
   }
+  throw new Error(`Format non supporté: ${extension}. Seul le format Draco (.drc) est supporté.`);
 }
 
 /**

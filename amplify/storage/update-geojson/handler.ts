@@ -52,11 +52,11 @@ export const handler: S3Handler = async (event) => {
 
   (response.Contents || [])
     .filter(
-      (obj) => obj.Key?.endsWith(".final.ply") || obj.Key?.endsWith(".drc")
+      (obj) => obj.Key?.endsWith(".drc")
     )
     .forEach((obj) => {
       const key = obj.Key!;
-      const match = key.match(/(\d{4})_(\d{4})_(\d+)\.(drc|final\.ply)$/);
+      const match = key.match(/(\d{4})_(\d{4})_(\d+)\.drc$/);
       if (!match) {
         console.warn(`⚠️ Fichier ignoré (format invalide) : ${key}`);
         return;
@@ -67,7 +67,7 @@ export const handler: S3Handler = async (event) => {
       const x = parseInt(match[1]) * 1000; // Pour les calculs géographiques
       const y = parseInt(match[2]) * 1000; // Pour les calculs géographiques
       const level = match[3];
-      const format = key.endsWith(".drc") ? "drc" : "ply";
+      const format = "drc";
       const coordKey = `${xCoord}_${yCoord}`; // ID avec les coordonnées du fichier
 
       if (!tilesByCoords[coordKey]) {

@@ -1,175 +1,62 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, useMemo, Suspense } from "react";
 import dynamic from "next/dynamic";
-import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import DropZone from "@/components/three/DropZone";
-import {
-  createFileInfo,
-  FileInfo,
-  extractCoordinates,
-} from "@/utils/fileUtils";
+import { createFileInfo, extractTileCoord } from "@/utils/fileUtils";
 import { detectAndLogCapabilities } from "@/utils/deviceCapabilities";
 import { useAppContext } from "@/contexts/AppContext";
+import type { TileModel, TileData } from "@/types/models";
+import type { TileCoord } from "@/utils/fileUtils";
 
 // // Import dynamique du composant 3D pour éviter les problèmes SSR
 const ThreeScene = dynamic(() => import("@/components/three/ThreeScene"));
 
-interface Model {
-  name: string;
-  url?: string; // Pour les meshes sans LoD
-  urlHigh?: string; // Pour les meshes avec LoD (niveau 11)
-  urlLow?: string; // Pour les meshes avec LoD (niveau 09)
-  urlUltraLow?: string; // Pour les meshes avec LoD (niveau 01)
-  format?: "ply" | "drc";
-  coordinates?: { x: number; y: number };
-  fileSize?: number; // Taille du fichier en octets
-  lodEnabled?: boolean; // Flag pour activer le LoD
-}
-
-// Fonction utilitaire pour encoder en base64 (compatible Node.js et navigateur)
-const encodeBase64 = (str: string): string => {
-  // Utilisation de Buffer.from pour la compatibilité Node.js
-  return Buffer.from(str, "utf8").toString("base64");
-};
-
-// Fonction utilitaire pour décoder en base64 (compatible Node.js et navigateur)
-const decodeBase64 = (base64: string): string => {
-  // Utilisation de Buffer.from pour la compatibilité Node.js
-  return Buffer.from(base64, "base64").toString("utf8");
-};
-
-// Composant interne qui utilise useSearchParams
 function HomePageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const pathname = usePathname();
   const {
-    selectedModels,
-    setSelectedModels,
-    availableModels,
-    setAvailableModels,
+    selectedTiles,
+    setSelectedTiles,
+    selectedLevel,
+    setSelectedLevel,
+    tilesData,
+    setTilesData,
+    availableLevels,
   } = useAppContext();
-  const [models, setModels] = useState<Model[]>([]);
-  const [localFiles, setLocalFiles] = useState<Model[]>([]);
+
+  const [localFiles, setLocalFiles] = useState<{ coord: string; url: string }[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
   const [showDropZone, setShowDropZone] = useState(false);
   const [isPanelVisible, setIsPanelVisible] = useState(false);
-  const [isSharing, setIsSharing] = useState(false);
 
-  // Fonction utilitaire pour obtenir l'URL principale d'un modèle
-  const getModelUrl = (model: Model): string => {
-    return model.url || model.urlHigh || model.name;
-  };
-
-  // Fonction pour regrouper les meshes par coordonnées pour créer des modèles LoD
-  const groupMeshesByCoordinates = (modelsList: Model[]): Model[] => {
-    const grouped = new Map<
-      string,
-      { high?: Model; low?: Model; ultraLow?: Model }
-    >();
-    const standalone: Model[] = [];
-
-    modelsList.forEach((model) => {
-      const modelUrl = getModelUrl(model);
-      // Extraire les coordonnées et le niveau depuis le nom du fichier
-      const match = modelUrl.match(/(\d{4}_\d{4})_(\d{2})\.drc$/);
-
-      if (!match) {
-        // Si le format ne correspond pas, c'est un modèle standalone
-        standalone.push(model);
-        return;
-      }
-
-      const [, coords, level] = match;
-      const key = coords;
-
-      if (!grouped.has(key)) {
-        grouped.set(key, {});
-      }
-
-      const entry = grouped.get(key)!;
-      if (level === "11") entry.high = model;
-      if (level === "09") entry.low = model;
-      if (level === "01") entry.ultraLow = model;
-    });
-
-    // Créer les modèles LoD ou standalone
-    const lodModels: Model[] = [];
-    grouped.forEach(({ high, low, ultraLow }, coords) => {
-      if (high && low) {
-        // Créer un modèle LoD avec 2 ou 3 niveaux
-        lodModels.push({
-          name: coords,
-          urlHigh: high.url || "",
-          urlLow: low.url || "",
-          urlUltraLow: ultraLow?.url,
-          format: "drc",
-          coordinates: high.coordinates,
-          lodEnabled: true,
-          fileSize:
-            (high.fileSize || 0) +
-            (low.fileSize || 0) +
-            (ultraLow?.fileSize || 0),
-        });
-      } else if (high) {
-        // Haute résolution seule
-        lodModels.push(high);
-      } else if (low) {
-        // Basse résolution seule
-        lodModels.push(low);
-      } else if (ultraLow) {
-        // Ultra basse résolution seule
-        //lodModels.push(ultraLow); // On peut choisir de ne pas afficher les ultra basse résolutions seules
-      }
-    });
-
-    return [...lodModels, ...standalone];
-  };
-
-  // Fonction pour récupérer la taille d'un fichier depuis S3
-  const getFileSize = async (url: string): Promise<number> => {
-    try {
-      const response = await fetch(url, { method: "HEAD" });
-      return parseInt(response.headers.get("content-length") || "0");
-    } catch {
-      return 0;
-    }
-  };
-
-  // Fonction pour recharger les modèles (utilisée par le bouton Réessayer)
-  const loadModels = async () => {
+  // Charger les données des tuiles depuis le GeoJSON
+  const loadTilesData = async () => {
     try {
       setLoading(true);
-      const response = await fetch("/api/models");
-      if (!response.ok)
-        throw new Error("Erreur lors du chargement des modèles");
+      const response = await fetch("/api/tiles");
+      if (!response.ok) throw new Error("Erreur lors du chargement des tuiles");
 
-      const modelsData = await response.json();
+      const geojson = await response.json();
+      const newTilesData = new Map<TileCoord, TileData>();
 
-      // Récupérer les tailles des fichiers en parallèle
-      const modelPromises = modelsData.map(
-        async (modelData: { url: string; format: string; key: string }) => {
-          const fileSize = await getFileSize(modelData.url);
-          const name = modelData.url.split("/").pop() || "Modèle";
-          const nameWithoutExtension = name
-            .replace(".final.ply", "")
-            .replace(".drc", "");
+      geojson.features?.forEach((feature: any) => {
+        const props = feature.properties;
+        const coord = props.name || props.id;
+        if (coord) {
+          newTilesData.set(coord, {
+            coord,
+            x: props.x,
+            y: props.y,
+            levels: props.levels || [],
+            files: props.files || [],
+          });
+        }
+      });
 
-          return {
-            name: nameWithoutExtension,
-            url: modelData.url,
-            format: modelData.format as "ply" | "drc",
-            coordinates: extractCoordinates(modelData.url),
-            fileSize,
-          };
-        },
-      );
-
-      const modelList = await Promise.all(modelPromises);
-      setModels(modelList);
-      setAvailableModels(modelList); // Synchroniser avec le contexte global
+      setTilesData(newTilesData);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erreur inconnue");
     } finally {
@@ -179,7 +66,7 @@ function HomePageContent() {
 
   // Charger la liste des modèles depuis l'API
   useEffect(() => {
-    loadModels();
+    loadTilesData();
   }, []);
 
   // Détecter les capacités du client au chargement
@@ -187,115 +74,50 @@ function HomePageContent() {
     detectAndLogCapabilities();
   }, []);
 
-  // Fonction pour gérer l'upload de fichiers
+  // Construire les modèles à afficher à partir des tuiles sélectionnées + niveau choisi
+  const models: TileModel[] = useMemo(() => {
+    return selectedTiles
+      .map((coord) => {
+        const tileData = tilesData.get(coord);
+        if (!tileData) return null;
+
+        // Trouver le fichier au niveau sélectionné, ou le plus proche
+        let file = tileData.files.find((f) => f.level === selectedLevel);
+        if (!file) {
+          // Fallback : niveau le plus proche disponible
+          const sortedFiles = [...tileData.files].sort(
+            (a, b) =>
+              Math.abs(parseInt(a.level) - parseInt(selectedLevel)) -
+              Math.abs(parseInt(b.level) - parseInt(selectedLevel))
+          );
+          file = sortedFiles[0];
+        }
+        if (!file) return null;
+
+        return {
+          coord,
+          level: file.level,
+          coordinates: { x: tileData.x, y: tileData.y },
+          availableLevels: tileData.levels,
+        };
+      })
+      .filter(Boolean) as TileModel[];
+  }, [selectedTiles, selectedLevel, tilesData]);
+
+  // Upload de fichiers locaux
   const handleFileUpload = (file: File) => {
     try {
       const fileInfo = createFileInfo(file);
+      const coord = extractTileCoord(file.name) || `local_${Date.now()}`;
 
-      // Créer un nouveau modèle local
-      const newModel: Model = {
-        name: fileInfo.name.replace(/\.(final\.)?ply|\.(drc)/i, ""),
-        url: fileInfo.url,
-        format: fileInfo.format,
-        fileSize: fileInfo.size,
-      };
-
-      // Ajouter le fichier local à la liste
-      setLocalFiles((prev) => [...prev, newModel]);
-
-      // Afficher un message de succès
-      console.log(`✅ Fichier uploadé: ${newModel.name}`);
-
-      // Sélectionner automatiquement le fichier uploadé
-      if (newModel.url) {
-        setSelectedModels((prev) => [...prev, newModel.url!]);
-      }
+      setLocalFiles((prev) => [...prev, { coord, url: fileInfo.url }]);
+      setSelectedTiles((prev) => [...prev, coord]);
+      console.log(`✅ Fichier uploadé: ${file.name}`);
     } catch (err) {
       console.error("Erreur lors de l'upload du fichier:", err);
       setError("Erreur lors du traitement du fichier");
     }
   };
-
-  // Combiner les modèles distants et locaux, puis regrouper pour le LoD
-  const allModels = groupMeshesByCoordinates([...models, ...localFiles]);
-  // Fonction pour supprimer un fichier local
-  const removeLocalFile = (url: string) => {
-    setLocalFiles((prev) => prev.filter((model) => model.url !== url));
-    setSelectedModels((prev) =>
-      prev.filter((selectedUrl) => selectedUrl !== url),
-    );
-  };
-
-  // Fonction pour gérer le partage
-  const handleShareClick = () => {
-    if (selectedModels.length === 0) {
-      alert("Veuillez sélectionner au moins un modèle à partager");
-      return;
-    }
-
-    // Générer l'URL de partage
-    const shareUrl = new URL(window.location.href);
-    const encoded = encodeBase64(JSON.stringify(selectedModels));
-    shareUrl.searchParams.set("models", encoded);
-
-    // Copier dans le presse-papiers
-    navigator.clipboard
-      .writeText(shareUrl.toString())
-      .then(() => {
-        setIsSharing(true);
-        setTimeout(() => setIsSharing(false), 2000);
-        alert("Lien de partage copié dans le presse-papiers !");
-      })
-      .catch(() => {
-        alert(
-          "Impossible de copier dans le presse-papiers. Voici le lien :\n" +
-            shareUrl.toString(),
-        );
-      });
-  };
-
-  //routage avec encodage des modeles selectionnes dans l'url
-  // État pour contrôler l'initialisation
-  const [isInitialized, setIsInitialized] = useState(false);
-
-  // Initialiser depuis l'URL au chargement (pour compatibilité avec anciens liens)
-  useEffect(() => {
-    if (models.length > 0 && !isInitialized) {
-      const encodedModels = searchParams.get("models");
-
-      // Gérer les modèles existants depuis l'URL (pour compatibilité)
-      if (encodedModels) {
-        try {
-          const decoded = JSON.parse(
-            decodeBase64(decodeURIComponent(encodedModels)),
-          );
-          const validUrls = decoded.filter((url: string) =>
-            models.some((m) => m.url === url),
-          );
-          setSelectedModels(validUrls);
-        } catch (e) {
-          console.error("Erreur décodage:", e);
-        }
-      }
-
-      setIsInitialized(true);
-    }
-  }, [searchParams, models.length, isInitialized, setSelectedModels, models]);
-
-  // Supprimer l'URL de partage après le chargement initial
-  useEffect(() => {
-    if (isInitialized && models.length > 0) {
-      // Vérifier si nous avons chargé des modèles depuis l'URL
-      const currentUrl = new URL(window.location.href);
-      const hasModelsParam = currentUrl.searchParams.has("models");
-
-      if (hasModelsParam) {
-        // Supprimer le paramètre models de l'URL après chargement
-        currentUrl.searchParams.delete("models");
-        window.history.replaceState({}, "", currentUrl.toString());
-      }
-    }
-  }, [isInitialized, models.length]);
 
   if (loading) {
     return (
@@ -313,7 +135,7 @@ function HomePageContent() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <p className="text-red-600 mb-4">Erreur: {error}</p>
-          <button onClick={loadModels} className="btn-primary">
+          <button onClick={loadTilesData} className="btn-primary">
             Réessayer
           </button>
         </div>
@@ -332,130 +154,89 @@ function HomePageContent() {
         >
           <div className="card">
             <h2 className="text-lg sm:text-xl font-semibold mb-4">
-              Modèles LiDAR
+              Zones sélectionnées
             </h2>
 
-            <div className="space-y-4">
-              <div>
+            {/* Sélecteur de niveau de détail */}
+            {availableLevels.length > 0 && (
+              <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Sélectionner les modèles à afficher
+                  Niveau de détail
                 </label>
+                <select
+                  value={selectedLevel}
+                  onChange={(e) => setSelectedLevel(e.target.value)}
+                  className="w-full p-2 border rounded text-sm"
+                >
+                  {availableLevels.map((level) => (
+                    <option key={level} value={level}>
+                      Niveau {level}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
 
-                {selectedModels.length > 0 && (
-                  <div className="pt-4 border-t">
-                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-2">
-                      <span className="text-sm font-medium">
-                        {selectedModels.length} modèle
-                        {selectedModels.length > 1 ? "s" : ""} sélectionné
-                        {selectedModels.length > 1 ? "s" : ""}
-                      </span>
-                      <button
-                        onClick={() => setSelectedModels([])}
-                        className="text-xs text-red-600 hover:text-red-800 transition-colors self-start sm:self-auto"
-                      >
-                        Tout désélectionner
-                      </button>
-                    </div>
+            <div className="space-y-4">
+              {selectedTiles.length > 0 && (
+                <div className="pt-4 border-t">
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-2">
+                    <span className="text-sm font-medium">
+                      {selectedTiles.length} zone
+                      {selectedTiles.length > 1 ? "s" : ""} sélectionnée
+                      {selectedTiles.length > 1 ? "s" : ""}
+                    </span>
+                    <button
+                      onClick={() => setSelectedTiles([])}
+                      className="text-xs text-red-600 hover:text-red-800 transition-colors self-start sm:self-auto"
+                    >
+                      Tout désélectionner
+                    </button>
                   </div>
-                )}
-
-                <div className="space-y-2 max-h-64 sm:max-h-96 overflow-y-auto">
-                  {allModels.map((model) => {
-                    const modelUrl = getModelUrl(model);
-                    return (
-                      <label
-                        key={modelUrl}
-                        className="flex items-center space-x-2 p-2 rounded hover:bg-gray-50 transition-colors"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={selectedModels.includes(modelUrl)}
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              setSelectedModels((prev) => [...prev, modelUrl]);
-                            } else {
-                              setSelectedModels((prev) =>
-                                prev.filter((url) => url !== modelUrl),
-                              );
-                            }
-                          }}
-                          className="w-4 h-4 sm:w-5 sm:h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                        />
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between">
-                            <div className="font-medium text-sm truncate">
-                              {model.name}
-                              {model.lodEnabled && (
-                                <span className="ml-2 text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
-                                  LoD
-                                </span>
-                              )}
-                              {localFiles.find(
-                                (lf) => getModelUrl(lf) === modelUrl,
-                              ) && (
-                                <span className="ml-2 text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded">
-                                  Local
-                                </span>
-                              )}
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <span
-                                className={`text-xs px-2 py-1 rounded ${
-                                  model.format === "drc"
-                                    ? "bg-green-100 text-green-800"
-                                    : "bg-blue-100 text-blue-800"
-                                }`}
-                              >
-                                {model.format?.toUpperCase()}
-                              </span>
-                              {localFiles.find(
-                                (lf) => getModelUrl(lf) === modelUrl,
-                              ) && (
-                                <button
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    removeLocalFile(modelUrl);
-                                  }}
-                                  className="text-red-500 hover:text-red-700 p-1"
-                                  title="Supprimer le fichier local"
-                                >
-                                  <svg
-                                    className="w-4 h-4"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                  >
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                    />
-                                  </svg>
-                                </button>
-                              )}
-                            </div>
-                          </div>
-                          <div className="flex justify-between items-center">
-                            {model.coordinates && (
-                              <div className="text-xs text-gray-500 truncate">
-                                ({model.coordinates.x}, {model.coordinates.y})
-                              </div>
-                            )}
-                            {model.fileSize && (
-                              <div className="text-xs text-gray-600 font-mono">
-                                {model.fileSize > 1024 * 1024
-                                  ? `${Math.round(model.fileSize / (1024 * 1024))}MB`
-                                  : `${Math.round(model.fileSize / 1024)}KB`}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </label>
-                    );
-                  })}
                 </div>
+              )}
+
+              <div className="space-y-2 max-h-64 sm:max-h-96 overflow-y-auto">
+                {selectedTiles.map((coord) => {
+                  const tileData = tilesData.get(coord);
+                  return (
+                    <div
+                      key={coord}
+                      className="flex items-center justify-between p-2 rounded bg-gray-50"
+                    >
+                      <div className="font-mono text-sm">{coord}</div>
+                      <div className="flex items-center space-x-2">
+                        {tileData && (
+                          <span className="text-xs text-gray-500">
+                            {tileData.levels.join(", ")}
+                          </span>
+                        )}
+                        <button
+                          onClick={() =>
+                            setSelectedTiles((prev) =>
+                              prev.filter((c) => c !== coord)
+                            )
+                          }
+                          className="text-red-500 hover:text-red-700 p-1"
+                        >
+                          <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M6 18L18 6M6 6l12 12"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -485,12 +266,6 @@ function HomePageContent() {
                 >
                   {showDropZone ? "Masquer" : "Ajouter"} Fichier
                 </button>
-                <button
-                  onClick={handleShareClick}
-                  className="btn-secondary text-sm px-3 py-2 touch-manipulation"
-                >
-                  Partager
-                </button>
               </div>
             </div>
 
@@ -501,13 +276,10 @@ function HomePageContent() {
               {showDropZone ? (
                 <DropZone
                   onFileSelect={handleFileUpload}
-                  acceptedFormats={["drc", "ply"]}
+                  acceptedFormats={["drc"]}
                 />
-              ) : selectedModels.length > 0 ? (
-                <ThreeScene
-                  models={allModels}
-                  selectedModels={selectedModels}
-                />
+              ) : models.length > 0 ? (
+                <ThreeScene models={models} />
               ) : (
                 <div className="flex items-center justify-center h-full">
                   <div className="text-center px-4">
@@ -527,7 +299,7 @@ function HomePageContent() {
                       </svg>
                     </div>
                     <p className="text-sm sm:text-base text-gray-400">
-                      Sélectionnez des modèles ou ajoutez-en de nouveaux
+                      Sélectionnez des zones dans l&apos;onglet &quot;Zones disponibles&quot;
                     </p>
                   </div>
                 </div>

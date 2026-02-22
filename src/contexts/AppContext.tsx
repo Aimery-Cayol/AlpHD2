@@ -1,27 +1,24 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-
-interface Model {
-  name: string;
-  url: string;
-  format?: "ply" | "drc";
-  coordinates?: { x: number; y: number };
-  fileSize?: number;
-}
+import type { TileCoord } from '@/utils/fileUtils';
+import type { TileData } from '@/types/models';
 
 interface AppContextType {
-  // État des modèles pour Three.js
-  selectedModels: string[];
-  setSelectedModels: (models: string[] | ((prev: string[]) => string[])) => void;
+  // Zones sélectionnées (coordonnées XXXX_YYYY)
+  selectedTiles: TileCoord[];
+  setSelectedTiles: (tiles: TileCoord[] | ((prev: TileCoord[]) => TileCoord[])) => void;
 
-  // État des tuiles sélectionnées dans la carte
-  selectedTiles: string[];
-  setSelectedTiles: (tiles: string[] | ((prev: string[]) => string[])) => void;
+  // Niveau de détail choisi par l'utilisateur
+  selectedLevel: string;
+  setSelectedLevel: (level: string) => void;
 
-  // Liste complète des modèles disponibles
-  availableModels: Model[];
-  setAvailableModels: (models: Model[]) => void;
+  // Métadonnées des zones disponibles (depuis le GeoJSON)
+  tilesData: Map<TileCoord, TileData>;
+  setTilesData: (data: Map<TileCoord, TileData>) => void;
+
+  // Niveaux disponibles globalement (union de tous les niveaux)
+  availableLevels: string[];
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -39,55 +36,32 @@ interface AppProviderProps {
 }
 
 export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
-  // État des modèles sélectionnés pour Three.js
-  const [selectedModels, setSelectedModels] = useState<string[]>([]);
+  const [selectedTiles, setSelectedTiles] = useState<TileCoord[]>([]);
+  const [selectedLevel, setSelectedLevel] = useState<string>("09"); // Niveau par défaut
+  const [tilesData, setTilesData] = useState<Map<TileCoord, TileData>>(new Map());
 
-  // État des tuiles sélectionnées dans la carte
-  const [selectedTiles, setSelectedTiles] = useState<string[]>([]);
+  // Calculer les niveaux disponibles globalement
+  const availableLevels = Array.from(
+    new Set(Array.from(tilesData.values()).flatMap(t => t.levels))
+  ).sort((a, b) => parseInt(a) - parseInt(b));
 
-  // Liste complète des modèles disponibles
-  const [availableModels, setAvailableModels] = useState<Model[]>([]);
-
-  // Ne plus charger depuis localStorage au démarrage pour éviter de recharger les anciens modèles
-  // useEffect(() => {
-  //   const savedSelectedModels = localStorage.getItem('selectedModels');
-  //   const savedSelectedTiles = localStorage.getItem('selectedTiles');
-
-  //   if (savedSelectedModels) {
-  //     try {
-  //       const models = JSON.parse(savedSelectedModels);
-  //       setSelectedModels(models);
-  //     } catch (e) {
-  //       console.error('Erreur chargement selectedModels:', e);
-  //     }
-  //   }
-
-  //   if (savedSelectedTiles) {
-  //     try {
-  //       const tiles = JSON.parse(savedSelectedTiles);
-  //       setSelectedTiles(tiles);
-  //     } catch (e) {
-  //       console.error('Erreur chargement selectedTiles:', e);
-  //     }
-  //   }
-  // }, []);
-
-  // Sauvegarder dans localStorage quand l'état change
-  useEffect(() => {
-    localStorage.setItem('selectedModels', JSON.stringify(selectedModels));
-  }, [selectedModels]);
-
+  // Sauvegarder dans localStorage
   useEffect(() => {
     localStorage.setItem('selectedTiles', JSON.stringify(selectedTiles));
   }, [selectedTiles]);
 
+  useEffect(() => {
+    localStorage.setItem('selectedLevel', selectedLevel);
+  }, [selectedLevel]);
+
   const value: AppContextType = {
-    selectedModels,
-    setSelectedModels,
     selectedTiles,
     setSelectedTiles,
-    availableModels,
-    setAvailableModels,
+    selectedLevel,
+    setSelectedLevel,
+    tilesData,
+    setTilesData,
+    availableLevels,
   };
 
   return (

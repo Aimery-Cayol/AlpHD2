@@ -214,37 +214,6 @@ function Params() {
     },
   });
 
-  const lodControls = useControls("Level of Detail (LoD)", {
-    lodEnabled: {
-      value: true,
-      label: "Activer LoD",
-    },
-    lodDistanceHigh: {
-      value: 0,
-      min: 0,
-      max: 10,
-      step: 1,
-      label: "Distance haute résolution (m)",
-      render: (get) => get("Level of Detail (LoD).lodEnabled"),
-    },
-    lodDistanceLow: {
-      value: 2,
-      min: 0,
-      max: 10,
-      step: 1,
-      label: "Distance basse résolution (m)",
-      render: (get) => get("Level of Detail (LoD).lodEnabled"),
-    },
-    lodDistanceUltraLow: {
-      value: 5,
-      min: 0,
-      max: 10,
-      step: 1,
-      label: "Distance ultra basse résolution (m)",
-      render: (get) => get("Level of Detail (LoD).lodEnabled"),
-    },
-  });
-
   const debugControls = useControls("Debug", {
     showGrid: { value: true, label: "Grille" },
     showAxes: { value: false, label: "Axes" },
@@ -312,7 +281,6 @@ function Params() {
     ...environmentControls,
     ...skyControls,
     ...postProcessControls,
-    ...lodControls,
   };
 }
 

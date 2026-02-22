@@ -47,17 +47,20 @@ export function useCameraControls() {
   // Gestionnaire de double-clic pour "Fit To Mesh" avec dolly
   const handleMeshDoubleClick = useCallback((event: any) => {
     event.stopPropagation();
-    if (cameraControlsRef.current && event.point) {
-      // Ajoute un marqueur au point cliqué
-      setClickMarkers((prev) => [...prev, event.point.clone()]);
+    if (cameraControlsRef.current && event.intersections && event.intersections.length > 0) {
+      const intersection = event.intersections[0];
+      if (intersection.point) {
+        // Ajoute un marqueur au point cliqué
+        setClickMarkers((prev) => [...prev, intersection.point.clone()]);
 
-      // Utilise moveTo pour animer la caméra vers le point cliqué
-      cameraControlsRef.current.moveTo(
-        event.point.x,
-        event.point.y,
-        event.point.z,
-        true // Animation smooth
-      );
+        // Utilise moveTo pour animer la caméra vers le point cliqué
+        cameraControlsRef.current.moveTo(
+          intersection.point.x,
+          intersection.point.y,
+          intersection.point.z,
+          true // Animation smooth
+        );
+      }
     }
   }, []);
 

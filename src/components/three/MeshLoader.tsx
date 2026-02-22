@@ -1,34 +1,55 @@
 "use client";
 
 import React, { useEffect, useState, useRef, useMemo } from "react";
-import { useLoader } from "@react-three/fiber";
-import { PLYLoader } from "three-stdlib";
 import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
-import { BufferGeometry, Material, Mesh } from "three";
+import { BufferGeometry, Mesh } from "three";
 import * as THREE from "three";
 import { useSceneControls } from "./LevaUI";
 import BoundingBoxHelper from "./BoundingBoxHelper";
 import { geometryCache } from "./GeometryCache";
 import GeometryInspector from "./GeometryInspector";
 import { isLocalUrl, revokeBlobUrl } from "@/utils/fileUtils";
+import { useAppContext } from "@/contexts/AppContext";
+import type { TileCoord } from "@/utils/fileUtils";
 
 import HauteMontagne from "./HauteMontagneShader";
 import BasseMontagne from "./BasseMontagneShader";
+import { Bvh } from "@react-three/drei";
 
 interface MeshLoaderProps {
-  url: string;
-  format?: "ply" | "drc";
+  coord: TileCoord;
+  level: string;
   onDoubleClick?: (event: any) => void;
   lightDirection?: THREE.Vector3;
 }
 
 export default function MeshLoader({
-  url,
-  format,
+  coord,
+  level,
   onDoubleClick,
   lightDirection,
 }: MeshLoaderProps) {
+  const { tilesData } = useAppContext();
+
+  // Résoudre l'URL à partir des données de la tuile dans le contexte
+  const url = useMemo(() => {
+    const tileData = tilesData.get(coord);
+    return tileData?.files.find((f) => f.level === level)?.url ?? null;
+  }, [tilesData, coord, level]);
+
+  // URL pour le mesh de raycast léger : priorité niveau "06", sinon "01"
+  const urlRaycast = useMemo(() => {
+    const tileData = tilesData.get(coord);
+    if (!tileData) return null;
+    return (
+      tileData.files.find((f) => f.level === "06")?.url ??
+      tileData.files.find((f) => f.level === "01")?.url ??
+      null
+    );
+  }, [tilesData, coord]);
+
   const [geometry, setGeometry] = useState<BufferGeometry | null>(null);
+  const [raycastGeometry, setRaycastGeometry] = useState<BufferGeometry | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [cacheStatus, setCacheStatus] = useState<
@@ -159,7 +180,7 @@ export default function MeshLoader({
       Object.values(materials).forEach((mat) => mat.dispose());
 
       // Ne dispose la géométrie QUE si elle n'est pas en cache
-      if (meshRef.current?.geometry && !geometryCache.has(url)) {
+      if (meshRef.current?.geometry && url && !geometryCache.has(url)) {
         meshRef.current.geometry.dispose();
       }
 
@@ -226,19 +247,12 @@ export default function MeshLoader({
           setCacheStatus("network");
         }
 
-        let loader;
-
-        if (format === "drc") {
-          loader = new DRACOLoader();
-          const supportsWasm =
-            typeof WebAssembly === "object" && WebAssembly.validate;
-          const decoderType = supportsWasm ? "wasm" : "js";
-          loader.setDecoderPath("/draco/");
-          loader.setDecoderConfig({ type: decoderType });
-        } else {
-          loader = new PLYLoader();
-        }
-
+        const loader = new DRACOLoader();
+        const supportsWasm =
+          typeof WebAssembly === "object" && WebAssembly.validate;
+        const decoderType = supportsWasm ? "wasm" : "js";
+        loader.setDecoderPath("/draco/");
+        loader.setDecoderConfig({ type: decoderType });
         loader.setCrossOrigin("anonymous");
 
         loader.load(
@@ -294,8 +308,8 @@ export default function MeshLoader({
           },
           (error) => {
             if (cancelled) return;
-            console.error(`Erreur chargement ${format?.toUpperCase()}:`, error);
-            setError(`Erreur chargement ${format?.toUpperCase()}`);
+            console.error("Erreur chargement DRC:", error);
+            setError("Erreur chargement DRC");
             setLoading(false);
           },
         );
@@ -312,7 +326,57 @@ export default function MeshLoader({
     return () => {
       cancelled = true; // ✅ Annuler les opérations en cours
     };
-  }, [url, format]);
+  }, [url]);
+
+  // Chargement de la géométrie niveau "01" pour le mesh de raycast
+  useEffect(() => {
+    // Si l'URL du raycast est identique à l'URL principale, réutiliser la géométrie
+    if (urlRaycast === url) {
+      setRaycastGeometry(geometry);
+      return;
+    }
+
+    if (!urlRaycast) return;
+
+    let cancelled = false;
+
+    const loadRaycastGeometry = async () => {
+      // Vérifier le cache d'abord
+      const cached = geometryCache.get(urlRaycast);
+      if (cached) {
+        setRaycastGeometry(cached);
+        return;
+      }
+
+      const loader = new DRACOLoader();
+      const supportsWasm = typeof WebAssembly === "object" && WebAssembly.validate;
+      loader.setDecoderPath("/draco/");
+      loader.setDecoderConfig({ type: supportsWasm ? "wasm" : "js" });
+      loader.setCrossOrigin("anonymous");
+
+      loader.load(
+        urlRaycast,
+        (geo: BufferGeometry) => {
+          if (cancelled) return;
+          geo.computeVertexNormals();
+          geo.computeBoundingBox();
+          geometryCache.set(urlRaycast, geo);
+          setRaycastGeometry(geo);
+        },
+        undefined,
+        (err) => {
+          if (cancelled) return;
+          console.warn("Impossible de charger la géométrie raycast:", err);
+        },
+      );
+    };
+
+    loadRaycastGeometry();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [urlRaycast, level, geometry]);
 
   if (loading) {
     const loadingColor =
@@ -375,18 +439,30 @@ export default function MeshLoader({
         castShadow
         receiveShadow
         userData={{ url }}
+        // onDoubleClick={onDoubleClick}
       />
 
-      {/* Mesh simplifié (bounding box invisible) pour le raycast - optimisé pour HD */}
-      {geometry.boundingBox && onDoubleClick && (
-        <mesh
-          onDoubleClick={onDoubleClick}
-          visible={false}
-          position={boundingCenter}
-        >
-          <boxGeometry args={boundingSize as [number, number, number]} />
-          <meshBasicMaterial transparent opacity={0} />
-        </mesh>
+      {/* Mesh niveau 01 invisible pour le raycast (léger, haute performance) */}
+      {onDoubleClick && (
+        raycastGeometry ? (
+          <mesh
+            geometry={raycastGeometry}
+            visible={false}
+            onDoubleClick={onDoubleClick}
+          >
+            <meshBasicMaterial transparent opacity={0} />
+          </mesh>
+        ) : geometry.boundingBox ? (
+          /* Fallback bounding box si niveau 01 non disponible */
+          <mesh
+            visible={false}
+            position={boundingCenter}
+            onDoubleClick={onDoubleClick}
+          >
+            <boxGeometry args={boundingSize as [number, number, number]} />
+            <meshBasicMaterial transparent opacity={0} />
+          </mesh>
+        ) : null
       )}
 
       {/* Bounding box */}
