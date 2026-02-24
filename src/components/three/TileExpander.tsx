@@ -37,6 +37,12 @@ export default function TileExpander({
   const [minAltitude, setMinAltitude] = useState<number>(0);
   const [hoveredKey, setHoveredKey] = useState<string | null>(null);
 
+  // Refs factices pour occlude — drei raycast uniquement contre les meshes terrain
+  const colliderOccludeRefs = useMemo(
+    () => collidersRef.current.map(mesh => ({ current: mesh })),
+    [collidersRef, version]
+  );
+
   const buttons = useMemo(() => {
     if (models.length === 0) return [];
     const refX = models[0].x;
@@ -67,7 +73,7 @@ export default function TileExpander({
     return result;
   }, [models, availableTileUrls]);
 
-  // Altitude minimale des dalles chargées : tous les "+" au même niveau
+  // Altitude minimale des dalles chargées : positionner les "+" au niveau du bas du terrain.
   useEffect(() => {
     const colliders = collidersRef.current;
     if (colliders.length === 0) return;
@@ -88,7 +94,7 @@ export default function TileExpander({
   return (
     <>
       {buttons.map(({ key, ex, ez, nx, ny, url }) => (
-        <Html key={key} position={[ex, minAltitude, ez]} center zIndexRange={[100, 0]} occlude>
+        <Html key={key} position={[ex, minAltitude, ez]} center zIndexRange={[100, 0]} occlude={colliderOccludeRefs}>
           <div style={{ position: "relative", display: "inline-flex", flexDirection: "column", alignItems: "center" }}>
             {hoveredKey === key && (
               <div style={{

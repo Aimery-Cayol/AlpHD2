@@ -58,9 +58,15 @@ type TileModel = { x: number; y: number };
 
 export default function PoiTool({ models }: { models: TileModel[] }) {
   const { camera, gl } = useThree();
-  const { collidersRef } = useColliders();
+  const { collidersRef, version } = useColliders();
   const { poiEnabled, poiPlacing, setPoiPlacing, pois } = useAppContext();
   const raycaster = useRef(new THREE.Raycaster());
+
+  // Refs factices pour occlude — drei raycast uniquement contre les meshes terrain
+  const colliderOccludeRefs = useMemo(
+    () => collidersRef.current.map(mesh => ({ current: mesh })),
+    [collidersRef, version]
+  );
 
   // Identifiants des dalles chargées : x_y
   const loadedIds = useMemo(() => models.map(m => `${m.x}_${m.y}`), [models]);
@@ -178,18 +184,26 @@ export default function PoiTool({ models }: { models: TileModel[] }) {
         const z = poi.ly != null ? -(poi.ly - refY) : poi.position.z;
         const color = COLOR_BY_TYPE[poi.type as PoiType];
         const h = poiHeights.get(poi.id) ?? POI_LABEL_HEIGHT;
+        // Tableau de points pour la ligne — recréé uniquement si position/hauteur changent
+        const lineArray = new Float32Array([x, y, z, x, y + h, z]);
         return (
           <React.Fragment key={poi.id}>
-            <Line
-              points={[[x, y, z], [x, y + h, z]]}
-              color={color}
-              lineWidth={1}
-            />
+            {/* Ligne native WebGL : participe au z-buffer → occultée par le terrain */}
+            <line>
+              <bufferGeometry>
+                <bufferAttribute
+                  attach="attributes-position"
+                  args={[lineArray, 3]}
+                />
+              </bufferGeometry>
+              <lineBasicMaterial color={color} />
+            </line>
             <Html
               position={[x, y + h, z]}
               center
               distanceFactor={4}
               zIndexRange={[10, 0]}
+              occlude={colliderOccludeRefs}
             >
               <div
                 style={{
