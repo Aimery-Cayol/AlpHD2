@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState, useMemo } from "react";
+import React, { useRef, useState, useMemo, Suspense } from "react";
 import * as THREE from "three";
 import { Canvas, useThree, useFrame } from "@react-three/fiber";
 import { CameraControls } from "@react-three/drei";
@@ -9,6 +9,10 @@ import ModelPositioner from "./ModelPositioner";
 import PoiTool from "./PoiTool";
 import TileExpander from "./TileExpander";
 import MeasureTool from "./MeasureTool";
+import WeatherOverlay from "@/components/3d/WeatherOverlay";
+import AlpinistMarkers from "@/components/3d/AlpinistMarkers";
+import AvalancheZones from "@/components/3d/AvalancheZones";
+import { DataLayerErrorBoundary } from "@/components/DataLayerErrorBoundary";
 import type { TileModel } from "@/types/models";
 
 // Import des hooks personnalisés
@@ -152,6 +156,23 @@ function SceneContent({ models }: ThreeSceneProps) {
 
       {/* Outil de mesure */}
       <MeasureTool />
+
+      {/* Couches de données temps réel — isolées par ErrorBoundary */}
+      <DataLayerErrorBoundary layer="weather">
+        <Suspense fallback={null}>
+          <WeatherOverlay models={models} />
+        </Suspense>
+      </DataLayerErrorBoundary>
+      <DataLayerErrorBoundary layer="alpinists">
+        <Suspense fallback={null}>
+          <AlpinistMarkers models={models} />
+        </Suspense>
+      </DataLayerErrorBoundary>
+      <DataLayerErrorBoundary layer="geological">
+        <Suspense fallback={null}>
+          <AvalancheZones models={models} />
+        </Suspense>
+      </DataLayerErrorBoundary>
     </>
   );
 }

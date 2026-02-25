@@ -1,0 +1,61 @@
+### =============================================================
+### Tests des routes API données temps réel — AlpHD
+### Compatible REST Client (VSCode) et httpYac
+### Démarrer le serveur : npm run dev
+### =============================================================
+
+@base = http://localhost:3000/api
+
+# ---------------------------------------------------------------
+# 1. Météo actuelle — stations Dent du Géant + Chamonix
+# ---------------------------------------------------------------
+### Attendu : WeatherData { stations: [...], forecasts: [], alerts: [] }
+GET {{base}}/weather
+Accept: application/json
+
+###
+
+# ---------------------------------------------------------------
+# 2. Prévisions 7 jours
+# ---------------------------------------------------------------
+### Attendu : WeatherForecast[] (2 entrées), hourly 48 pts, daily 7 pts
+GET {{base}}/weather/forecast
+Accept: application/json
+
+###
+
+# ---------------------------------------------------------------
+# 3. Alpinistes — mock dynamique (bougent à chaque appel)
+# ---------------------------------------------------------------
+### Attendu : HumanActivityData { alpinists: [5], refuges: [3], rescueOps: [] }
+GET {{base}}/alpinists
+Accept: application/json
+
+###
+
+# ---------------------------------------------------------------
+# 4. Données géologiques — zones avalanche + événements
+# ---------------------------------------------------------------
+### Attendu : GeologicalData { avalancheZones: [4], avalancheEvents: [2], massifRisk: 3 }
+GET {{base}}/geological
+Accept: application/json
+
+###
+
+# ---------------------------------------------------------------
+# 5. Environnement — enneigement + glaciers + hydrologie
+# ---------------------------------------------------------------
+### Attendu : EnvironmentData { snowpack: [4], glaciers: [3], hydrology: [1] }
+GET {{base}}/environment
+Accept: application/json
+
+###
+
+# ---------------------------------------------------------------
+# 6. Médias — webcams (Windy si clé, mock sinon)
+# ---------------------------------------------------------------
+### Attendu : MediaData { items: [], webcams: [5], total: 5 }
+GET {{base}}/media
+Accept: application/json
+
+###

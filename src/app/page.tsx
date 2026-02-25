@@ -26,11 +26,13 @@ import {
   MapPin,
   Search,
   Menu,
+  Layers,
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useAppContext } from "@/contexts/AppContext";
 import Compass3D from "@/components/three/Compass3D";
 import LoadingOverlay from "@/components/LoadingOverlay";
+import DataLayersPanel from "@/components/3d/DataLayersPanel";
 import Link from "next/link";
 import type { TileModel, TileData } from "@/types/models";
 import type { TileCoord } from "@/utils/fileUtils";
@@ -437,6 +439,7 @@ function HomePageContent() {
   const [showTileInfo, setShowTileInfo] = useState(false);
   const [showTilesPanel, setShowTilesPanel] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showDataLayers, setShowDataLayers] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
 
@@ -916,7 +919,21 @@ function HomePageContent() {
                     </span>
                   </button>
                 )}
+                {/* Bouton couches de données */}
+                <button
+                  title="Couches de données"
+                  onClick={() => setShowDataLayers(!showDataLayers)}
+                  className={`relative group p-2.5 backdrop-blur border rounded-xl shadow-xl transition-all ${showDataLayers ? "bg-violet-600 text-white border-violet-700" : "bg-white/90 border-slate-200 hover:bg-violet-600 hover:text-white"}`}
+                >
+                  <Layers className="h-4 w-4" />
+                  <span className="pointer-events-none absolute right-full mr-2 top-1/2 -translate-y-1/2 whitespace-nowrap bg-slate-900/90 text-white text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">Couches</span>
+                </button>
               </div>
+
+              {/* Panneau couches de données temps réel */}
+              {showDataLayers && (
+                <DataLayersPanel className="absolute bottom-16 right-3 z-40" />
+              )}
 
               {/* Boussole 3D */}
               <Compass3D />
