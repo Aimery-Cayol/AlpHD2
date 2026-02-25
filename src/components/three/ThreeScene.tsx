@@ -6,6 +6,7 @@ import { Canvas, useThree, useFrame } from "@react-three/fiber";
 import { CameraControls } from "@react-three/drei";
 import MyLevaUI, { useSceneControls } from "./LevaUI";
 import ModelPositioner from "./ModelPositioner";
+import MeasureTool from "./MeasureTool";
 import type { TileModel } from "@/types/models";
 
 // Import des hooks personnalisés

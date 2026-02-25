@@ -5,7 +5,34 @@ import type { TileCoord } from '@/utils/fileUtils';
 import type { TileData } from '@/types/models';
 
 // ---------------------------------------------------------------------------
-// Interface du contexte — PR1 : tuiles + LOD + caméra (rotation boussole)
+// Interfaces mesure — ajoutées dans feature/b-outil-mesure
+// ---------------------------------------------------------------------------
+
+interface MeasurementPoint {
+  position: { x: number; y: number; z: number };
+  altitude: number;
+}
+
+interface SegmentData {
+  distance: number;
+  slope: number;
+  elevationDiff: number;
+}
+
+export interface MeasurementData {
+  points: MeasurementPoint[];
+  segments: SegmentData[];
+  startPoint: MeasurementPoint | null;
+  endPoint: MeasurementPoint | null;
+  totalDistance: number | null;
+  distance: number | null;
+  slope: number | null;
+  elevationDiff: number | null;
+  elevationProfile: { distance: number; altitude: number }[];
+}
+
+// ---------------------------------------------------------------------------
+// Interface du contexte
 // ---------------------------------------------------------------------------
 
 interface AppContextType {
@@ -24,9 +51,16 @@ interface AppContextType {
   // --- Niveaux disponibles (union de toutes les tuiles) ---
   availableLevels: string[];
 
-  // --- Rotation caméra (utilisée par la boussole) ---
+  // --- Rotation caméra (boussole) ---
   cameraRotation: { x: number; y: number; z: number };
   setCameraRotation: (rotation: { x: number; y: number; z: number }) => void;
+
+  // --- Outil de mesure ---
+  measurementEnabled: boolean;
+  setMeasurementEnabled: (enabled: boolean) => void;
+  measurementData: MeasurementData;
+  setMeasurementData: (data: MeasurementData | ((prev: MeasurementData) => MeasurementData)) => void;
+  resetMeasurement: () => void;
 }
 
 // ---------------------------------------------------------------------------
@@ -47,6 +81,18 @@ export const useAppContext = () => {
 // Provider
 // ---------------------------------------------------------------------------
 
+const defaultMeasurementData: MeasurementData = {
+  points: [],
+  segments: [],
+  startPoint: null,
+  endPoint: null,
+  totalDistance: null,
+  distance: null,
+  slope: null,
+  elevationDiff: null,
+  elevationProfile: [],
+};
+
 interface AppProviderProps {
   children: ReactNode;
 }
@@ -62,8 +108,13 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     new Set(Array.from(tilesData.values()).flatMap(t => t.levels))
   ).sort((a, b) => parseInt(a) - parseInt(b));
 
-  // --- Caméra (boussole) ---
+  // --- Caméra ---
   const [cameraRotation, setCameraRotation] = useState({ x: 0, y: 0, z: 0 });
+
+  // --- Mesure ---
+  const [measurementEnabled, setMeasurementEnabled] = useState(false);
+  const [measurementData, setMeasurementData] = useState<MeasurementData>(defaultMeasurementData);
+  const resetMeasurement = () => setMeasurementData(defaultMeasurementData);
 
   // --- Hydratation localStorage ---
   useEffect(() => {
@@ -74,7 +125,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     setIsHydrated(true);
   }, []);
 
-  // Persister dans localStorage
   useEffect(() => {
     if (isHydrated) localStorage.setItem('selectedTiles', JSON.stringify(selectedTiles));
   }, [selectedTiles, isHydrated]);
@@ -89,6 +139,8 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     tilesData, setTilesData,
     availableLevels,
     cameraRotation, setCameraRotation,
+    measurementEnabled, setMeasurementEnabled,
+    measurementData, setMeasurementData, resetMeasurement,
   };
 
   return (
