@@ -26,6 +26,7 @@ import {
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useAppContext } from "@/contexts/AppContext";
+import Compass3D from "@/components/three/Compass3D";
 import Link from "next/link";
 import type { TileModel, TileData } from "@/types/models";
 import type { TileCoord } from "@/utils/fileUtils";
@@ -865,6 +866,9 @@ function HomePageContent() {
                   <span className="pointer-events-none absolute right-full mr-2 top-1/2 -translate-y-1/2 whitespace-nowrap bg-slate-900/90 text-white text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">Mesure</span>
                 </button>
               </div>
+
+              {/* Boussole 3D */}
+              <Compass3D />
 
             </>
           ) : (
