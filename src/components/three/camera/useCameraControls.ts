@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { CameraControlsImpl } from "@react-three/drei";
 import * as THREE from "three";
+import { useColliders } from "@/contexts/ColliderContext";
 
 /**
  * Hook pour gérer les contrôles de la caméra
@@ -13,6 +14,7 @@ export function useCameraControls() {
   const cameraControlsRef = useRef<CameraControlsImpl | null>(null);
   const [isShiftPressed, setIsShiftPressed] = useState(false);
   const [clickMarkers, setClickMarkers] = useState<THREE.Vector3[]>([]);
+  const { collidersRef } = useColliders();
 
   // Gestion de l'appui de la touche Shift pour les contrôles caméra
   useEffect(() => {
@@ -63,6 +65,27 @@ export function useCameraControls() {
       }
     }
   }, []);
+
+  // Repositionne la caméra pour voir tous les meshes chargés
+  useEffect(() => {
+    const handleFitCamera = () => {
+      if (!cameraControlsRef.current || collidersRef.current.length === 0) return;
+      const box = new THREE.Box3();
+      for (const mesh of collidersRef.current) {
+        box.expandByObject(mesh);
+      }
+      if (!box.isEmpty()) {
+        cameraControlsRef.current.fitToBox(box, true, {
+          paddingTop: 0.3,
+          paddingBottom: 0.3,
+          paddingLeft: 0.3,
+          paddingRight: 0.3,
+        });
+      }
+    };
+    window.addEventListener("fit-camera", handleFitCamera);
+    return () => window.removeEventListener("fit-camera", handleFitCamera);
+  }, [collidersRef]);
 
   return {
     cameraControlsRef,

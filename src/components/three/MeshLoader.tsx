@@ -4,17 +4,23 @@ import React, { useEffect, useState, useRef, useMemo } from "react";
 import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { BufferGeometry, Mesh } from "three";
 import * as THREE from "three";
+import { computeBoundsTree, disposeBoundsTree, acceleratedRaycast } from "three-mesh-bvh";
+
+// Patch THREE une seule fois pour activer le raycast accéléré sur tous les meshes
+(THREE.BufferGeometry.prototype as any).computeBoundsTree = computeBoundsTree;
+(THREE.BufferGeometry.prototype as any).disposeBoundsTree = disposeBoundsTree;
+(THREE.Mesh.prototype as any).raycast = acceleratedRaycast;
 import { useSceneControls } from "./LevaUI";
 import BoundingBoxHelper from "./BoundingBoxHelper";
 import { geometryCache } from "./GeometryCache";
 import GeometryInspector from "./GeometryInspector";
 import { isLocalUrl, revokeBlobUrl } from "@/utils/fileUtils";
 import { useAppContext } from "@/contexts/AppContext";
+import { useColliders } from "@/contexts/ColliderContext";
 import type { TileCoord } from "@/utils/fileUtils";
 
 import HauteMontagne from "./HauteMontagneShader";
 import BasseMontagne from "./BasseMontagneShader";
-import { Bvh } from "@react-three/drei";
 
 interface MeshLoaderProps {
   coord: TileCoord;
@@ -29,7 +35,8 @@ export default function MeshLoader({
   onDoubleClick,
   lightDirection,
 }: MeshLoaderProps) {
-  const { tilesData } = useAppContext();
+  const { tilesData, incrementPendingLoads, decrementPendingLoads } = useAppContext();
+  const { addCollider, removeCollider } = useColliders();
 
   // Résoudre l'URL à partir des données de la tuile dans le contexte
   const url = useMemo(() => {
@@ -211,6 +218,15 @@ export default function MeshLoader({
     ];
   }, [geometry]);
 
+  // Enregistrer le mesh comme collider pour les raycasts (PoiTool, TileExpander, etc.)
+  useEffect(() => {
+    const mesh = meshRef.current;
+    if (mesh && geometry) {
+      addCollider(mesh);
+      return () => removeCollider(mesh);
+    }
+  }, [geometry, addCollider, removeCollider]);
+
   useEffect(() => {
     if (!url) {
       setLoading(false);
@@ -220,6 +236,9 @@ export default function MeshLoader({
 
     // 🎯 OPTIMISATION 6: Flag pour annuler les opérations async
     let cancelled = false;
+    let loaded = false;
+    const markLoaded = () => { if (!loaded) { loaded = true; decrementPendingLoads(); } };
+    incrementPendingLoads();
 
     const loadGeometry = async () => {
       setLoading(true);
@@ -269,6 +288,7 @@ export default function MeshLoader({
             if (cancelled) return;
 
             geometry.computeBoundingBox();
+            (geometry as any).computeBoundsTree();
 
             await new Promise((resolve) => setTimeout(resolve, 0));
             if (cancelled) return;
@@ -296,6 +316,7 @@ export default function MeshLoader({
             geometryCache.set(url, geometry);
             setGeometry(geometry);
             setLoading(false);
+            markLoaded();
           },
           (progress) => {
             if (process.env.NODE_ENV === "development") {
@@ -310,6 +331,7 @@ export default function MeshLoader({
             console.error("Erreur chargement DRC:", error);
             setError("Erreur chargement DRC");
             setLoading(false);
+            markLoaded();
           },
         );
       } catch (err) {
@@ -317,15 +339,17 @@ export default function MeshLoader({
         console.error("Erreur:", err);
         setError("Erreur chargement");
         setLoading(false);
+        markLoaded();
       }
     };
 
     loadGeometry();
 
     return () => {
-      cancelled = true; // ✅ Annuler les opérations en cours
+      cancelled = true;
+      markLoaded(); // libérer le compteur même si annulé
     };
-  }, [url]);
+  }, [url]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Chargement de la géométrie niveau "01" pour le mesh de raycast
   useEffect(() => {
@@ -430,7 +454,6 @@ export default function MeshLoader({
 
   return (
     <group>
-      {/* ✅ Un seul mesh avec le matériau actif */}
       <mesh
         ref={meshRef}
         geometry={geometry}
@@ -478,20 +501,6 @@ export default function MeshLoader({
         />
       )}
 
-      {/* Indicateurs visuels */}
-      {cacheStatus === "cache" && (
-        <mesh position={[0, 1.5, 0]}>
-          <sphereGeometry args={[0.05, 8, 8]} />
-          <meshBasicMaterial color="#22c55e" />
-        </mesh>
-      )}
-
-      {cacheStatus === "local" && (
-        <mesh position={[0, 1.5, 0]}>
-          <sphereGeometry args={[0.05, 8, 8]} />
-          <meshBasicMaterial color="#0066cc" />
-        </mesh>
-      )}
     </group>
   );
 }

@@ -7,8 +7,8 @@ import { Amplify } from 'aws-amplify';
 import { AppProvider } from '../contexts/AppContext';
 
 // Configure Amplify : DEUX LIGNES A COMMENTER LORS DE L'UTILISATION par FORK
-import outputs from '../../amplify_outputs.json';
-Amplify.configure(outputs);
+// import outputs from '../../amplify_outputs.json';
+// Amplify.configure(outputs);
 
 // Ancien test pour environnement sandbox : à garder commenté tant qu'on n'y revient pas :
 // import sandboxOutputs from '../../amplify_outputs.sandbox.json';

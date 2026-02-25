@@ -3,7 +3,10 @@
 import React, { useMemo } from "react";
 import * as THREE from "three";
 import MeshLoader from "./MeshLoader";
+import IGNBasemap from "./IGNBasemap";
+import { useSceneControls } from "./LevaUI";
 import type { TileModel } from "@/types/models";
+import type { IGNLayer } from "@/utils/coordinateUtils";
 
 interface ModelPositionerProps {
   models: TileModel[];
@@ -16,14 +19,39 @@ export default function ModelPositioner({
   onMeshDoubleClick,
   lightDirection,
 }: ModelPositionerProps) {
-  // Calculer les positions relatives avec le premier modèle au centre
-  const positionedModels = useMemo(() => {
-    if (models.length === 0) return [];
-    return calculateRelativePositions(models);
+  const controls = useSceneControls();
+  const showBasemap = controls?.showBasemap ?? false;
+
+  const { positionedModels, referenceX, referenceY, tileData } = useMemo(() => {
+    if (models.length === 0) {
+      return { positionedModels: [], referenceX: 0, referenceY: 0, tileData: [] };
+    }
+    const positioned = calculateRelativePositions(models);
+    const firstWithCoords = models.find((m) => m.coordinates);
+    const refX = firstWithCoords ? firstWithCoords.coordinates.x / 1000 : 0;
+    const refY = firstWithCoords ? firstWithCoords.coordinates.y / 1000 : 0;
+    const tiles = models
+      .filter((m) => m.coordinates)
+      .map((m) => ({ x: m.coordinates.x / 1000, y: m.coordinates.y / 1000 }));
+    return { positionedModels: positioned, referenceX: refX, referenceY: refY, tileData: tiles };
   }, [models]);
 
   return (
     <>
+      {/* Fond de carte IGN */}
+      {showBasemap && tileData.length > 0 && (
+        <IGNBasemap
+          key={`basemap-${referenceX}-${referenceY}`}
+          tiles={tileData}
+          referenceX={referenceX}
+          referenceY={referenceY}
+          marginKm={7}
+          opacity={controls?.basemapOpacity ?? 1}
+          yOffset={2.5}
+          layer={(controls?.basemapLayer as IGNLayer) ?? 'PLANIGNV2'}
+        />
+      )}
+
       {positionedModels.map((model) => (
         <group
           key={model.coord}
@@ -38,11 +66,11 @@ export default function ModelPositioner({
           />
         </group>
       ))}
+
     </>
   );
 }
 
-// Fonction pour calculer les positions relatives basées sur les coordonnées géographiques
 function calculateRelativePositions(
   models: TileModel[],
 ): (TileModel & { position: [number, number, number] })[] {

@@ -1,6 +1,9 @@
+import { useRef } from "react";
+import { useFrame } from "@react-three/fiber";
 import { PerspectiveCamera, CameraControls, Stats } from "@react-three/drei";
 import { useCameraContext } from "./CameraContext";
 import CameraTargetDebug from "../CameraTargetDebug";
+import { useAppContext } from "@/contexts/AppContext";
 
 interface CameraSetupProps {
   fov: number;
@@ -15,8 +18,23 @@ interface CameraSetupProps {
 export function CameraSetup(props: CameraSetupProps) {
   const { fov, showCameraTarget, showStats } = props;
 
-  // Récupère les données depuis le Context partagé
   const { cameraControlsRef, mouseButtonsConfig, clickMarkers } = useCameraContext();
+  const { setCameraRotation } = useAppContext();
+  const prevAngles = useRef({ polar: -1, azimuth: -1 });
+
+  // Met à jour la boussole en lisant les angles de la caméra à chaque frame
+  useFrame(() => {
+    if (!cameraControlsRef.current) return;
+    const polar = cameraControlsRef.current.polarAngle;
+    const azimuth = cameraControlsRef.current.azimuthAngle;
+    if (
+      Math.abs(polar - prevAngles.current.polar) > 0.005 ||
+      Math.abs(azimuth - prevAngles.current.azimuth) > 0.005
+    ) {
+      prevAngles.current = { polar, azimuth };
+      setCameraRotation({ x: polar, y: azimuth, z: 0 });
+    }
+  });
 
   return (
     <>
