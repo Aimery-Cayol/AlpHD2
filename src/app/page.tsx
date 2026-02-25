@@ -23,6 +23,7 @@ import {
   Menu,
   Ruler,
   ArrowUpDown,
+  MapPin,
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useAppContext } from "@/contexts/AppContext";
@@ -418,6 +419,9 @@ function HomePageContent() {
     availableLevels,
     measurementEnabled, setMeasurementEnabled,
     measurementData, resetMeasurement,
+    poiEnabled, setPoiEnabled,
+    poiPlacing, setPoiPlacing,
+    pois,
   } = useAppContext();
 
   const hasMeasurement = measurementData.points.length >= 2;
@@ -544,8 +548,9 @@ function HomePageContent() {
     if (q.length < 2) return [];
     const norm = (s: string) => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     const summits = summitSearchItems.filter(i => norm(i.name).includes(q));
-    return summits.slice(0, 8);
-  }, [searchQuery, summitSearchItems]);
+    const poiResults = pois.map(p => ({ kind: "poi" as const, ...p })).filter(p => norm(p.name).includes(q));
+    return [...summits, ...poiResults].slice(0, 8);
+  }, [searchQuery, summitSearchItems, pois]);
 
   const handleToggle = (id: string) => {
     if (selectedSummitId === id) {
@@ -865,6 +870,26 @@ function HomePageContent() {
                   <Ruler className="h-4 w-4" />
                   <span className="pointer-events-none absolute right-full mr-2 top-1/2 -translate-y-1/2 whitespace-nowrap bg-slate-900/90 text-white text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">Mesure</span>
                 </button>
+                <button
+                  title="Lieux"
+                  onClick={() => { setPoiEnabled(!poiEnabled); if (poiEnabled) setPoiPlacing(false); }}
+                  className={`relative group p-2.5 backdrop-blur border rounded-xl shadow-xl transition-all ${poiEnabled ? "bg-orange-500 text-white border-orange-600" : "bg-white/90 border-slate-200 hover:bg-orange-500 hover:text-white"}`}
+                >
+                  <MapPin className="h-4 w-4" />
+                  <span className="pointer-events-none absolute right-full mr-2 top-1/2 -translate-y-1/2 whitespace-nowrap bg-slate-900/90 text-white text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">Lieux</span>
+                </button>
+                {poiEnabled && (
+                  <button
+                    title={poiPlacing ? "Annuler" : "Ajouter un lieu"}
+                    onClick={() => setPoiPlacing(!poiPlacing)}
+                    className={`relative group p-2.5 backdrop-blur border rounded-xl shadow-xl transition-all text-sm font-bold leading-none ${poiPlacing ? "bg-orange-600 text-white border-orange-700" : "bg-white/90 border-orange-200 text-orange-500 hover:bg-orange-500 hover:text-white"}`}
+                  >
+                    {poiPlacing ? "✕" : "+"}
+                    <span className="pointer-events-none absolute right-full mr-2 top-1/2 -translate-y-1/2 whitespace-nowrap bg-slate-900/90 text-white text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                      {poiPlacing ? "Annuler" : "Ajouter un lieu"}
+                    </span>
+                  </button>
+                )}
               </div>
 
               {/* Boussole 3D */}
