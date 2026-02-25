@@ -25,6 +25,9 @@ const BasseMontagne = shaderMaterial(
     varying vec3 vLightDirection;
     varying float vDepth;
 
+    #include <common>
+    #include <logdepthbuf_pars_vertex>
+
     void main() {
       vWorldNormal = normalize((modelMatrix * vec4(normal, 0.0)).xyz);
       vViewNormal = normalize((modelViewMatrix * vec4(normal, 0.0)).xyz);
@@ -32,6 +35,7 @@ const BasseMontagne = shaderMaterial(
       vec4 viewPosition = modelViewMatrix * vec4(position, 1.0);
       vDepth = -viewPosition.z;
       gl_Position = projectionMatrix * viewPosition;
+      #include <logdepthbuf_vertex>
     }
   `,
   // Fragment Shader
@@ -52,7 +56,10 @@ const BasseMontagne = shaderMaterial(
     varying vec3 vLightDirection;
     varying float vDepth;
 
+    #include <logdepthbuf_pars_fragment>
+
     void main() {
+      #include <logdepthbuf_fragment>
       float slope = abs(dot(vWorldNormal, vec3(0.0, 1.0, 0.0)));
 
       float mix_factor = smoothstep(
