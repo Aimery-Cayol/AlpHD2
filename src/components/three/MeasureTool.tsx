@@ -282,23 +282,19 @@ export default function MeasureTool() {
       )}
 
       {/* Placed point spheres */}
-      {points.map((pt, idx) => (
-        <mesh
-          key={idx}
-          position={[pt.position.x, pt.position.y + 0.003, pt.position.z]}
-        >
-          <sphereGeometry args={[0.004, 12, 12]} />
-          <meshStandardMaterial
-            color={
-              idx === 0
-                ? "#22c55e"
-                : idx === points.length - 1
-                  ? "#ef4444"
-                  : "#3b82f6"
-            }
-          />
-        </mesh>
-      ))}
+      {points.map((pt, idx) => {
+        const color =
+          idx === 0 ? "#22c55e" : idx === points.length - 1 ? "#ef4444" : "#3b82f6";
+        return (
+          <mesh
+            key={idx}
+            position={[pt.position.x, pt.position.y + 0.003, pt.position.z]}
+          >
+            <sphereGeometry args={[0.003, 16, 16]} />
+            <meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.7} />
+          </mesh>
+        );
+      })}
     </>
   );
 }

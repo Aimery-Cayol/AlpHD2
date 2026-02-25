@@ -21,6 +21,8 @@ import {
   ExternalLink,
   Ruler,
   ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
   MapPin,
   Search,
   Menu,
@@ -590,6 +592,7 @@ function HomePageContent() {
       setSelectedTiles(summit.dalles.map((d: any) => toCoord(d.x, d.y)));
       setShowTileInfo(false);
       setMeasurementEnabled(false);
+      setSidebarOpen(false); // fermer le drawer mobile pour libérer le viewport
     }
   };
 
@@ -850,11 +853,16 @@ function HomePageContent() {
 
               {/* Hint outil de mesure */}
               {measurementEnabled && (
-                <div className="absolute top-3 left-1/2 -translate-x-1/2 z-40 bg-slate-900/80 text-white text-[10px] font-bold uppercase tracking-widest px-4 py-2 rounded-full backdrop-blur-sm pointer-events-none flex items-center gap-2 whitespace-nowrap">
-                  <Ruler className="h-3 w-3 text-blue-400" />
-                  {measurementData.points.length === 0
-                    ? "Cliquez sur le terrain pour démarrer"
-                    : "Cliquez pour ajouter un point · Clic droit pour terminer"}
+                <div className="absolute top-3 left-1/2 -translate-x-1/2 z-40 bg-slate-900/80 text-white text-[10px] font-bold uppercase tracking-widest px-4 py-2 rounded-full backdrop-blur-sm pointer-events-none flex items-center gap-2 max-w-[90vw] sm:whitespace-nowrap text-center">
+                  <Ruler className="h-3 w-3 text-blue-400 flex-shrink-0" />
+                  {measurementData.points.length === 0 ? (
+                    <span>Touchez le terrain pour démarrer</span>
+                  ) : (
+                    <>
+                      <span className="hidden sm:inline">Cliquez pour ajouter un point · Clic droit pour terminer</span>
+                      <span className="sm:hidden">Touchez pour ajouter · Tapez Mesure pour arrêter</span>
+                    </>
+                  )}
                 </div>
               )}
 
@@ -914,16 +922,19 @@ function HomePageContent() {
               <Compass3D />
             </>
           ) : (
-            <div className="w-full h-full flex flex-col items-center justify-center p-8 lg:p-12 animate-in fade-in duration-700">
-              <div className="max-w-2xl w-full text-center space-y-8">
-                <div className="inline-flex p-6 border border-white/5 rounded-full bg-white/5 mb-4">
-                  <CompassIcon className="h-12 w-12 text-blue-500/50 animate-pulse" />
+            <div className="w-full h-full flex flex-col items-center justify-center p-4 sm:p-8 lg:p-12 animate-in fade-in duration-700">
+              <div className="max-w-2xl w-full text-center space-y-5 sm:space-y-8">
+                <div className="inline-flex p-4 sm:p-6 border border-white/5 rounded-full bg-white/5 mb-2 sm:mb-4">
+                  <CompassIcon className="h-8 w-8 sm:h-12 sm:w-12 text-blue-500/50 animate-pulse" />
                 </div>
                 <div>
-                  <h2 className="text-white text-2xl font-black uppercase tracking-tighter mb-2">Prêt pour l'exploration ?</h2>
-                  <p className="text-slate-500 text-[10px] font-bold uppercase tracking-[0.2em]">Sélectionnez un sommet dans le répertoire pour charger le relief 3D</p>
+                  <h2 className="text-white text-xl sm:text-2xl font-black uppercase tracking-tighter mb-2">Prêt pour l'exploration ?</h2>
+                  <p className="text-slate-500 text-[10px] font-bold uppercase tracking-[0.2em]">
+                    <span className="hidden sm:inline">Sélectionnez un sommet dans le répertoire pour charger le relief 3D</span>
+                    <span className="sm:hidden">Appuyez sur <span className="text-slate-400">☰</span> pour choisir un sommet</span>
+                  </p>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 text-left">
                   <div className="p-5 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm">
                     <div className="flex items-center gap-3 mb-2 text-blue-400"><MousePointer2 className="h-4 w-4"/><span className="text-[10px] font-bold uppercase tracking-widest">Rotation</span></div>
                     <p className="text-xs text-slate-400">Clic gauche maintenu ou <strong>MAJ + Clic</strong> pour pivoter autour du relief.</p>
@@ -946,11 +957,19 @@ function HomePageContent() {
           )}
         </section>
 
+        {/* Backdrop mobile — tap pour fermer le panneau de détails */}
+        {((hasMeasurement && measurementEnabled) || (selectedRouteInfo && showSummitInfo) || (selectedTiles.length > 0 && !selectedSummitId && showTileInfo)) && showDetails && (
+          <div className="fixed inset-0 z-20 bg-black/30 lg:hidden" onClick={() => { setShowDetails(false); setShowSummitInfo(false); setShowTileInfo(false); }} />
+        )}
         {/* Panneau de droite : Mesure OU Infos sommet OU Dalles */}
         {((hasMeasurement && measurementEnabled) || (selectedRouteInfo && showSummitInfo) || (selectedTiles.length > 0 && !selectedSummitId && showTileInfo)) && showDetails && (
-          <aside className="w-[340px] lg:w-[380px] flex-shrink-0 animate-in slide-in-from-right-4 duration-500 hidden lg:block">
-            <div className="bg-white border border-slate-200 rounded-[2rem] h-full shadow-2xl flex flex-col overflow-hidden">
-              <div className="p-6 lg:p-8 border-b border-slate-100">
+          <aside className="fixed bottom-0 left-0 right-0 z-30 lg:static lg:z-auto lg:w-[380px] lg:flex-shrink-0 animate-in slide-in-from-bottom-4 lg:slide-in-from-right-4 duration-300">
+            <div className="bg-white border border-slate-200 rounded-t-[2rem] lg:rounded-[2rem] max-h-[72vh] lg:max-h-none lg:h-full shadow-2xl flex flex-col overflow-hidden">
+              {/* Poignée de défilement — mobile uniquement */}
+              <div className="flex justify-center pt-2.5 pb-1 flex-shrink-0 lg:hidden">
+                <div className="w-10 h-1.5 bg-slate-200 rounded-full" />
+              </div>
+              <div className="p-5 lg:p-8 border-b border-slate-100 flex-shrink-0">
                 <div className="flex justify-between items-start mb-6">
                   <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 bg-slate-50 px-3 py-1 rounded-full border border-slate-100">
                     {(hasMeasurement && measurementEnabled) ? "Mesure de distance" : selectedRouteInfo ? "Détails Relief" : "Dalles sélectionnées"}
@@ -980,7 +999,7 @@ function HomePageContent() {
                 )}
               </div>
 
-              <div className="flex-1 overflow-y-auto p-6 lg:p-8 space-y-6">
+              <div className="flex-1 overflow-y-auto p-5 lg:p-8 space-y-6">
                 {/* Contenu Mesure */}
                 {(hasMeasurement && measurementEnabled) ? (
                   <>
@@ -993,8 +1012,14 @@ function HomePageContent() {
                       </div>
                       <div className="bg-purple-50 rounded-xl p-4 border border-purple-100">
                         <div className="flex items-center gap-1.5 text-purple-400 mb-1"><ArrowUpDown className="h-3 w-3" /><span className="text-[9px] font-bold uppercase tracking-wider">Élévation</span></div>
-                        <p className="text-xl font-black text-slate-900">
+                        <p className="text-xl font-black text-slate-900 flex items-center gap-1">
                           {measurementData.elevationDiff !== null ? `${Math.abs(Math.round(measurementData.elevationDiff))} m` : "—"}
+                          {measurementData.elevationDiff !== null && measurementData.elevationDiff > 0 && (
+                            <ArrowUp className="h-4 w-4 text-green-500 flex-shrink-0" />
+                          )}
+                          {measurementData.elevationDiff !== null && measurementData.elevationDiff < 0 && (
+                            <ArrowDown className="h-4 w-4 text-red-400 flex-shrink-0" />
+                          )}
                         </p>
                       </div>
                       <div className="bg-orange-50 rounded-xl p-4 border border-orange-100">
@@ -1118,7 +1143,7 @@ function HomePageContent() {
                 )}
               </div>
 
-              <footer className="p-4 bg-slate-50 border-t border-slate-100 text-center text-[9px] text-slate-400 font-bold uppercase tracking-widest">
+              <footer className="p-4 bg-slate-50 border-t border-slate-100 text-center text-[9px] text-slate-400 font-bold uppercase tracking-widest flex-shrink-0">
                 IGN / Camptocamp / Wikipedia
               </footer>
             </div>
