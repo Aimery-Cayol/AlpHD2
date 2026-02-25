@@ -28,6 +28,7 @@ import {
 import dynamic from "next/dynamic";
 import { useAppContext } from "@/contexts/AppContext";
 import Compass3D from "@/components/three/Compass3D";
+import LoadingOverlay from "@/components/LoadingOverlay";
 import Link from "next/link";
 import type { TileModel, TileData } from "@/types/models";
 import type { TileCoord } from "@/utils/fileUtils";
@@ -422,6 +423,7 @@ function HomePageContent() {
     poiEnabled, setPoiEnabled,
     poiPlacing, setPoiPlacing,
     pois,
+    pendingLoads, loadingProgress, resetLoadingProgress,
   } = useAppContext();
 
   const hasMeasurement = measurementData.points.length >= 2;
@@ -495,6 +497,20 @@ function HomePageContent() {
   useEffect(() => {
     if (hasMeasurement && measurementEnabled) setShowDetails(true);
   }, [hasMeasurement, measurementEnabled]);
+
+  // Quand le chargement passe de >0 à 0 : recentrer la caméra
+  const [wasLoading, setWasLoading] = useState(false);
+  useEffect(() => {
+    if (pendingLoads > 0) {
+      setWasLoading(true);
+    } else if (wasLoading) {
+      setTimeout(() => {
+        window.dispatchEvent(new CustomEvent("fit-camera"));
+        resetLoadingProgress();
+      }, 300);
+      setWasLoading(false);
+    }
+  }, [pendingLoads]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Construire les modèles à afficher à partir des tuiles sélectionnées + niveau choisi
   const models: TileModel[] = useMemo(() => {
@@ -829,6 +845,7 @@ function HomePageContent() {
           {models.length > 0 ? (
             <>
               <ThreeScene models={models} />
+              <LoadingOverlay visible={pendingLoads > 0} progress={loadingProgress} />
 
               {/* Hint outil de mesure */}
               {measurementEnabled && (

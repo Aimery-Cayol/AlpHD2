@@ -86,8 +86,12 @@ interface AppContextType {
   updatePoi: (id: string, updates: Partial<Omit<Poi, "id">>) => void;
   removePoi: (id: string) => void;
 
-  // --- Chargement scène (loading overlay — implémenté dans feature/f-loading-overlay) ---
+  // --- Chargement scène ---
   pendingLoads: number;
+  loadingProgress: number;
+  incrementPendingLoads: () => void;
+  decrementPendingLoads: () => void;
+  resetLoadingProgress: () => void;
 }
 
 // ---------------------------------------------------------------------------
@@ -161,6 +165,15 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     setPois(prev => prev.filter(p => p.id !== id));
   }, []);
 
+  // --- Chargement scène ---
+  const [totalLoads, setTotalLoads] = useState(0);
+  const [completedLoads, setCompletedLoads] = useState(0);
+  const pendingLoads = totalLoads - completedLoads;
+  const loadingProgress = totalLoads > 0 ? Math.min(1, completedLoads / totalLoads) : 0;
+  const incrementPendingLoads = useCallback(() => setTotalLoads(n => n + 1), []);
+  const decrementPendingLoads = useCallback(() => setCompletedLoads(n => n + 1), []);
+  const resetLoadingProgress = useCallback(() => { setTotalLoads(0); setCompletedLoads(0); }, []);
+
   // --- Hydratation localStorage ---
   useEffect(() => {
     try {
@@ -225,7 +238,8 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     poiEnabled, setPoiEnabled,
     poiPlacing, setPoiPlacing,
     pois, addPoi, updatePoi, removePoi,
-    pendingLoads: 0, // stub — remplacé dans feature/f-loading-overlay
+    pendingLoads, loadingProgress,
+    incrementPendingLoads, decrementPendingLoads, resetLoadingProgress,
   };
 
   return (
