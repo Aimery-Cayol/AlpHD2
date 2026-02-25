@@ -85,6 +85,9 @@ interface AppContextType {
   addPoi: (poi: Omit<Poi, "id">) => void;
   updatePoi: (id: string, updates: Partial<Omit<Poi, "id">>) => void;
   removePoi: (id: string) => void;
+
+  // --- Chargement scène (loading overlay — implémenté dans feature/f-loading-overlay) ---
+  pendingLoads: number;
 }
 
 // ---------------------------------------------------------------------------
@@ -222,6 +225,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     poiEnabled, setPoiEnabled,
     poiPlacing, setPoiPlacing,
     pois, addPoi, updatePoi, removePoi,
+    pendingLoads: 0, // stub — remplacé dans feature/f-loading-overlay
   };
 
   return (

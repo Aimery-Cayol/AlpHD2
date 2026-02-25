@@ -8,6 +8,7 @@ import MyLevaUI, { useSceneControls } from "./LevaUI";
 import ModelPositioner from "./ModelPositioner";
 import MeasureTool from "./MeasureTool";
 import PoiTool from "./PoiTool";
+import TileExpander from "./TileExpander";
 import type { TileModel } from "@/types/models";
 
 // Import des hooks personnalisés
@@ -145,7 +146,7 @@ function SceneContent({ models }: ThreeSceneProps) {
 
       <MeasureTool />
       <PoiTool models={models} />
-      {/* TileExpander — ajouté dans feature/e-tile-expander */}
+      <TileExpander models={models} />
     </>
   );
 }
