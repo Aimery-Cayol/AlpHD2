@@ -54,7 +54,7 @@ export function useAlpinistsData({
   const params = new URLSearchParams();
   if (tileCoords?.length) params.set("tiles", tileCoords.join(","));
   if (radiusKm !== undefined) params.set("radius", String(radiusKm));
-  const apiUrl = `/api/human-activity?${params}`;
+  const apiUrl = `/api/alpinists?${params}`;
 
   const { data, error, isLoading, mutate } = useSWR<HumanActivityData>(
     polling ? apiUrl : null,
