@@ -7,7 +7,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-export type LayerKey = "weather" | "alpinists" | "geological" | "environment" | "media";
+export type LayerKey = "weather" | "winds" | "alpinists" | "geological" | "environment" | "media";
 
 interface LayerConfig {
   visible: boolean;
@@ -16,6 +16,7 @@ interface LayerConfig {
 
 const DEFAULT: Record<LayerKey, LayerConfig> = {
   weather:     { visible: false, opacity: 1 },
+  winds:       { visible: false, opacity: 1 },
   alpinists:   { visible: false, opacity: 1 },
   geological:  { visible: false, opacity: 0.7 },
   environment: { visible: false, opacity: 0.8 },
@@ -61,11 +62,11 @@ export const useLayersStore = create<LayersState>()(
       setRealTimeEnabled: (v) => set(() => ({ realTimeEnabled: v })),
 
       hideAll: () =>
-        set(() => ({
+        set((s) => ({
           layers: Object.fromEntries(
-            (Object.keys(DEFAULT) as LayerKey[]).map((k) => [
+            (Object.keys(s.layers) as LayerKey[]).map((k) => [
               k,
-              { ...DEFAULT[k], visible: false },
+              { ...s.layers[k], visible: false },
             ])
           ) as Record<LayerKey, LayerConfig>,
         })),
@@ -73,6 +74,19 @@ export const useLayersStore = create<LayersState>()(
     {
       name: "alphd-layers",
       partialize: (s) => ({ layers: s.layers, realTimeEnabled: s.realTimeEnabled }),
+      // Deep-merge : les nouvelles clés de DEFAULT (ex: "winds") sont toujours présentes
+      // même si le localStorage date d'avant leur ajout.
+      merge: (persisted: unknown, current: LayersState): LayersState => {
+        const p = persisted as Partial<{ layers: Record<string, LayerConfig>; realTimeEnabled: boolean }>;
+        return {
+          ...current,
+          realTimeEnabled: p.realTimeEnabled ?? current.realTimeEnabled,
+          layers: {
+            ...DEFAULT,          // toutes les clés avec leurs valeurs par défaut
+            ...(p.layers ?? {}), // valeurs persistées (peuvent manquer des clés récentes)
+          } as Record<LayerKey, LayerConfig>,
+        };
+      },
     }
   )
 );

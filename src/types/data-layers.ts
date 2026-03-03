@@ -258,6 +258,8 @@ export interface WebcamFeed extends TimestampedRecord {
   position: GeoPoint;
   streamUrl: string;
   snapshotUrl: string;
+  /** URL d'un player Windy ou équivalent, embarquable en iframe */
+  embedUrl?: string;
   direction: WindDirection;
   operator: string;
   online: boolean;

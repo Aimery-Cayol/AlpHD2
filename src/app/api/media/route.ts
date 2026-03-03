@@ -11,15 +11,27 @@
 
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { wgs84ToLambert93Km, degreesToWindDir, nowISO, uid } from "@/lib/geo";
+import { wgs84ToLambert93Km, lambert93KmToWgs84, degreesToWindDir, nowISO, uid } from "@/lib/geo";
 import type { MediaData, WebcamFeed } from "@/types/data-layers";
 
-export const revalidate = 600; // 10 min
+// Centre de référence des webcams mock (Dent du Géant)
+const REF_LAT = 45.8567;
+const REF_LON = 6.9553;
+const RADIUS_KM = 25;
 
-// Centre de recherche : Dent du Géant / massif Mont-Blanc
-const CENTER_LAT  = 45.8567;
-const CENTER_LON  = 6.9553;
-const RADIUS_KM   = 25;
+/** Calcule le centre WGS-84 des dalles demandées, repli sur la référence */
+function parseTileCenter(tilesParam: string | null): { lat: number; lon: number } {
+  if (!tilesParam) return { lat: REF_LAT, lon: REF_LON };
+  const coords = tilesParam
+    .split(",")
+    .map((t) => { const [x, y] = t.split("_").map(Number); return { x, y }; })
+    .filter((c) => !isNaN(c.x) && !isNaN(c.y) && c.x > 0 && c.y > 0);
+  if (coords.length === 0) return { lat: REF_LAT, lon: REF_LON };
+  const avgX = coords.reduce((s, c) => s + c.x, 0) / coords.length + 0.5;
+  const avgY = coords.reduce((s, c) => s + c.y, 0) / coords.length + 0.5;
+  const [lon, lat] = lambert93KmToWgs84(avgX, avgY);
+  return { lat, lon };
+}
 
 // ---------------------------------------------------------------------------
 // Schéma Zod de la réponse Windy Webcams v3
@@ -69,7 +81,7 @@ async function fetchWindyWebcams(): Promise<WebcamFeed[]> {
   }
 
   const url = new URL("https://api.windy.com/webcams/api/v3/webcams");
-  url.searchParams.set("nearby",   `${CENTER_LAT},${CENTER_LON},${RADIUS_KM}`);
+  url.searchParams.set("nearby",   `${REF_LAT},${REF_LON},${RADIUS_KM}`);
   url.searchParams.set("include",  "location,player,images");
   url.searchParams.set("limit",    "20");
   url.searchParams.set("orderby",  "popularity");
@@ -104,7 +116,10 @@ async function fetchWindyWebcams(): Promise<WebcamFeed[]> {
         w.player?.day?.preview ??
         w.player?.live?.preview ??
         "";
-      const streamUrl = w.player?.live?.hls ?? w.player?.day?.embed ?? "";
+      // streamUrl = flux HLS natif si disponible
+      const streamUrl = w.player?.live?.hls ?? "";
+      // embedUrl = player embarquable en iframe (Windy day embed)
+      const embedUrl  = w.player?.day?.embed ?? undefined;
       return {
         id:          uid(),
         webcamId:    w.webcamId,
@@ -114,6 +129,7 @@ async function fetchWindyWebcams(): Promise<WebcamFeed[]> {
         position:    { lx, ly, altitude: w.location.altitude },
         streamUrl,
         snapshotUrl,
+        embedUrl,
         direction:   "N",      // Windy ne fournit pas l'orientation dans v3
         operator:    "Windy.com",
         online:      w.status === "active",
@@ -129,61 +145,62 @@ async function fetchWindyWebcams(): Promise<WebcamFeed[]> {
 // Webcams mock — positions réelles, snapshots publics connus
 // ---------------------------------------------------------------------------
 
-function buildMockWebcams(): WebcamFeed[] {
+function buildMockWebcams(centerLat: number, centerLon: number): WebcamFeed[] {
   const now = nowISO();
+  // Offsets [dlat, dlon, alt] par rapport au centre de la dalle
   const cams: Array<{
-    id: string; name: string; lat: number; lon: number; alt: number;
-    dir: string; operator: string; snapshot: string; stream: string;
+    id: string; name: string; dlat: number; dlon: number; alt: number;
+    dir: string; operator: string; snapshot: string; stream: string; embed?: string;
   }> = [
     {
-      id:       "aiguille-du-midi-live",
-      name:     "Aiguille du Midi — sommet",
-      lat: 45.8789, lon: 6.8870, alt: 3842,
-      dir:      "S",
-      operator: "Mont-Blanc Webcam",
-      snapshot: "https://www.n-tv.de/img/33/335246/Img_335246_webcam-aiguille-du-midi_full.jpg",
-      stream:   "",
-    },
-    {
-      id:       "chamonix-village",
-      name:     "Chamonix — centre village",
-      lat: 45.9237, lon: 6.8694, alt: 1035,
-      dir:      "SE",
-      operator: "Office du Tourisme Chamonix",
-      snapshot: "https://www.chamonix.com/webcams/webcam-chamonix.jpg",
-      stream:   "",
-    },
-    {
-      id:       "mer-de-glace-montenvers",
-      name:     "Mer de Glace — Montenvers",
-      lat: 45.9283, lon: 6.9150, alt: 1913,
+      // Aiguille du Midi : 45.8788°N, 6.8873°E — offset depuis Dent du Géant (REF)
+      id:       "cam-aiguille-midi",
+      name:     "Aiguille du Midi — 3 842 m",
+      dlat: 0.0221, dlon: -0.0680, alt: 3842,
       dir:      "S",
       operator: "Compagnie du Mont-Blanc",
-      snapshot: "",
+      // Windy public snapshot + player embed (ID 1237897571 = Aiguille du Midi)
+      snapshot: "https://images-webcams.windy.com/71/1237897571/current/full/1237897571.jpg",
       stream:   "",
+      embed:    "https://webcams.windy.com/webcams/public/embed/player/1237897571/day",
     },
     {
-      id:       "brevent-planpraz",
-      name:     "Brévent — Plan Praz",
-      lat: 45.9372, lon: 6.8494, alt: 2000,
-      dir:      "E",
-      operator: "Ski Club Chamonix",
-      snapshot: "",
+      // Chamonix centre — 45.9237°N, 6.8694°E
+      id:       "cam-chamonix",
+      name:     "Chamonix centre — 1 035 m",
+      dlat: 0.0670, dlon: -0.0859, alt: 1035,
+      dir:      "SE",
+      operator: "Office du Tourisme de Chamonix",
+      // Windy webcam Chamonix (ID 1237875837)
+      snapshot: "https://images-webcams.windy.com/37/1237875837/current/full/1237875837.jpg",
       stream:   "",
+      embed:    "https://webcams.windy.com/webcams/public/embed/player/1237875837/day",
     },
     {
-      id:       "torino-refuge",
-      name:     "Refuge Torino — Col du Géant",
-      lat: 45.8678, lon: 6.9844, alt: 3371,
+      // Mer de Glace / Montenvers — 45.9283°N, 6.9158°E
+      id:       "cam-mer-de-glace",
+      name:     "Mer de Glace — Montenvers",
+      dlat: 0.0716, dlon: -0.0395, alt: 1913,
+      dir:      "S",
+      operator: "Compagnie du Mont-Blanc",
+      snapshot: "https://images-webcams.windy.com/92/1237893092/current/full/1237893092.jpg",
+      stream:   "",
+      embed:    "https://webcams.windy.com/webcams/public/embed/player/1237893092/day",
+    },
+    {
+      // Refuge du Goûter — 45.8456°N, 6.8618°E
+      id:       "cam-refuge-gouter",
+      name:     "Refuge du Goûter — 3 835 m",
+      dlat: -0.0111, dlon: -0.0935, alt: 3835,
       dir:      "W",
-      operator: "Rifugio Torino",
+      operator: "Refuge du Goûter",
       snapshot: "",
       stream:   "",
     },
   ];
 
   return cams.map((c) => {
-    const { lx, ly } = wgs84ToLambert93Km(c.lon, c.lat);
+    const { lx, ly } = wgs84ToLambert93Km(centerLon + c.dlon, centerLat + c.dlat);
     return {
       id:          uid(),
       webcamId:    c.id,
@@ -193,13 +210,14 @@ function buildMockWebcams(): WebcamFeed[] {
       position:    { lx, ly, altitude: c.alt },
       streamUrl:   c.stream,
       snapshotUrl: c.snapshot,
+      embedUrl:    c.embed,
       direction:   degreesToWindDir(
         c.dir === "N" ? 0 : c.dir === "NE" ? 45 : c.dir === "E" ? 90 :
         c.dir === "SE" ? 135 : c.dir === "S" ? 180 : c.dir === "SW" ? 225 :
         c.dir === "W" ? 270 : 315
       ),
       operator:    c.operator,
-      online:      true,
+      online:      c.snapshot !== "" || c.embed !== undefined,
     } satisfies WebcamFeed;
   });
 }
@@ -208,13 +226,16 @@ function buildMockWebcams(): WebcamFeed[] {
 // Handler
 // ---------------------------------------------------------------------------
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
-    // Windy en priorité, fallback mock si clé absente
+    const { searchParams } = new URL(req.url);
+    const center = parseTileCenter(searchParams.get("tiles"));
+
+    // Windy en priorité, fallback mock centré sur la dalle
     let webcams = await fetchWindyWebcams();
     if (webcams.length === 0) {
-      webcams = buildMockWebcams();
-      console.log(`[media] Mock — ${webcams.length} webcams`);
+      webcams = buildMockWebcams(center.lat, center.lon);
+      console.log(`[media] Mock — ${webcams.length} webcams @ (${center.lat.toFixed(4)}, ${center.lon.toFixed(4)})`);
     } else {
       console.log(`[media] Windy — ${webcams.length} webcams`);
     }

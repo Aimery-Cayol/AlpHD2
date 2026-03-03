@@ -34,6 +34,13 @@ const LAYERS: LayerMeta[] = [
     updateFreq: "5 min",
   },
   {
+    key: "winds",
+    label: "Vents dominants",
+    icon: "💨",
+    description: "Direction et vitesse dominantes",
+    updateFreq: "5 min",
+  },
+  {
     key: "alpinists",
     label: "Alpinistes",
     icon: "🧗",
@@ -76,6 +83,7 @@ type DataStatusKey =
 
 const STATUS_KEY: Record<LayerKey, DataStatusKey> = {
   weather:     "weatherStatus",
+  winds:       "weatherStatus",  // partage les données météo
   alpinists:   "humanActivityStatus",
   geological:  "geologicalStatus",
   environment: "environmentStatus",
@@ -84,6 +92,7 @@ const STATUS_KEY: Record<LayerKey, DataStatusKey> = {
 
 const ERROR_KEY: Record<LayerKey, keyof ReturnType<typeof useDataStore.getState>> = {
   weather:     "weatherError",
+  winds:       "weatherError",
   alpinists:   "humanActivityError",
   geological:  "geologicalError",
   environment: "environmentError",
@@ -252,9 +261,11 @@ function LayerRow({ meta, visible, opacity, status, error, onToggle, onOpacity }
 interface DataLayersPanelProps {
   /** Classe CSS à ajouter au conteneur (positionnement, z-index, etc.) */
   className?: string;
+  /** Appelé quand l'utilisateur clique "Tout masquer" — ferme le panneau */
+  onHide?: () => void;
 }
 
-export default function DataLayersPanel({ className }: DataLayersPanelProps) {
+export default function DataLayersPanel({ className, onHide }: DataLayersPanelProps) {
   const { layers, realTimeEnabled, toggleLayer, setLayerOpacity, setRealTimeEnabled, hideAll } =
     useLayersStore();
 
@@ -368,7 +379,7 @@ export default function DataLayersPanel({ className }: DataLayersPanelProps) {
 
             {/* Tout masquer */}
             <button
-              onClick={hideAll}
+              onClick={() => { hideAll(); onHide?.(); }}
               style={{
                 background: "none",
                 border: "1px solid rgba(255,255,255,0.1)",

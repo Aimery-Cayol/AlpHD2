@@ -1,14 +1,14 @@
 // =============================================================================
-// GET /api/geological — risque avalanche, zones, événements
+// GET /api/geological — risque avalanche, zones, événements (centré sur les dalles)
 // =============================================================================
 // Source principale : Météo-France API BRA (Bulletin de Risque d'Avalanche)
-// Fallback : zones mock réalistes basées sur la topographie réelle du massif
-// Cache : 3 h (les BRA sont publiés à 16h et vers 6h en période de crise)
+// Fallback : zones mock réalistes décalées vers les dalles demandées (param "tiles")
+// Cache : 3 h
 // =============================================================================
 
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { wgs84ToLambert93Km, nowISO, isoFromHoursAgo, uid } from "@/lib/geo";
+import { wgs84ToLambert93Km, lambert93KmToWgs84, nowISO, isoFromHoursAgo, uid } from "@/lib/geo";
 import type {
   GeologicalData,
   AvalancheZone,
@@ -18,12 +18,28 @@ import type {
   WindDirection,
 } from "@/types/data-layers";
 
-export const revalidate = 10800; // 3 h
+// ---------------------------------------------------------------------------
+// Centre de référence des données mock (Dent du Géant)
+// ---------------------------------------------------------------------------
+
+const REF_LAT = 45.8567;
+const REF_LON = 6.9553;
+
+function parseTileCenter(tilesParam: string | null): { lat: number; lon: number } {
+  if (!tilesParam) return { lat: REF_LAT, lon: REF_LON };
+  const coords = tilesParam
+    .split(",")
+    .map((t) => { const [x, y] = t.split("_").map(Number); return { x, y }; })
+    .filter((c) => !isNaN(c.x) && !isNaN(c.y) && c.x > 0 && c.y > 0);
+  if (coords.length === 0) return { lat: REF_LAT, lon: REF_LON };
+  const avgX = coords.reduce((s, c) => s + c.x, 0) / coords.length + 0.5;
+  const avgY = coords.reduce((s, c) => s + c.y, 0) / coords.length + 0.5;
+  const [lon, lat] = lambert93KmToWgs84(avgX, avgY);
+  return { lat, lon };
+}
 
 // ---------------------------------------------------------------------------
 // Météo-France BRA (API publique non documentée — fragile)
-// Endpoint : https://mf-api.com/bra  (wrapper communautaire)
-// On essaie, en cas d'échec on utilise les zones mock.
 // ---------------------------------------------------------------------------
 
 const MF_BRA_URL = "https://api.meteo-forecast.com/mf/bra/massifs"; // placeholder
@@ -50,127 +66,133 @@ async function fetchMeteoranceBRA(massif: string): Promise<AvalancheRisk | null>
 }
 
 // ---------------------------------------------------------------------------
-// Zones de risque avalanche réalistes — Massif du Mont-Blanc
-// Polygones basés sur les zones topographiques réelles (WGS-84)
+// Zones mock (polygones en offsets lat/lon depuis le centre de référence)
 // ---------------------------------------------------------------------------
 
-function makeGeoPoints(coords: [number, number, number][]): GeoPoint[] {
-  return coords.map(([lon, lat, alt]) => {
-    const { lx, ly } = wgs84ToLambert93Km(lon, lat);
+function makeGeoPoints(
+  offsets: [number, number, number][],
+  centerLat: number,
+  centerLon: number
+): GeoPoint[] {
+  return offsets.map(([dlat, dlon, alt]) => {
+    const { lx, ly } = wgs84ToLambert93Km(centerLon + dlon, centerLat + dlat);
     return { lx, ly, altitude: alt };
   });
 }
 
-function buildMockZones(massifRisk: AvalancheRisk): AvalancheZone[] {
+function buildMockZones(
+  massifRisk: AvalancheRisk,
+  centerLat: number,
+  centerLon: number
+): AvalancheZone[] {
   const now = nowISO();
 
-  // Zones topographiques du massif Mont-Blanc / Dent du Géant
   return [
     {
-      id:          uid(),
-      zoneId:      "z-glacier-geant-nord",
-      name:        "Glacier du Géant — face nord",
-      timestamp:   now,
-      updatedAt:   now,
-      polygon:     makeGeoPoints([
-        [6.944, 45.874, 3400],
-        [6.958, 45.872, 3500],
-        [6.965, 45.862, 3800],
-        [6.952, 45.855, 4000],
-        [6.940, 45.858, 3900],
-        [6.935, 45.867, 3600],
-      ]),
-      risk:          Math.min(5, massifRisk + 1) as AvalancheRisk,
-      types:         ["slab"],
-      aspects:       ["N", "NE", "NW"] as WindDirection[],
-      elevationMin:  3400,
-      elevationMax:  4013,
-      comment:       "Plaques à vent persistantes après les dernières chutes",
-    },
-    {
       id:        uid(),
-      zoneId:    "z-rochefort",
-      name:      "Arête de Rochefort — versant NE",
+      zoneId:    "z-face-nord",
+      name:      "Face nord — plaques à vent",
       timestamp: now,
       updatedAt: now,
       polygon:   makeGeoPoints([
-        [6.934, 45.875, 3700],
-        [6.945, 45.872, 3800],
-        [6.950, 45.865, 4001],
-        [6.942, 45.862, 3900],
-        [6.930, 45.869, 3750],
-      ]),
-      risk:          massifRisk,
-      types:         ["slab", "loose"],
-      aspects:       ["NE", "E"] as WindDirection[],
-      elevationMin:  3700,
-      elevationMax:  4001,
+        [ 0.017, -0.013, 3400],
+        [ 0.015,  0.001, 3500],
+        [ 0.005,  0.008, 3800],
+        [-0.002,  0.000, 4000],  // near summit
+        [-0.003, -0.017, 3900],
+        [ 0.010, -0.022, 3600],
+      ], centerLat, centerLon),
+      risk:         Math.min(5, massifRisk + 1) as AvalancheRisk,
+      types:        ["slab"],
+      aspects:      ["N", "NE", "NW"] as WindDirection[],
+      elevationMin: 3400,
+      elevationMax: 4100,
+      comment:      "Plaques à vent persistantes après les dernières chutes",
     },
     {
       id:        uid(),
-      zoneId:    "z-vallee-blanche-sud",
-      name:      "Vallée Blanche — dévers sud",
+      zoneId:    "z-arete-e",
+      name:      "Arête E — versant NE",
       timestamp: now,
       updatedAt: now,
       polygon:   makeGeoPoints([
-        [6.920, 45.882, 3300],
-        [6.938, 45.878, 3450],
-        [6.940, 45.870, 3500],
-        [6.925, 45.873, 3380],
-      ]),
-      risk:          Math.max(1, massifRisk - 1) as AvalancheRisk,
-      types:         ["wet"],
-      aspects:       ["S", "SE", "SW"] as WindDirection[],
-      elevationMin:  3300,
-      elevationMax:  3500,
-      comment:       "Risque de plaquettes de neige humide l'après-midi",
+        [ 0.023, -0.021, 3700],
+        [ 0.015, -0.008, 3800],
+        [ 0.006, -0.003, 4001],
+        [-0.001, -0.015, 3900],
+        [ 0.012, -0.027, 3750],
+      ], centerLat, centerLon),
+      risk:         massifRisk,
+      types:        ["slab", "loose"],
+      aspects:      ["NE", "E"] as WindDirection[],
+      elevationMin: 3700,
+      elevationMax: 4001,
     },
     {
       id:        uid(),
-      zoneId:    "z-tour-ronde",
-      name:      "Tour Ronde — face nord",
+      zoneId:    "z-glacier-s",
+      name:      "Glacier S — dévers",
       timestamp: now,
       updatedAt: now,
       polygon:   makeGeoPoints([
-        [6.950, 45.856, 3500],
-        [6.958, 45.853, 3600],
-        [6.962, 45.848, 3792],
-        [6.954, 45.845, 3750],
-        [6.948, 45.849, 3600],
-      ]),
-      risk:          Math.min(5, massifRisk + 1) as AvalancheRisk,
-      types:         ["slab", "gliding"],
-      aspects:       ["N", "NW"] as WindDirection[],
-      elevationMin:  3500,
-      elevationMax:  3792,
+        [ 0.025, -0.037, 3300],
+        [ 0.015, -0.019, 3450],
+        [ 0.013, -0.027, 3500],
+        [ 0.018, -0.042, 3380],
+      ], centerLat, centerLon),
+      risk:         Math.max(1, massifRisk - 1) as AvalancheRisk,
+      types:        ["wet"],
+      aspects:      ["S", "SE", "SW"] as WindDirection[],
+      elevationMin: 3300,
+      elevationMax: 3500,
+      comment:      "Risque de plaquettes de neige humide l'après-midi",
+    },
+    {
+      id:        uid(),
+      zoneId:    "z-face-nw",
+      name:      "Face NW",
+      timestamp: now,
+      updatedAt: now,
+      polygon:   makeGeoPoints([
+        [-0.007, -0.007, 3500],
+        [ 0.001,  0.001, 3600],
+        [ 0.005, -0.005, 3792],
+        [-0.003, -0.012, 3750],
+        [-0.009, -0.008, 3600],
+      ], centerLat, centerLon),
+      risk:         Math.min(5, massifRisk + 1) as AvalancheRisk,
+      types:        ["slab", "gliding"],
+      aspects:      ["N", "NW"] as WindDirection[],
+      elevationMin: 3500,
+      elevationMax: 3800,
     },
   ];
 }
 
-function buildMockEvents(): AvalancheEvent[] {
+function buildMockEvents(centerLat: number, centerLon: number): AvalancheEvent[] {
   const now = nowISO();
   return [
     {
-      id:        uid(),
-      eventId:   "ev-2025-01",
-      timestamp: isoFromHoursAgo(14),
-      updatedAt: now,
-      position:  { ...wgs84ToLambert93Km(6.951, 45.857), altitude: 3700 },
-      type:      "slab",
-      size:      2,
+      id:             uid(),
+      eventId:        "ev-recent-1",
+      timestamp:      isoFromHoursAgo(14),
+      updatedAt:      now,
+      position:       { ...wgs84ToLambert93Km(centerLon + 0.002, centerLat - 0.006), altitude: 3700 },
+      type:           "slab",
+      size:           2,
       runoutDistance: 180,
-      confirmed: true,
+      confirmed:      true,
     },
     {
-      id:        uid(),
-      eventId:   "ev-2025-02",
-      timestamp: isoFromHoursAgo(36),
-      updatedAt: now,
-      position:  { ...wgs84ToLambert93Km(6.938, 45.874), altitude: 3850 },
-      type:      "loose",
-      size:      1,
+      id:             uid(),
+      eventId:        "ev-recent-2",
+      timestamp:      isoFromHoursAgo(36),
+      updatedAt:      now,
+      position:       { ...wgs84ToLambert93Km(centerLon - 0.011, centerLat + 0.017), altitude: 3850 },
+      type:           "loose",
+      size:           1,
       runoutDistance: 80,
-      confirmed: false,
+      confirmed:      false,
     },
   ];
 }
@@ -189,10 +211,12 @@ const BRAResponseSchema = z.object({
 // Handler
 // ---------------------------------------------------------------------------
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
-    // Tentative de récupération du risque réel (Météo-France ou autre)
-    let massifRisk: AvalancheRisk = 3; // valeur par défaut conservative
+    const { searchParams } = new URL(req.url);
+    const center = parseTileCenter(searchParams.get("tiles"));
+
+    let massifRisk: AvalancheRisk = 3;
     const liveRisk = await fetchMeteoranceBRA("mont-blanc");
     if (liveRisk) {
       massifRisk = liveRisk;
@@ -201,8 +225,8 @@ export async function GET() {
       console.log(`[geological] BRA non disponible — risque mock ${massifRisk}/5`);
     }
 
-    const zones  = buildMockZones(massifRisk);
-    const events = buildMockEvents();
+    const zones  = buildMockZones(massifRisk, center.lat, center.lon);
+    const events = buildMockEvents(center.lat, center.lon);
 
     const body: GeologicalData = {
       avalancheZones:  zones,
@@ -212,7 +236,7 @@ export async function GET() {
       massifRisk,
     };
 
-    console.log(`[geological] ${zones.length} zones, ${events.length} événements`);
+    console.log(`[geological] ${zones.length} zones @ (${center.lat.toFixed(4)}, ${center.lon.toFixed(4)})`);
 
     return NextResponse.json(body, {
       headers: { "Cache-Control": "public, s-maxage=10800, stale-while-revalidate=600" },

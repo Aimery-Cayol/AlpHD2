@@ -23,6 +23,12 @@ export function lambert93ToWgs84(x: number, y: number): [number, number] {
   return [lon, lat];
 }
 
+/** WGS-84 (lon, lat) → Lambert-93 en km */
+export function wgs84ToLambert93Km(lon: number, lat: number): { lx: number; ly: number } {
+  const [x, y] = proj4('EPSG:4326', 'EPSG:2154', [lon, lat]);
+  return { lx: x / 1000, ly: y / 1000 };
+}
+
 /**
  * Calcule la bounding box à partir des dalles sélectionnées.
  * tiles[].x et tiles[].y sont en km (ex: 1010, 6552).

@@ -12,6 +12,8 @@ import MeasureTool from "./MeasureTool";
 import WeatherOverlay from "@/components/3d/WeatherOverlay";
 import AlpinistMarkers from "@/components/3d/AlpinistMarkers";
 import AvalancheZones from "@/components/3d/AvalancheZones";
+import WebcamMarkers from "@/components/3d/WebcamMarkers";
+import RouteRenderer from "@/components/3d/RouteRenderer";
 import { DataLayerErrorBoundary } from "@/components/DataLayerErrorBoundary";
 import type { TileModel } from "@/types/models";
 
@@ -157,6 +159,9 @@ function SceneContent({ models }: ThreeSceneProps) {
       {/* Outil de mesure */}
       <MeasureTool />
 
+      {/* Tracé de la voie active */}
+      <RouteRenderer models={models} />
+
       {/* Couches de données temps réel — isolées par ErrorBoundary */}
       <DataLayerErrorBoundary layer="weather">
         <Suspense fallback={null}>
@@ -171,6 +176,11 @@ function SceneContent({ models }: ThreeSceneProps) {
       <DataLayerErrorBoundary layer="geological">
         <Suspense fallback={null}>
           <AvalancheZones models={models} />
+        </Suspense>
+      </DataLayerErrorBoundary>
+      <DataLayerErrorBoundary layer="media">
+        <Suspense fallback={null}>
+          <WebcamMarkers models={models} />
         </Suspense>
       </DataLayerErrorBoundary>
     </>

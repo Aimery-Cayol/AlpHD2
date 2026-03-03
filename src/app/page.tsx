@@ -33,9 +33,12 @@ import { useAppContext } from "@/contexts/AppContext";
 import Compass3D from "@/components/three/Compass3D";
 import LoadingOverlay from "@/components/LoadingOverlay";
 import DataLayersPanel from "@/components/3d/DataLayersPanel";
+import WindIndicator from "@/components/WindIndicator";
 import Link from "next/link";
 import type { TileModel, TileData } from "@/types/models";
 import type { TileCoord } from "@/utils/fileUtils";
+import { CLIMBING_ROUTES, gradeToColor } from "@/data/climbingRoutes";
+import { useRouteStore } from "@/store/route-store";
 
 const ThreeScene = dynamic(() => import("@/components/three/ThreeScene"), { ssr: false });
 
@@ -418,6 +421,8 @@ function TreeElement({ item, selectedSummitId, onToggle, level = 0 }: {
 }
 
 function HomePageContent() {
+  const { activeRoute, setActiveRoute } = useRouteStore();
+
   const {
     selectedTiles, setSelectedTiles,
     selectedLevel, setSelectedLevel,
@@ -574,6 +579,7 @@ function HomePageContent() {
   }, [searchQuery, summitSearchItems, pois]);
 
   const handleToggle = (id: string) => {
+    setActiveRoute(null); // Vider le tracé de voie quand on change de sommet
     if (selectedSummitId === id) {
       // Désélection
       setSelectedSummitId(null);
@@ -853,6 +859,7 @@ function HomePageContent() {
             <>
               <ThreeScene models={models} />
               <LoadingOverlay visible={pendingLoads > 0} progress={loadingProgress} />
+              <WindIndicator />
 
               {/* Hint outil de mesure */}
               {measurementEnabled && (
@@ -932,7 +939,7 @@ function HomePageContent() {
 
               {/* Panneau couches de données temps réel */}
               {showDataLayers && (
-                <DataLayersPanel className="absolute bottom-16 right-3 z-40" />
+                <DataLayersPanel className="absolute bottom-16 right-3 z-40" onHide={() => setShowDataLayers(false)} />
               )}
 
               {/* Boussole 3D */}
@@ -1097,6 +1104,50 @@ function HomePageContent() {
                       <section className="bg-slate-50 p-5 rounded-2xl border border-slate-100">
                         <h3 className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2 flex items-center gap-2"><Mountain className="h-3 w-3 text-orange-500" /> Première ascension</h3>
                         <p className="text-sm text-slate-700 leading-relaxed">{selectedRouteInfo.firstAscent}</p>
+                      </section>
+                    )}
+
+                    {selectedRouteInfo.id && CLIMBING_ROUTES[selectedRouteInfo.id] && (
+                      <section className="bg-slate-50 p-5 rounded-2xl border border-slate-100">
+                        <h3 className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-4 flex items-center gap-2">
+                          <Mountain className="h-3 w-3 text-orange-500" /> Voies classiques
+                        </h3>
+                        <div className="space-y-2">
+                          {CLIMBING_ROUTES[selectedRouteInfo.id].map((route) => {
+                            const isActive = activeRoute?.id === route.id;
+                            const color = gradeToColor(route.grade);
+                            return (
+                              <button
+                                key={route.id}
+                                onClick={() => setActiveRoute(isActive ? null : route)}
+                                className={`w-full text-left flex items-start gap-3 p-3 rounded-xl border transition-all ${isActive ? "bg-slate-900 border-slate-700" : "bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50"}`}
+                              >
+                                <span
+                                  className="flex-shrink-0 text-[9px] font-black px-1.5 py-0.5 rounded text-white mt-0.5"
+                                  style={{ background: color }}
+                                >
+                                  {route.grade}
+                                </span>
+                                <div className="flex-1 min-w-0">
+                                  <p className={`text-[11px] font-bold leading-tight truncate ${isActive ? "text-white" : "text-slate-800"}`}>
+                                    {route.name}
+                                  </p>
+                                  {route.gradeText && (
+                                    <p className={`text-[9px] mt-0.5 leading-tight ${isActive ? "text-slate-400" : "text-slate-400"}`}>
+                                      {route.gradeText}
+                                    </p>
+                                  )}
+                                  <p className={`text-[9px] mt-0.5 uppercase tracking-wide ${isActive ? "text-slate-500" : "text-slate-400"}`}>
+                                    {route.activity}
+                                  </p>
+                                </div>
+                                {isActive && (
+                                  <span className="flex-shrink-0 text-[9px] text-slate-400 mt-0.5">✕</span>
+                                )}
+                              </button>
+                            );
+                          })}
+                        </div>
                       </section>
                     )}
 
