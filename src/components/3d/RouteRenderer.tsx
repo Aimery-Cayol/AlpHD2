@@ -103,13 +103,13 @@ function SingleRouteRenderer({ route, refX, refY }: SingleRouteRendererProps) {
     const colliders = collidersRef.current;
 
     // Conversion WGS84 → coordonnées scène + snap terrain
+    // Fallback : altitude GPS (altM / 1000) si le point est hors des dalles chargées
     const scenePoints: THREE.Vector3[] = [];
     for (const p of rawPoints) {
       const { lx, ly } = wgs84ToLambert93Km(p.lon, p.lat);
       const sx = lx - refX;
       const sz = -(ly - refY);
-      const terrainY = snapToTerrain(sx, sz, colliders);
-      if (terrainY === null) continue; // point hors terrain chargé → ignoré
+      const terrainY = snapToTerrain(sx, sz, colliders) ?? (p.altM / 1000);
       scenePoints.push(new THREE.Vector3(sx, terrainY, sz));
     }
 
