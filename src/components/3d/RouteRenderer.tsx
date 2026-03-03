@@ -76,7 +76,8 @@ interface SingleRouteRendererProps {
 function SingleRouteRenderer({ route, refX, refY }: SingleRouteRendererProps) {
   const { invalidate } = useThree();
   const { collidersRef, version } = useColliders();
-  const { gpsPoints, loading } = useRouteGeo(route.c2cId);
+  // routeId → GPX local (public/routes/{routeId}.gpx), c2cId → fallback C2C
+  const { gpsPoints, loading } = useRouteGeo(route.id, route.c2cId);
 
   // Force re-render frameloop="demand" à chaque changement de terrain ou GPS
   useEffect(() => {
