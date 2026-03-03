@@ -33,6 +33,8 @@ import { useAppContext } from "@/contexts/AppContext";
 import Compass3D from "@/components/three/Compass3D";
 import LoadingOverlay from "@/components/LoadingOverlay";
 import DataLayersPanel from "@/components/3d/DataLayersPanel";
+import RouteLibrary from "@/components/3d/RouteLibrary";
+import AltitudeProfile from "@/components/AltitudeProfile";
 import WindIndicator from "@/components/WindIndicator";
 import Link from "next/link";
 import type { TileModel, TileData } from "@/types/models";
@@ -421,7 +423,7 @@ function TreeElement({ item, selectedSummitId, onToggle, level = 0 }: {
 }
 
 function HomePageContent() {
-  const { activeRoute, setActiveRoute } = useRouteStore();
+  const { visibleRoutes, toggleRoute, clearRoutes, setActiveRoute } = useRouteStore();
 
   const {
     selectedTiles, setSelectedTiles,
@@ -445,6 +447,7 @@ function HomePageContent() {
   const [showTilesPanel, setShowTilesPanel] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showDataLayers, setShowDataLayers] = useState(false);
+  const [showRouteLibrary, setShowRouteLibrary] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
 
@@ -579,7 +582,7 @@ function HomePageContent() {
   }, [searchQuery, summitSearchItems, pois]);
 
   const handleToggle = (id: string) => {
-    setActiveRoute(null); // Vider le tracé de voie quand on change de sommet
+    clearRoutes(); // Vider les voies actives quand on change de sommet
     if (selectedSummitId === id) {
       // Désélection
       setSelectedSummitId(null);
@@ -935,11 +938,37 @@ function HomePageContent() {
                   <Layers className="h-4 w-4" />
                   <span className="pointer-events-none absolute right-full mr-2 top-1/2 -translate-y-1/2 whitespace-nowrap bg-slate-900/90 text-white text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">Couches</span>
                 </button>
+                {/* Bouton voies d'alpinisme */}
+                <button
+                  title="Voies d'alpinisme"
+                  onClick={() => setShowRouteLibrary(!showRouteLibrary)}
+                  className={`relative group p-2.5 backdrop-blur border rounded-xl shadow-xl transition-all ${showRouteLibrary ? "bg-orange-500 text-white border-orange-600" : visibleRoutes.length > 0 ? "bg-orange-100 text-orange-600 border-orange-200" : "bg-white/90 border-slate-200 hover:bg-orange-500 hover:text-white"}`}
+                >
+                  <Mountain className="h-4 w-4" />
+                  {visibleRoutes.length > 0 && (
+                    <span className="absolute -top-1 -right-1 w-4 h-4 bg-orange-500 text-white text-[8px] font-black rounded-full flex items-center justify-center leading-none">
+                      {visibleRoutes.length}
+                    </span>
+                  )}
+                  <span className="pointer-events-none absolute right-full mr-2 top-1/2 -translate-y-1/2 whitespace-nowrap bg-slate-900/90 text-white text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">Voies</span>
+                </button>
               </div>
 
               {/* Panneau couches de données temps réel */}
               {showDataLayers && (
                 <DataLayersPanel className="absolute bottom-16 right-3 z-40" onHide={() => setShowDataLayers(false)} />
+              )}
+
+              {/* Panneau bibliothèque de voies */}
+              {showRouteLibrary && (
+                <RouteLibrary className={`absolute bottom-16 z-40 ${showDataLayers ? "right-[244px]" : "right-3"}`} />
+              )}
+
+              {/* Profil altimétrique — visible dès qu'une voie est affichée */}
+              {visibleRoutes.length > 0 && (
+                <div className="absolute bottom-3 left-3 z-40">
+                  <AltitudeProfile routes={visibleRoutes} />
+                </div>
               )}
 
               {/* Boussole 3D */}
@@ -1114,12 +1143,12 @@ function HomePageContent() {
                         </h3>
                         <div className="space-y-2">
                           {CLIMBING_ROUTES[selectedRouteInfo.id].map((route) => {
-                            const isActive = activeRoute?.id === route.id;
+                            const isActive = visibleRoutes.some(r => r.id === route.id);
                             const color = gradeToColor(route.grade);
                             return (
                               <button
                                 key={route.id}
-                                onClick={() => setActiveRoute(isActive ? null : route)}
+                                onClick={() => toggleRoute(route)}
                                 className={`w-full text-left flex items-start gap-3 p-3 rounded-xl border transition-all ${isActive ? "bg-slate-900 border-slate-700" : "bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50"}`}
                               >
                                 <span
