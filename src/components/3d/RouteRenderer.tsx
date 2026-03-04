@@ -35,7 +35,7 @@ interface RouteRendererProps {
 /** Offset vertical (km) au-dessus de la surface du terrain */
 const VERTICAL_OFFSET_KM = 0.003; // 3 m
 /** Rayon du tube (km) */
-const TUBE_RADIUS_KM = 0.012; // 12 m
+const TUBE_RADIUS_KM = 0.002; // 2 m
 /** Rayon des sphères de départ / arrivée */
 const SPHERE_RADIUS_KM = 0.025; // 25 m
 
@@ -121,12 +121,12 @@ function SingleRouteRenderer({ route, refX, refY }: SingleRouteRendererProps) {
       prevTubeRef.current.dispose();
     }
 
-    const segments = Math.max(scenePoints.length * 4, 32);
+    const segments = Math.max(scenePoints.length, 32);
     const curve = new THREE.CatmullRomCurve3(
       scenePoints,
       false,
       "catmullrom",
-      0.5
+      0.1
     );
     const tubeGeo = new THREE.TubeGeometry(
       curve,
@@ -287,9 +287,12 @@ function SingleRouteRenderer({ route, refX, refY }: SingleRouteRendererProps) {
 export default function RouteRenderer({ models }: RouteRendererProps) {
   const { visibleRoutes } = useRouteStore();
 
-  // Référence de scène (coin SW de la dalle la plus ancienne)
+  // Référence de scène
+  // coordinates.x = coin OUEST de la tuile → refX correct tel quel
+  // coordinates.y = coin NORD de la tuile (convention NE du GeoJSON) → -1 pour le coin SUD,
+  //   qui est l'origine réelle du mesh (local Y=0) après rotation [-π/2,0,0]
   const refX = models.length > 0 ? models[0].coordinates.x / 1000 : 0;
-  const refY = models.length > 0 ? models[0].coordinates.y / 1000 : 0;
+  const refY = models.length > 0 ? models[0].coordinates.y / 1000 - 1 : 0;
 
   if (visibleRoutes.length === 0) return null;
 
