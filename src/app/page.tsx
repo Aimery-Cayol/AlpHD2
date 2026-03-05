@@ -544,6 +544,45 @@ function HomePageContent() {
       .filter(Boolean) as TileModel[];
   }, [selectedTiles, selectedLevel, tilesData]);
 
+  // Tuiles voisines — chargées automatiquement au niveau de précision le plus bas
+  // pour remplir l'espace autour des dalles sélectionnées sans surcharger le rendu.
+  // Ne charge une voisine que si elle dispose d'un niveau simplifié (≤ 05).
+  const neighborModels: TileModel[] = useMemo(() => {
+    if (tilesData.size === 0 || selectedTiles.length === 0) return [];
+
+    const coords = selectedTiles.map((c) => {
+      const parts = c.split("_");
+      return { x: parseInt(parts[0]), y: parseInt(parts[1]) };
+    });
+    const minX = Math.min(...coords.map((c) => c.x));
+    const maxX = Math.max(...coords.map((c) => c.x));
+    const minY = Math.min(...coords.map((c) => c.y));
+    const maxY = Math.max(...coords.map((c) => c.y));
+
+    const neighbors: TileModel[] = [];
+    for (let x = minX - 1; x <= maxX + 1; x++) {
+      for (let y = minY - 1; y <= maxY + 1; y++) {
+        const coord = toCoord(x, y);
+        if (selectedTiles.includes(coord)) continue;
+        const tileData = tilesData.get(coord);
+        if (!tileData) continue;
+        const sortedLevels = [...tileData.levels].sort((a, b) => parseInt(a) - parseInt(b));
+        const lowestLevel = sortedLevels[0];
+        if (parseInt(lowestLevel) > 5) continue; // pas de niveau simplifié disponible
+        neighbors.push({
+          coord,
+          level: lowestLevel,
+          coordinates: { x: tileData.x, y: tileData.y },
+          availableLevels: tileData.levels,
+        });
+      }
+    }
+    return neighbors;
+  }, [selectedTiles, tilesData]);
+
+  // Modèles complets : tuiles principales (haute qualité) + voisines (basse qualité)
+  const allModels = useMemo(() => [...models, ...neighborModels], [models, neighborModels]);
+
   // Info du sommet sélectionné
   const selectedRouteInfo = useMemo(() => {
     if (!selectedSummitId) return null;
@@ -860,7 +899,7 @@ function HomePageContent() {
         <section className="flex-1 relative bg-slate-900 rounded-[2rem] overflow-hidden shadow-2xl border border-slate-800 min-w-0">
           {models.length > 0 ? (
             <>
-              <ThreeScene models={models} />
+              <ThreeScene models={allModels} />
               <LoadingOverlay visible={pendingLoads > 0} progress={loadingProgress} />
               <WindIndicator />
 
