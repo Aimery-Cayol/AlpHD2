@@ -568,8 +568,11 @@ function HomePageContent() {
         if (!tileData) continue;
         const sortedLevels = [...tileData.levels].sort((a, b) => parseInt(a) - parseInt(b));
         const lowestLevel = sortedLevels[0];
-        // TODO: filtrer sur parseInt(lowestLevel) <= 5 une fois que Romain
-        // aura mis à jour le GeoJSON (fix listObjects → tous les niveaux visibles)
+        // N'affiche une voisine que si elle dispose d'un niveau vraiment simplifié (≤ 05).
+        // Actuellement la plupart des tuiles n'ont que le niveau 11 dans le GeoJSON
+        // (limite listObjects côté Romain). Cette condition sera satisfaite automatiquement
+        // quand le GeoJSON sera mis à jour avec tous les niveaux générés.
+        if (parseInt(lowestLevel) > 5) continue;
         neighbors.push({
           coord,
           level: lowestLevel,
