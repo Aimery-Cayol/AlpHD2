@@ -496,6 +496,18 @@ function HomePageContent() {
         tileData.files.push({ url: fileUrl, level });
       });
 
+      // Synthétiser le niveau 01 pour les tuiles qui n'en ont pas.
+      // Romain a généré tous les niveaux simplifiés sur S3 ; le GeoJSON est incomplet
+      // (limite listObjects), donc on construit l'URL en remplaçant _11.drc → _01.drc.
+      tileMap.forEach((tileData) => {
+        if (tileData.levels.includes("01")) return;
+        const file11 = tileData.files.find((f) => f.level === "11");
+        if (!file11) return;
+        const url01 = file11.url.replace(/_11\.drc/, "_01.drc");
+        tileData.files.push({ url: url01, level: "01" });
+        tileData.levels.push("01");
+      });
+
       setTilesData(tileMap);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erreur inconnue");
@@ -566,13 +578,8 @@ function HomePageContent() {
         if (selectedTiles.includes(coord)) continue;
         const tileData = tilesData.get(coord);
         if (!tileData) continue;
-        const sortedLevels = [...tileData.levels].sort((a, b) => parseInt(a) - parseInt(b));
-        const lowestLevel = sortedLevels[0];
-        // N'affiche une voisine que si elle dispose d'un niveau vraiment simplifié (≤ 05).
-        // Actuellement la plupart des tuiles n'ont que le niveau 11 dans le GeoJSON
-        // (limite listObjects côté Romain). Cette condition sera satisfaite automatiquement
-        // quand le GeoJSON sera mis à jour avec tous les niveaux générés.
-        if (parseInt(lowestLevel) > 5) continue;
+        // Niveau 01 garanti : synthétisé au chargement du GeoJSON pour toutes les tuiles
+        const lowestLevel = "01";
         neighbors.push({
           coord,
           level: lowestLevel,
