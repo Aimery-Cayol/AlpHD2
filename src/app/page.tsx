@@ -568,7 +568,8 @@ function HomePageContent() {
         if (!tileData) continue;
         const sortedLevels = [...tileData.levels].sort((a, b) => parseInt(a) - parseInt(b));
         const lowestLevel = sortedLevels[0];
-        if (parseInt(lowestLevel) > 5) continue; // pas de niveau simplifié disponible
+        // TODO: filtrer sur parseInt(lowestLevel) <= 5 une fois que Romain
+        // aura mis à jour le GeoJSON (fix listObjects → tous les niveaux visibles)
         neighbors.push({
           coord,
           level: lowestLevel,
