@@ -66,12 +66,22 @@ export function useCameraControls() {
     }
   }, []);
 
-  // Repositionne la caméra pour voir tous les meshes chargés
+  // Repositionne la caméra sur les dalles principales (haute résolution uniquement)
   useEffect(() => {
-    const handleFitCamera = () => {
+    const handleFitCamera = (event: Event) => {
       if (!cameraControlsRef.current || collidersRef.current.length === 0) return;
+      const detail = (event as CustomEvent).detail as { mainCoords?: Set<string> } | undefined;
+      const mainCoords = detail?.mainCoords;
+
+      // Filtrer les colliders pour n'inclure que les dalles sélectionnées (haute résolution)
+      const meshes =
+        mainCoords && mainCoords.size > 0
+          ? collidersRef.current.filter((m) => mainCoords.has(m.userData.coord))
+          : collidersRef.current;
+      const targetMeshes = meshes.length > 0 ? meshes : collidersRef.current;
+
       const box = new THREE.Box3();
-      for (const mesh of collidersRef.current) {
+      for (const mesh of targetMeshes) {
         box.expandByObject(mesh);
       }
       if (!box.isEmpty()) {

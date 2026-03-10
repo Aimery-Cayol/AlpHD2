@@ -530,7 +530,7 @@ function HomePageContent() {
       setWasLoading(true);
     } else if (wasLoading) {
       setTimeout(() => {
-        window.dispatchEvent(new CustomEvent("fit-camera"));
+        window.dispatchEvent(new CustomEvent("fit-camera", { detail: { mainCoords: new Set(selectedTiles) } }));
         resetLoadingProgress();
       }, 300);
       setWasLoading(false);
@@ -593,6 +593,13 @@ function HomePageContent() {
 
   // Modèles complets : tuiles principales (haute qualité) + voisines (basse qualité)
   const allModels = useMemo(() => [...models, ...neighborModels], [models, neighborModels]);
+
+  // Set des coords voisines — pour la détection de survol dans ModelPositioner
+  const neighborCoordsSet = useMemo(() => new Set(neighborModels.map((m) => m.coord)), [neighborModels]);
+
+  // Survol d'une dalle voisine basse résolution
+  const [hoveredNeighbor, setHoveredNeighbor] = useState<string | null>(null);
+  const [mousePos, setMousePos] = useState<{ x: number; y: number } | null>(null);
 
   // Info du sommet sélectionné
   const selectedRouteInfo = useMemo(() => {
@@ -910,7 +917,52 @@ function HomePageContent() {
         <section className="flex-1 relative bg-slate-900 rounded-[2rem] overflow-hidden shadow-2xl border border-slate-800 min-w-0">
           {models.length > 0 ? (
             <>
-              <ThreeScene models={allModels} />
+              <div
+                style={{ position: "absolute", inset: 0, cursor: hoveredNeighbor ? "pointer" : "default" }}
+                onMouseMove={(e) => {
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+                }}
+                onMouseLeave={() => setMousePos(null)}
+              >
+                <ThreeScene
+                  models={allModels}
+                  neighborCoords={neighborCoordsSet}
+                  onNeighborHover={setHoveredNeighbor}
+                  onNeighborClick={(coord) =>
+                    setSelectedTiles((prev) =>
+                      prev.includes(coord as any) ? prev : [...prev, coord as any]
+                    )
+                  }
+                />
+              </div>
+              {hoveredNeighbor && mousePos && (
+                <div
+                  style={{
+                    position: "absolute",
+                    left: mousePos.x + 16,
+                    top: mousePos.y - 36,
+                    zIndex: 40,
+                    pointerEvents: "none",
+                    background: "rgba(15, 23, 42, 0.9)",
+                    backdropFilter: "blur(8px)",
+                    border: "1px solid rgba(96, 165, 250, 0.3)",
+                    borderRadius: 8,
+                    padding: "6px 12px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 6,
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  <span style={{ color: "rgba(255,255,255,0.45)", fontSize: 12 }}>
+                    Zone basse résolution —
+                  </span>
+                  <span style={{ color: "#60a5fa", fontSize: 12, fontWeight: 600 }}>
+                    Cliquer pour charger en HD
+                  </span>
+                </div>
+              )}
               <LoadingOverlay visible={pendingLoads > 0} progress={loadingProgress} />
               <WindIndicator />
 

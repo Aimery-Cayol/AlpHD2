@@ -38,6 +38,9 @@ import { PostProcessingSetup } from "./effects";
 
 interface ThreeSceneProps {
   models: TileModel[];
+  neighborCoords?: Set<string>;
+  onNeighborHover?: (coord: string | null) => void;
+  onNeighborClick?: (coord: string) => void;
 }
 
 /** Empêche la caméra de passer à travers le terrain (raycast multi-directionnel) */
@@ -94,7 +97,7 @@ function CameraCollisionSystem({
 /**
  * Composant interne qui orchestre tous les composants de la scène 3D
  */
-function SceneContent({ models }: ThreeSceneProps) {
+function SceneContent({ models, neighborCoords, onNeighborHover, onNeighborClick }: ThreeSceneProps) {
   const controls = useSceneControls();
   const { handleMeshDoubleClick, cameraControlsRef } = useCameraContext();
   const lightDirection = useLightDirection(controls.sunAzimuth, controls.sunElevation);
@@ -148,6 +151,9 @@ function SceneContent({ models }: ThreeSceneProps) {
         models={models}
         onMeshDoubleClick={handleMeshDoubleClick}
         lightDirection={lightDirection}
+        neighborCoords={neighborCoords}
+        onNeighborHover={onNeighborHover}
+        onNeighborClick={onNeighborClick}
       />
 
       {/* Boutons "+" pour charger les dalles voisines */}
@@ -190,7 +196,7 @@ function SceneContent({ models }: ThreeSceneProps) {
 /**
  * Composant principal de la scène 3D
  */
-export default function ThreeScene({ models }: ThreeSceneProps) {
+export default function ThreeScene({ models, neighborCoords, onNeighborHover, onNeighborClick }: ThreeSceneProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [showAvalanchePentes, setShowAvalanchePentes] = useState(false);
 
@@ -210,7 +216,7 @@ export default function ThreeScene({ models }: ThreeSceneProps) {
         >
           <ColliderProvider>
             <CameraProvider>
-              <SceneContent models={models} />
+              <SceneContent models={models} neighborCoords={neighborCoords} onNeighborHover={onNeighborHover} onNeighborClick={onNeighborClick} />
             </CameraProvider>
           </ColliderProvider>
         </Canvas>

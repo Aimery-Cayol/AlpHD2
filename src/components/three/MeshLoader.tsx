@@ -460,7 +460,7 @@ export default function MeshLoader({
         material={activeMaterial}
         castShadow
         receiveShadow
-        userData={{ url }}
+        userData={{ url, coord }}
         // onDoubleClick={onDoubleClick}
       />
 

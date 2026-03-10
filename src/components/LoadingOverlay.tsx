@@ -196,6 +196,30 @@ export default function LoadingOverlay({ visible, progress }: LoadingOverlayProp
         </p>
       </div>
 
+      {/* Légende des boutons d'interaction */}
+      <div className="mt-8 flex flex-col items-center gap-2.5">
+        <p className="text-[8px] font-black uppercase tracking-[0.25em] text-white/30">
+          Navigation du relief
+        </p>
+        <div className="flex gap-5">
+          <div className="flex items-center gap-2">
+            <span style={{
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "#3b82f6",
+              fontSize: 18,
+              fontWeight: 700,
+              lineHeight: 1,
+              width: 24,
+              height: 24,
+              textShadow: "0 1px 4px rgba(0,0,0,0.5)",
+            }}>+</span>
+            <span className="text-[10px] text-white/40">Charger une dalle voisine</span>
+          </div>
+        </div>
+      </div>
+
       <style jsx>{`
         @keyframes mountain-draw {
           from { stroke-dashoffset: 600; }

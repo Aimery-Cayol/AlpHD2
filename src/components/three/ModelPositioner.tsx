@@ -12,12 +12,18 @@ interface ModelPositionerProps {
   models: TileModel[];
   onMeshDoubleClick?: (event: any) => void;
   lightDirection?: THREE.Vector3;
+  neighborCoords?: Set<string>;
+  onNeighborHover?: (coord: string | null) => void;
+  onNeighborClick?: (coord: string) => void;
 }
 
 export default function ModelPositioner({
   models,
   onMeshDoubleClick,
   lightDirection,
+  neighborCoords,
+  onNeighborHover,
+  onNeighborClick,
 }: ModelPositionerProps) {
   const controls = useSceneControls();
   const showBasemap = controls?.showBasemap ?? false;
@@ -52,20 +58,26 @@ export default function ModelPositioner({
         />
       )}
 
-      {positionedModels.map((model) => (
-        <group
-          key={model.coord}
-          position={model.position}
-          rotation={[-Math.PI / 2, 0, 0]}
-        >
-          <MeshLoader
-            coord={model.coord}
-            level={model.level}
-            onDoubleClick={onMeshDoubleClick}
-            lightDirection={lightDirection}
-          />
-        </group>
-      ))}
+      {positionedModels.map((model) => {
+        const isNeighbor = neighborCoords?.has(model.coord) ?? false;
+        return (
+          <group
+            key={model.coord}
+            position={model.position}
+            rotation={[-Math.PI / 2, 0, 0]}
+            onPointerEnter={isNeighbor ? () => onNeighborHover?.(model.coord) : undefined}
+            onPointerLeave={isNeighbor ? () => onNeighborHover?.(null) : undefined}
+            onClick={isNeighbor ? (e) => { e.stopPropagation(); onNeighborClick?.(model.coord); } : undefined}
+          >
+            <MeshLoader
+              coord={model.coord}
+              level={model.level}
+              onDoubleClick={onMeshDoubleClick}
+              lightDirection={lightDirection}
+            />
+          </group>
+        );
+      })}
 
     </>
   );

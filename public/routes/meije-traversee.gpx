@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="AlpHD" xmlns="http://www.topografix.com/GPX/1/1">
+  <trk>
+    <name>La Meije — Traversée Intégrale des Arêtes</name>
+    <trkseg>
+      <!-- Approche nord depuis La Grave / téléphérique Girose (hors dalles, repère bas) -->
+      <trkpt lat="45.046200" lon="6.310500"><ele>1480.0</ele></trkpt>
+      <trkpt lat="45.040300" lon="6.307800"><ele>1800.0</ele></trkpt>
+      <trkpt lat="45.034800" lon="6.305200"><ele>2200.0</ele></trkpt>
+      <trkpt lat="45.029100" lon="6.302800"><ele>2600.0</ele></trkpt>
+      <!-- Haut du téléphérique / glacier de la Girose (~3200m) -->
+      <trkpt lat="45.022600" lon="6.292000"><ele>3200.0</ele></trkpt>
+      <trkpt lat="45.020000" lon="6.291200"><ele>3180.0</ele></trkpt>
+      <trkpt lat="45.017300" lon="6.290800"><ele>3160.0</ele></trkpt>
+      <!-- Traversée glacier vers la Brèche de la Meije -->
+      <trkpt lat="45.013800" lon="6.290400"><ele>3240.0</ele></trkpt>
+      <trkpt lat="45.010400" lon="6.290100"><ele>3290.0</ele></trkpt>
+      <trkpt lat="45.007200" lon="6.289800"><ele>3310.0</ele></trkpt>
+      <!-- Brèche de la Meije (3357m) — début de la traversée des arêtes -->
+      <trkpt lat="45.003800" lon="6.289600"><ele>3357.0</ele></trkpt>
+      <!-- Montée vers le Grand Pic par l'arête ouest -->
+      <trkpt lat="45.003900" lon="6.291000"><ele>3420.0</ele></trkpt>
+      <trkpt lat="45.004100" lon="6.292500"><ele>3490.0</ele></trkpt>
+      <trkpt lat="45.004200" lon="6.294000"><ele>3560.0</ele></trkpt>
+      <trkpt lat="45.004300" lon="6.295500"><ele>3630.0</ele></trkpt>
+      <trkpt lat="45.004400" lon="6.297000"><ele>3700.0</ele></trkpt>
+      <trkpt lat="45.004500" lon="6.298500"><ele>3760.0</ele></trkpt>
+      <trkpt lat="45.004600" lon="6.300000"><ele>3820.0</ele></trkpt>
+      <trkpt lat="45.004620" lon="6.301500"><ele>3870.0</ele></trkpt>
+      <trkpt lat="45.004650" lon="6.303000"><ele>3910.0</ele></trkpt>
+      <trkpt lat="45.004670" lon="6.304500"><ele>3940.0</ele></trkpt>
+      <trkpt lat="45.004690" lon="6.306000"><ele>3962.0</ele></trkpt>
+      <trkpt lat="45.004700" lon="6.307500"><ele>3975.0</ele></trkpt>
+      <!-- Grand Pic de la Meije (3983m) — coordonnées réelles -->
+      <trkpt lat="45.004720" lon="6.308610"><ele>3983.0</ele></trkpt>
+      <!-- Traversée vers l'est : descente / remontée vers Doigt de Dieu -->
+      <trkpt lat="45.004650" lon="6.309500"><ele>3970.0</ele></trkpt>
+      <trkpt lat="45.004520" lon="6.310300"><ele>3940.0</ele></trkpt>
+      <trkpt lat="45.004350" lon="6.311100"><ele>3910.0</ele></trkpt>
+      <trkpt lat="45.004200" lon="6.311900"><ele>3890.0</ele></trkpt>
+      <trkpt lat="45.004100" lon="6.312600"><ele>3900.0</ele></trkpt>
+      <trkpt lat="45.004020" lon="6.313200"><ele>3930.0</ele></trkpt>
+      <!-- Doigt de Dieu / Pic Central (3973m) — coordonnées réelles -->
+      <trkpt lat="45.003935" lon="6.314429"><ele>3973.0</ele></trkpt>
+      <!-- Poursuite de la traversée vers la Meije Orientale (est) -->
+      <trkpt lat="45.003600" lon="6.315500"><ele>3920.0</ele></trkpt>
+      <trkpt lat="45.003300" lon="6.316800"><ele>3870.0</ele></trkpt>
+      <trkpt lat="45.003100" lon="6.317900"><ele>3840.0</ele></trkpt>
+      <trkpt lat="45.002900" lon="6.319000"><ele>3830.0</ele></trkpt>
+      <trkpt lat="45.002800" lon="6.320200"><ele>3845.0</ele></trkpt>
+      <trkpt lat="45.002700" lon="6.321300"><ele>3865.0</ele></trkpt>
+      <!-- Meije Orientale / Pic Oriental (3891m) -->
+      <trkpt lat="45.002600" lon="6.322400"><ele>3891.0</ele></trkpt>
+    </trkseg>
+  </trk>
+</gpx>

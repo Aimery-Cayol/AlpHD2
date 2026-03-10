@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="AlpHD" xmlns="http://www.topografix.com/GPX/1/1">
+  <trk>
+    <name>La Meije — Grand Pic : Arête du Promontoire (voie normale)</name>
+    <trkseg>
+      <!-- Approche depuis La Bérarde / Étançons (hors dalles, repère bas) -->
+      <trkpt lat="44.975200" lon="6.295800"><ele>2100.0</ele></trkpt>
+      <trkpt lat="44.977400" lon="6.296400"><ele>2185.0</ele></trkpt>
+      <trkpt lat="44.979600" lon="6.297000"><ele>2280.0</ele></trkpt>
+      <trkpt lat="44.981200" lon="6.297600"><ele>2360.0</ele></trkpt>
+      <trkpt lat="44.982800" lon="6.298200"><ele>2440.0</ele></trkpt>
+      <trkpt lat="44.984200" lon="6.298800"><ele>2530.0</ele></trkpt>
+      <trkpt lat="44.985400" lon="6.299400"><ele>2630.0</ele></trkpt>
+      <trkpt lat="44.986500" lon="6.299900"><ele>2720.0</ele></trkpt>
+      <trkpt lat="44.987600" lon="6.300400"><ele>2800.0</ele></trkpt>
+      <trkpt lat="44.988500" lon="6.300900"><ele>2870.0</ele></trkpt>
+      <!-- Entrée dans la zone des dalles (y≈6439, lat≈44.990°N) -->
+      <trkpt lat="44.990200" lon="6.301300"><ele>2940.0</ele></trkpt>
+      <trkpt lat="44.991400" lon="6.301700"><ele>2985.0</ele></trkpt>
+      <trkpt lat="44.992500" lon="6.302100"><ele>3020.0</ele></trkpt>
+      <trkpt lat="44.993600" lon="6.302500"><ele>3045.0</ele></trkpt>
+      <trkpt lat="44.994700" lon="6.302900"><ele>3062.0</ele></trkpt>
+      <trkpt lat="44.995800" lon="6.303200"><ele>3075.0</ele></trkpt>
+      <trkpt lat="44.996900" lon="6.303400"><ele>3082.0</ele></trkpt>
+      <!-- Refuge du Promontoire (3092m) — coordonnées réelles -->
+      <trkpt lat="44.998410" lon="6.303536"><ele>3092.0</ele></trkpt>
+      <!-- Col du Promontoire — début de l'arête -->
+      <trkpt lat="44.998900" lon="6.303800"><ele>3120.0</ele></trkpt>
+      <trkpt lat="44.999400" lon="6.304200"><ele>3165.0</ele></trkpt>
+      <trkpt lat="44.999900" lon="6.304700"><ele>3220.0</ele></trkpt>
+      <!-- Pied de l'arête technique -->
+      <trkpt lat="45.000300" lon="6.305100"><ele>3295.0</ele></trkpt>
+      <trkpt lat="45.000700" lon="6.305500"><ele>3370.0</ele></trkpt>
+      <trkpt lat="45.001000" lon="6.305900"><ele>3430.0</ele></trkpt>
+      <!-- Dalles du Tabuchet -->
+      <trkpt lat="45.001200" lon="6.306200"><ele>3490.0</ele></trkpt>
+      <trkpt lat="45.001400" lon="6.306600"><ele>3530.0</ele></trkpt>
+      <!-- Brèche Zsygmondy (~3564m) -->
+      <trkpt lat="45.001600" lon="6.307000"><ele>3564.0</ele></trkpt>
+      <trkpt lat="45.001900" lon="6.307300"><ele>3610.0</ele></trkpt>
+      <trkpt lat="45.002200" lon="6.307500"><ele>3660.0</ele></trkpt>
+      <trkpt lat="45.002600" lon="6.307700"><ele>3700.0</ele></trkpt>
+      <!-- Tour de la Chèvre / arête supérieure -->
+      <trkpt lat="45.002900" lon="6.307900"><ele>3740.0</ele></trkpt>
+      <trkpt lat="45.003200" lon="6.308000"><ele>3780.0</ele></trkpt>
+      <trkpt lat="45.003500" lon="6.308100"><ele>3820.0</ele></trkpt>
+      <trkpt lat="45.003800" lon="6.308200"><ele>3860.0</ele></trkpt>
+      <trkpt lat="45.004000" lon="6.308300"><ele>3895.0</ele></trkpt>
+      <trkpt lat="45.004200" lon="6.308400"><ele>3925.0</ele></trkpt>
+      <trkpt lat="45.004400" lon="6.308500"><ele>3950.0</ele></trkpt>
+      <trkpt lat="45.004600" lon="6.308560"><ele>3968.0</ele></trkpt>
+      <!-- Grand Pic de la Meije (3983m) — coordonnées réelles -->
+      <trkpt lat="45.004720" lon="6.308610"><ele>3983.0</ele></trkpt>
+    </trkseg>
+  </trk>
+</gpx>

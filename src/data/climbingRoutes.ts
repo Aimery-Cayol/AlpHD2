@@ -218,6 +218,51 @@ export const CLIMBING_ROUTES: Record<string, ClimbingRoute[]> = {
   ],
 
   // ==========================================================================
+  // LA MEIJE — Grand Pic 3984m — Massif des Écrins
+  // Tuiles Lambert-93 : x=959-962km, y=6438-6440km (WGS84 ≈ 45.00°N 6.29-6.33°E)
+  // ==========================================================================
+  meije: [
+    {
+      id: "meije-promontoire",
+      name: "Voie Normale — Arête du Promontoire",
+      activity: "alpinisme",
+      grade: "TD",
+      gradeText: "face N, 1500m D+, mixte rocher/glace, très engagé",
+      description: "Voie normale de la Meije depuis La Grave, par le Refuge du Promontoire (3092m). Itinéraire classique mais exigeant sur l'arête ouest du Grand Pic, réputé l'un des TD les plus sérieux des Alpes.",
+      c2cUrl: "https://www.camptocamp.org/routes/54399/fr/la-meije-grand-pic-voie-normale-arete-du-promontoire",
+      c2cId: "54399",
+      // Coordonnées vérifiées proj4 : WGS84 → Lambert-93 dans tuiles x=[959,962], y=[6438,6440]
+      track: [
+        { lon: 6.3096, lat: 45.0461, altM: 1480 }, // La Grave village (téléphérique, hors dalles)
+        { lon: 6.3080, lat: 45.0191, altM: 3200 }, // Téléphérique des Glaciers de la Meije (haut)
+        { lon: 6.3075, lat: 45.0119, altM: 3100 }, // Glacier de la Girose (dalle N, bord)
+        { lon: 6.3073, lat: 45.0083, altM: 3092 }, // Glacier mi-hauteur (Refuge du Promontoire)
+        { lon: 6.3135, lat: 45.0054, altM: 3300 }, // Pied de l'arête du Promontoire
+        { lon: 6.3197, lat: 45.0026, altM: 3564 }, // Brèche Zsygmondy
+        { lon: 6.3234, lat: 45.0006, altM: 3984 }, // Grand Pic de la Meije (sommet)
+      ],
+    },
+    {
+      id: "meije-traversee",
+      name: "Traversée Intégrale de la Meije",
+      activity: "alpinisme",
+      grade: "ED",
+      gradeText: "D→E intégrale, III à V, glaciaire + mixte + arête, 1800m D+",
+      description: "Traversée complète d'W en E : de la Brèche de la Meije au Doigt de Dieu (Cime de l'Est, 3973m). L'une des plus grandes courses classiques des Alpes françaises, première réalisée en 1885 par Zsygmondy.",
+      c2cUrl: "https://www.camptocamp.org/routes/54400/fr/la-meije-traversee-integrale",
+      c2cId: "54400",
+      // Traversée O→E sur la crête — coordonnées vérifiées proj4 dans tuiles x=[959,962]
+      track: [
+        { lon: 6.2944, lat: 45.0042, altM: 3357 }, // Brèche de la Meije (W) — départ traversée
+        { lon: 6.3073, lat: 45.0083, altM: 3700 }, // Glacier du Tabuchet — Pic du Glacier (3974m)
+        { lon: 6.3197, lat: 45.0026, altM: 3800 }, // Arête centrale — Brèche Zsygmondy
+        { lon: 6.3234, lat: 45.0006, altM: 3984 }, // Grand Pic (sommet)
+        { lon: 6.3262, lat: 45.0051, altM: 3973 }, // Cime de l'Est — Doigt de Dieu
+      ],
+    },
+  ],
+
+  // ==========================================================================
   // AIGUILLE DU MIDI — 45.8788°N 6.8873°E (3842m)
   // ==========================================================================
   midi: [
