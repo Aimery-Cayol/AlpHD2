@@ -48,12 +48,43 @@ const FAMILY_COLORS: Record<GradeFamily, string> = {
 // ---------------------------------------------------------------------------
 
 const SUMMIT_NAMES: Record<string, string> = {
+  // --- Massif du Mont-Blanc ---
+  tour: "Aiguille du Tour · 3540m",
+  chardonnet: "Aiguille du Chardonnet · 3824m",
   verte: "Aiguille Verte · 4122m",
-  "mont-blanc": "Mont Blanc · 4808m",
-  jorasses: "Grandes Jorasses · 4208m",
-  tacul: "Mont Blanc du Tacul · 4248m",
   drus: "Aiguille des Drus · 3754m",
+  droites: "Les Droites · 4001m",
+  courtes: "Les Courtes · 3856m",
+  moine: "Aiguille du Moine · 3412m",
   midi: "Aiguille du Midi · 3842m",
+  plan: "Aiguille du Plan · 3673m",
+  "chamonix-needles": "Aiguilles de Chamonix · 3842m",
+  "mont-blanc": "Mont Blanc · 4808m",
+  tacul: "Mont Blanc du Tacul · 4248m",
+  maudit: "Mont Maudit · 4465m",
+  "dome-gouter": "Dôme du Goûter · 4304m",
+  geant: "Dent du Géant · 4013m",
+  rochefort: "Arête de Rochefort · 4001m",
+  "tour-ronde": "Tour Ronde · 3792m",
+  jorasses: "Grandes Jorasses · 4208m",
+  talefre: "Aiguille de Talèfre · 3730m",
+  // --- Massif des Écrins ---
+  meije: "La Meije · 3984m",
+  rateau: "Le Râteau · 3809m",
+  "pic-gaspard": "Pic Gaspard · 3883m",
+  "barre-ecrins": "Barre des Écrins · 4102m",
+  "dome-neige": "Dôme de Neige · 4015m",
+  "roche-faurio": "Roche Faurio · 3730m",
+  agneaux: "Montagne des Agneaux · 3664m",
+  pelvoux: "Mont Pelvoux · 3946m",
+  ailefroide: "Ailefroide · 3954m",
+  olan: "L'Olan · 3564m",
+  "les-bans": "Les Bans · 3669m",
+  "les-rouies": "Les Rouies · 3589m",
+  sirac: "Le Sirac · 3441m",
+  muzelle: "La Muzelle · 3465m",
+  // --- Montagne Sainte-Victoire ---
+  "pic-mouches": "Pic des Mouches · 1011m",
 };
 
 // ---------------------------------------------------------------------------
