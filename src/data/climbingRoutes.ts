@@ -37,12 +37,12 @@ export const CLIMBING_ROUTES: Record<string, ClimbingRoute[]> = {
       c2cUrl: "https://www.camptocamp.org/routes/53937/fr/aiguille-du-tour-voie-normale",
       c2cId: "53937",
       track: [
-        { lon: 7.0253, lat: 45.9999, altM: 2702 }, // Refuge Albert 1er
-        { lon: 7.0181, lat: 46.0060, altM: 2900 }, // Glacier du Tour bas
-        { lon: 7.0120, lat: 46.0148, altM: 3100 }, // Glacier plateau
-        { lon: 7.0075, lat: 46.0205, altM: 3289 }, // Col du Tour
-        { lon: 7.0059, lat: 46.0245, altM: 3450 }, // Arête sommitale
-        { lon: 7.0046, lat: 46.0281, altM: 3540 }, // Sommet
+        { lon: 7.0180, lat: 45.9970, altM: 2702 }, // Bas du glacier du Tour
+        { lon: 7.0150, lat: 45.9990, altM: 2900 }, // Glacier du Tour
+        { lon: 7.0120, lat: 46.0010, altM: 3100 }, // Mi-glacier
+        { lon: 7.0095, lat: 46.0030, altM: 3289 }, // Col du Tour
+        { lon: 7.0082, lat: 46.0045, altM: 3450 }, // Arête sommitale
+        { lon: 7.0075, lat: 46.0055, altM: 3540 }, // Sommet
       ],
     },
     {
@@ -55,10 +55,10 @@ export const CLIMBING_ROUTES: Record<string, ClimbingRoute[]> = {
       c2cUrl: "https://www.camptocamp.org/routes/53938/fr/aiguille-du-tour-ski",
       c2cId: "53938",
       track: [
-        { lon: 7.0253, lat: 45.9999, altM: 2702 }, // Refuge Albert 1er
-        { lon: 7.0181, lat: 46.0060, altM: 2900 }, // Bas glacier
-        { lon: 7.0120, lat: 46.0148, altM: 3100 }, // Milieu glacier
-        { lon: 7.0075, lat: 46.0205, altM: 3289 }, // Col du Tour
+        { lon: 7.0180, lat: 45.9970, altM: 2702 }, // Bas glacier
+        { lon: 7.0150, lat: 45.9990, altM: 2900 }, // Glacier bas
+        { lon: 7.0120, lat: 46.0010, altM: 3100 }, // Mi-glacier
+        { lon: 7.0095, lat: 46.0030, altM: 3289 }, // Col du Tour
       ],
     },
   ],
@@ -208,10 +208,10 @@ export const CLIMBING_ROUTES: Record<string, ClimbingRoute[]> = {
       c2cUrl: "https://www.camptocamp.org/routes/54147/fr/aiguille-du-plan-voie-normale",
       c2cId: "54147",
       track: [
-        { lon: 6.8873, lat: 45.8788, altM: 3842 }, // Aiguille du Midi
-        { lon: 6.8749, lat: 45.8789, altM: 3750 }, // Col du Plan
-        { lon: 6.8691, lat: 45.8793, altM: 3600 }, // Arête N
-        { lon: 6.8638, lat: 45.8795, altM: 3673 }, // Sommet
+        { lon: 6.9200, lat: 45.9090, altM: 3050 }, // Vallée Blanche (dans tile)
+        { lon: 6.9100, lat: 45.9040, altM: 3350 }, // Glacier du Plan
+        { lon: 6.9020, lat: 45.8990, altM: 3550 }, // Arête N
+        { lon: 6.8980, lat: 45.8960, altM: 3673 }, // Sommet (approche tile)
       ],
     },
     {
@@ -224,11 +224,11 @@ export const CLIMBING_ROUTES: Record<string, ClimbingRoute[]> = {
       c2cUrl: "https://www.camptocamp.org/routes/54146/fr/aiguille-du-plan-eperon-frendo",
       c2cId: "54146",
       track: [
-        { lon: 6.8700, lat: 45.9240, altM: 1035 }, // Chamonix
-        { lon: 6.8620, lat: 45.9000, altM: 2200 }, // Glacier des Pèlerins
-        { lon: 6.8638, lat: 45.8830, altM: 2750 }, // Pied face N
-        { lon: 6.8638, lat: 45.8810, altM: 3200 }, // Mi-éperon
-        { lon: 6.8638, lat: 45.8795, altM: 3673 }, // Sommet
+        { lon: 6.8700, lat: 45.9240, altM: 1035 }, // Chamonix (approach)
+        { lon: 6.9120, lat: 45.9080, altM: 2500 }, // Glacier des Pèlerins (dans tile)
+        { lon: 6.9050, lat: 45.9010, altM: 2900 }, // Pied face N
+        { lon: 6.9010, lat: 45.8970, altM: 3300 }, // Mi-éperon
+        { lon: 6.8980, lat: 45.8960, altM: 3673 }, // Sommet
       ],
     },
   ],
@@ -329,12 +329,11 @@ export const CLIMBING_ROUTES: Record<string, ClimbingRoute[]> = {
       c2cUrl: "https://www.camptocamp.org/routes/54301/fr/dent-du-geant-voie-normale",
       c2cId: "54301",
       track: [
-        { lon: 6.9720, lat: 45.8538, altM: 3480 }, // Refuge Torino (Helbronner)
-        { lon: 6.9778, lat: 45.8573, altM: 3600 }, // Glacier du Géant
-        { lon: 6.9803, lat: 45.8599, altM: 3665 }, // Col du Géant
-        { lon: 6.9812, lat: 45.8610, altM: 3700 }, // Pied arête W
-        { lon: 6.9822, lat: 45.8618, altM: 3950 }, // Zone cordes fixes
-        { lon: 6.9829, lat: 45.8622, altM: 4013 }, // Sommet
+        { lon: 6.9580, lat: 45.8640, altM: 3480 }, // Glacier du Géant (dans tile)
+        { lon: 6.9555, lat: 45.8655, altM: 3665 }, // Pied arête W
+        { lon: 6.9535, lat: 45.8665, altM: 3800 }, // Arête W
+        { lon: 6.9520, lat: 45.8672, altM: 3950 }, // Zone cordes fixes
+        { lon: 6.9510, lat: 45.8677, altM: 4013 }, // Sommet
       ],
     },
   ],
@@ -378,11 +377,11 @@ export const CLIMBING_ROUTES: Record<string, ClimbingRoute[]> = {
       c2cUrl: "https://www.camptocamp.org/routes/54175/fr/tour-ronde-voie-normale",
       c2cId: "54175",
       track: [
-        { lon: 6.8780, lat: 45.8572, altM: 3532 }, // Col du Midi
-        { lon: 6.8718, lat: 45.8540, altM: 3400 }, // Glacier du Géant
-        { lon: 6.8696, lat: 45.8510, altM: 3300 }, // Pied arête SE
-        { lon: 6.8694, lat: 45.8495, altM: 3600 }, // Arête SE
-        { lon: 6.8693, lat: 45.8482, altM: 3792 }, // Sommet
+        { lon: 6.9170, lat: 45.8560, altM: 3200 }, // Vallée Blanche (dans tile)
+        { lon: 6.9120, lat: 45.8540, altM: 3300 }, // Glacier du Géant
+        { lon: 6.9080, lat: 45.8510, altM: 3400 }, // Pied arête SE
+        { lon: 6.9050, lat: 45.8490, altM: 3600 }, // Arête SE
+        { lon: 6.9030, lat: 45.8475, altM: 3792 }, // Sommet
       ],
     },
     {
@@ -395,10 +394,10 @@ export const CLIMBING_ROUTES: Record<string, ClimbingRoute[]> = {
       c2cUrl: "https://www.camptocamp.org/routes/54176/fr/tour-ronde-face-nord",
       c2cId: "54176",
       track: [
-        { lon: 6.8718, lat: 45.8540, altM: 3400 }, // Vallée Blanche
-        { lon: 6.8695, lat: 45.8507, altM: 3200 }, // Pied face N
-        { lon: 6.8693, lat: 45.8495, altM: 3600 }, // Mi-face
-        { lon: 6.8693, lat: 45.8482, altM: 3792 }, // Sommet
+        { lon: 6.9150, lat: 45.8555, altM: 3200 }, // Vallée Blanche (dans tile)
+        { lon: 6.9090, lat: 45.8510, altM: 3100 }, // Pied face N
+        { lon: 6.9050, lat: 45.8490, altM: 3500 }, // Mi-face
+        { lon: 6.9030, lat: 45.8475, altM: 3792 }, // Sommet
       ],
     },
   ],
@@ -418,11 +417,12 @@ export const CLIMBING_ROUTES: Record<string, ClimbingRoute[]> = {
       c2cUrl: "https://www.camptocamp.org/routes/54510/fr/aiguille-de-talefre-voie-normale",
       c2cId: "54510",
       track: [
-        { lon: 6.9737, lat: 45.9212, altM: 2687 }, // Refuge du Couvercle
-        { lon: 6.9980, lat: 45.9060, altM: 3100 }, // Glacier de Talèfre
-        { lon: 7.0198, lat: 45.8950, altM: 3544 }, // Col de Talèfre
-        { lon: 7.0292, lat: 45.8918, altM: 3620 }, // Arête W
-        { lon: 7.0385, lat: 45.8892, altM: 3730 }, // Sommet
+        { lon: 6.9737, lat: 45.9212, altM: 2687 }, // Refuge du Couvercle (approach)
+        { lon: 6.9950, lat: 45.9120, altM: 3100 }, // Glacier de Talèfre (dans tile)
+        { lon: 7.0020, lat: 45.9060, altM: 3300 }, // Mi-glacier
+        { lon: 7.0080, lat: 45.9010, altM: 3544 }, // Col de Talèfre
+        { lon: 7.0110, lat: 45.8990, altM: 3620 }, // Arête W
+        { lon: 7.0130, lat: 45.8980, altM: 3730 }, // Sommet
       ],
     },
   ],
@@ -752,11 +752,11 @@ export const CLIMBING_ROUTES: Record<string, ClimbingRoute[]> = {
       c2cUrl: "https://www.camptocamp.org/routes/54403/fr/pic-gaspard-voie-normale",
       c2cId: "54403",
       track: [
-        { lon: 6.3073, lat: 45.0083, altM: 3092 }, // Refuge du Promontoire
-        { lon: 6.2985, lat: 45.0096, altM: 3500 }, // Glacier de la Meije versant SW
-        { lon: 6.2952, lat: 45.0100, altM: 3700 }, // Col du Pic Gaspard
-        { lon: 6.2935, lat: 45.0098, altM: 3800 }, // Arête S
-        { lon: 6.2930, lat: 45.0100, altM: 3883 }, // Sommet
+        { lon: 6.3073, lat: 45.0083, altM: 3092 }, // Refuge du Promontoire (approach)
+        { lon: 6.2840, lat: 45.0070, altM: 3500 }, // Glacier de la Meije versant SW (dans tile)
+        { lon: 6.2820, lat: 45.0010, altM: 3700 }, // Col du Pic Gaspard
+        { lon: 6.2810, lat: 44.9970, altM: 3800 }, // Arête S
+        { lon: 6.2805, lat: 44.9950, altM: 3883 }, // Sommet
       ],
     },
   ],
@@ -844,11 +844,11 @@ export const CLIMBING_ROUTES: Record<string, ClimbingRoute[]> = {
       c2cUrl: "https://www.camptocamp.org/routes/54454/fr/roche-faurio-voie-normale",
       c2cId: "54454",
       track: [
-        { lon: 6.3883, lat: 44.9272, altM: 3175 }, // Refuge des Écrins
-        { lon: 6.3100, lat: 44.9520, altM: 2500 }, // Glacier du Faurio (approche)
-        { lon: 6.2800, lat: 44.9640, altM: 3000 }, // Col du Faurio
-        { lon: 6.2730, lat: 44.9670, altM: 3600 }, // Arête SE
-        { lon: 6.2700, lat: 44.9680, altM: 3730 }, // Sommet
+        { lon: 6.3883, lat: 44.9272, altM: 3175 }, // Refuge des Écrins (approach)
+        { lon: 6.2840, lat: 44.9630, altM: 2500 }, // Glacier du Faurio (dans tile)
+        { lon: 6.2780, lat: 44.9620, altM: 3000 }, // Col du Faurio
+        { lon: 6.2740, lat: 44.9600, altM: 3600 }, // Arête SE
+        { lon: 6.2720, lat: 44.9585, altM: 3730 }, // Sommet
       ],
     },
   ],
@@ -868,11 +868,11 @@ export const CLIMBING_ROUTES: Record<string, ClimbingRoute[]> = {
       c2cUrl: "https://www.camptocamp.org/routes/54455/fr/montagne-des-agneaux-voie-normale",
       c2cId: "54455",
       track: [
-        { lon: 6.4200, lat: 44.9800, altM: 2100 }, // Monêtier-les-Bains / Casset
-        { lon: 6.4050, lat: 44.9700, altM: 2800 }, // Refuge du Pavé
-        { lon: 6.3900, lat: 44.9620, altM: 3200 }, // Plateau des Agneaux
-        { lon: 6.3800, lat: 44.9570, altM: 3500 }, // Haut plateau
-        { lon: 6.3720, lat: 44.9530, altM: 3664 }, // Sommet
+        { lon: 6.3500, lat: 44.9900, altM: 2100 }, // Casset / Monêtier (approach)
+        { lon: 6.2860, lat: 44.9820, altM: 2800 }, // Plateau des Agneaux (dans tile)
+        { lon: 6.2820, lat: 44.9760, altM: 3200 }, // Mi-plateau
+        { lon: 6.2790, lat: 44.9710, altM: 3500 }, // Haut plateau
+        { lon: 6.2770, lat: 44.9670, altM: 3664 }, // Sommet
       ],
     },
   ],
@@ -958,11 +958,11 @@ export const CLIMBING_ROUTES: Record<string, ClimbingRoute[]> = {
       c2cUrl: "https://www.camptocamp.org/routes/54500/fr/l-olan-arete-nw",
       c2cId: "54500",
       track: [
-        { lon: 6.1855, lat: 44.9350, altM: 1100 }, // La Chapelle-en-Valgaudemar
-        { lon: 6.1810, lat: 44.9470, altM: 2100 }, // Refuge de Font Turbat
-        { lon: 6.1740, lat: 44.9580, altM: 3000 }, // Glacier N de l'Olan
-        { lon: 6.1710, lat: 44.9720, altM: 3300 }, // Bas de l'arête NW
-        { lon: 6.1700, lat: 44.9770, altM: 3564 }, // Sommet
+        { lon: 6.1855, lat: 44.8950, altM: 1100 }, // La Chapelle-en-Valgaudemar (approach)
+        { lon: 6.1800, lat: 44.8750, altM: 2100 }, // Refuge de Font Turbat (dans tile)
+        { lon: 6.1730, lat: 44.8690, altM: 3000 }, // Glacier N de l'Olan
+        { lon: 6.1695, lat: 44.8650, altM: 3300 }, // Bas de l'arête NW
+        { lon: 6.1680, lat: 44.8625, altM: 3564 }, // Sommet
       ],
     },
     {
@@ -975,11 +975,11 @@ export const CLIMBING_ROUTES: Record<string, ClimbingRoute[]> = {
       c2cUrl: "https://www.camptocamp.org/routes/54501/fr/l-olan-face-nord",
       c2cId: "54501",
       track: [
-        { lon: 6.1810, lat: 44.9470, altM: 2100 }, // Approche refuge
-        { lon: 6.1720, lat: 44.9640, altM: 2800 }, // Pied face N
-        { lon: 6.1705, lat: 44.9700, altM: 3200 }, // Mi-face
-        { lon: 6.1700, lat: 44.9750, altM: 3500 }, // Haut face
-        { lon: 6.1700, lat: 44.9770, altM: 3564 }, // Sommet
+        { lon: 6.1800, lat: 44.8750, altM: 2100 }, // Approche refuge (dans tile)
+        { lon: 6.1720, lat: 44.8690, altM: 2800 }, // Pied face N
+        { lon: 6.1700, lat: 44.8665, altM: 3200 }, // Mi-face
+        { lon: 6.1685, lat: 44.8640, altM: 3500 }, // Haut face
+        { lon: 6.1680, lat: 44.8625, altM: 3564 }, // Sommet
       ],
     },
   ],
@@ -999,11 +999,11 @@ export const CLIMBING_ROUTES: Record<string, ClimbingRoute[]> = {
       c2cUrl: "https://www.camptocamp.org/routes/54502/fr/les-bans-voie-normale",
       c2cId: "54502",
       track: [
-        { lon: 6.1855, lat: 44.9350, altM: 1100 }, // La Chapelle-en-Valgaudemar
-        { lon: 6.2520, lat: 44.9380, altM: 1620 }, // Refuge de Gioberney
-        { lon: 6.2550, lat: 44.9430, altM: 2500 }, // Glacier des Bans
-        { lon: 6.2570, lat: 44.9490, altM: 3200 }, // Col des Bans
-        { lon: 6.2580, lat: 44.9530, altM: 3669 }, // Sommet
+        { lon: 6.1855, lat: 44.8950, altM: 1100 }, // La Chapelle-en-Valgaudemar (approach)
+        { lon: 6.2590, lat: 44.8755, altM: 1620 }, // Refuge de Gioberney (dans tile)
+        { lon: 6.2610, lat: 44.8730, altM: 2500 }, // Glacier des Bans
+        { lon: 6.2620, lat: 44.8710, altM: 3200 }, // Col des Bans
+        { lon: 6.2625, lat: 44.8685, altM: 3669 }, // Sommet
       ],
     },
   ],
@@ -1023,10 +1023,10 @@ export const CLIMBING_ROUTES: Record<string, ClimbingRoute[]> = {
       c2cUrl: "https://www.camptocamp.org/routes/54503/fr/les-rouies-voie-normale",
       c2cId: "54503",
       track: [
-        { lon: 6.2460, lat: 44.9480, altM: 2577 }, // Refuge de la Pilatte
-        { lon: 6.2250, lat: 44.9490, altM: 3000 }, // Glacier des Rouies
-        { lon: 6.2165, lat: 44.9491, altM: 3300 }, // Col des Rouies
-        { lon: 6.2140, lat: 44.9490, altM: 3589 }, // Sommet
+        { lon: 6.2460, lat: 44.9600, altM: 2577 }, // Refuge de la Pilatte (dans tile)
+        { lon: 6.2430, lat: 44.9650, altM: 3000 }, // Glacier des Rouies
+        { lon: 6.2400, lat: 44.9690, altM: 3300 }, // Col des Rouies
+        { lon: 6.2385, lat: 44.9710, altM: 3589 }, // Sommet
       ],
     },
   ],
@@ -1046,11 +1046,11 @@ export const CLIMBING_ROUTES: Record<string, ClimbingRoute[]> = {
       c2cUrl: "https://www.camptocamp.org/routes/54505/fr/la-muzelle-voie-normale",
       c2cId: "54505",
       track: [
-        { lon: 6.1320, lat: 45.0200, altM: 1650 }, // Les Deux Alpes (départ)
-        { lon: 6.1620, lat: 45.0220, altM: 2100 }, // Lac Lauvitel
-        { lon: 6.1780, lat: 45.0210, altM: 2613 }, // Lac de la Muzelle
-        { lon: 6.1840, lat: 45.0215, altM: 3100 }, // Arête S
-        { lon: 6.1860, lat: 45.0240, altM: 3465 }, // Sommet
+        { lon: 6.1320, lat: 45.0200, altM: 1650 }, // Les Deux Alpes (approach)
+        { lon: 6.2380, lat: 45.0080, altM: 2613 }, // Lac de la Muzelle (dans tile)
+        { lon: 6.2420, lat: 45.0030, altM: 3100 }, // Arête S
+        { lon: 6.2440, lat: 44.9980, altM: 3300 }, // Montée finale
+        { lon: 6.2450, lat: 44.9955, altM: 3465 }, // Sommet
       ],
     },
   ],
@@ -1070,11 +1070,11 @@ export const CLIMBING_ROUTES: Record<string, ClimbingRoute[]> = {
       c2cUrl: "https://www.camptocamp.org/routes/54506/fr/le-sirac-voie-normale",
       c2cId: "54506",
       track: [
-        { lon: 6.1855, lat: 44.9350, altM: 1100 }, // La Chapelle-en-Valgaudemar
-        { lon: 6.1900, lat: 44.9390, altM: 1800 }, // Approche vallon S
-        { lon: 6.1920, lat: 44.9420, altM: 2500 }, // Glacier du Sirac
-        { lon: 6.1910, lat: 44.9440, altM: 3200 }, // Arête NW
-        { lon: 6.1900, lat: 44.9450, altM: 3441 }, // Sommet
+        { lon: 6.1855, lat: 44.8950, altM: 1100 }, // La Chapelle-en-Valgaudemar (approach)
+        { lon: 6.1490, lat: 44.8700, altM: 1800 }, // Approche vallon S (dans tile)
+        { lon: 6.1470, lat: 44.8670, altM: 2500 }, // Glacier du Sirac
+        { lon: 6.1455, lat: 44.8645, altM: 3200 }, // Arête NW
+        { lon: 6.1445, lat: 44.8630, altM: 3441 }, // Sommet
       ],
     },
   ],
@@ -1094,11 +1094,11 @@ export const CLIMBING_ROUTES: Record<string, ClimbingRoute[]> = {
       c2cUrl: "https://www.camptocamp.org/routes/182900/fr/sainte-victoire-traversee-crete",
       c2cId: "182900",
       track: [
-        { lon: 5.6320, lat: 43.5380, altM: 450 }, // Parking Cézanne (S)
-        { lon: 5.6450, lat: 43.5340, altM: 700 }, // Croix de Provence
-        { lon: 5.6680, lat: 43.5320, altM: 900 }, // Le Signal
-        { lon: 5.6950, lat: 43.5310, altM: 980 }, // Crête centrale
-        { lon: 5.7280, lat: 43.5355, altM: 1011 }, // Pic des Mouches (sommet)
+        { lon: 5.4000, lat: 43.2145, altM: 200 }, // Départ W (dans tile)
+        { lon: 5.4050, lat: 43.2160, altM: 450 }, // Mi-crête
+        { lon: 5.4100, lat: 43.2175, altM: 700 }, // Crête E
+        { lon: 5.4150, lat: 43.2185, altM: 900 }, // Approche sommet
+        { lon: 5.4200, lat: 43.2190, altM: 1011 }, // Pic des Mouches (sommet)
       ],
     },
   ],
