@@ -457,48 +457,69 @@ function HomePageContent() {
   const loadTilesData = async () => {
     try {
       setLoading(true);
-      const response = await fetch("/tiles.geojson");
+
+      // Source de vérité : /api/tiles (S3 tiles.geojson, toujours à jour)
+      // Format S3 : une feature par dalle, avec levels[] et files[] agrégés
+      // { properties: { id: "0442_6192", name: "0442_6192",
+      //                 x: 442000, y: 6192000,
+      //                 levels: ["00","01","11"],
+      //                 files: [{ url: "https://s3.../0442_6192_11.drc", level: "11" }] } }
+      const response = await fetch("/api/tiles");
       if (!response.ok) throw new Error("Erreur lors du chargement des tuiles");
       const geojson = await response.json();
 
-      // Format du GeoJSON (public/tiles.geojson) : une feature par fichier DRC
-      // { properties: { id: "1010000_6552000", x: 1010000, y: 6552000,
-      //                 url: "https://.../meshes/1010_6552.drc",
-      //                 name: "1010_6552" } }
-      // On regroupe par coord (x_y en km) et on construit files[] + levels[].
       const tileMap = new Map<TileCoord, TileData>();
 
       geojson.features?.forEach((feature: any) => {
         const props = feature.properties;
         if (!props) return;
 
-        // Coordonnées en mètres → km → TileCoord padded "XXXX_YYYY"
-        const xKm = Math.round((props.x ?? 0) / 1000);
-        const yKm = Math.round((props.y ?? 0) / 1000);
-        const coord = toCoord(xKm, yKm);
+        // Format S3 agrégé : props.name = "0442_6192" (déjà au bon format)
+        // Format local legacy : props.name = "0442_6192_11" (avec suffixe niveau)
+        const rawName: string = props.name ?? props.id ?? "";
+        const nameNoLevel = rawName.replace(/_\d{2}$/, ""); // retire le suffixe _XX si présent
+        const coord = nameNoLevel as TileCoord;
+        if (!coord) return;
 
-        // Extraire le niveau depuis le nom du fichier (ex: "1010_6552_11" → "11")
-        const nameMatch = (props.name ?? "").match(/_(\d+)$/);
-        const level = nameMatch ? nameMatch[1] : "11";
-
-        // Convertir l'URL S3 en URL proxy pour éviter les problèmes CORS
-        const rawUrl: string = props.url ?? "";
-        const pathMatch = rawUrl.match(/meshes\/[\w_]+\.drc/);
-        const fileUrl = pathMatch
-          ? `/api/tiles?path=${encodeURIComponent(pathMatch[0])}`
-          : rawUrl;
-
-        if (!tileMap.has(coord)) {
-          tileMap.set(coord, { coord, x: props.x, y: props.y, levels: [], files: [] });
+        // Format S3 agrégé : files[] est déjà présent
+        if (Array.isArray(props.files) && props.files.length > 0) {
+          const files = props.files.map((f: any) => {
+            const rawUrl: string = f.url ?? "";
+            const pathMatch = rawUrl.match(/meshes\/[\w_]+\.drc/);
+            return {
+              url: pathMatch ? `/api/tiles?path=${encodeURIComponent(pathMatch[0])}` : rawUrl,
+              level: f.level as string,
+            };
+          });
+          tileMap.set(coord, {
+            coord,
+            x: props.x,
+            y: props.y,
+            levels: props.levels ?? files.map((f: { level: string }) => f.level),
+            files,
+          });
+        } else {
+          // Format local legacy : une feature = un fichier DRC
+          const xKm = Math.round((props.x ?? 0) / 1000);
+          const yKm = Math.round((props.y ?? 0) / 1000);
+          const legacyCoord = toCoord(xKm, yKm);
+          const nameMatch = rawName.match(/_(\d+)$/);
+          const level = nameMatch ? nameMatch[1] : "11";
+          const rawUrl: string = props.url ?? "";
+          const pathMatch = rawUrl.match(/meshes\/[\w_]+\.drc/);
+          const fileUrl = pathMatch
+            ? `/api/tiles?path=${encodeURIComponent(pathMatch[0])}`
+            : rawUrl;
+          if (!tileMap.has(legacyCoord)) {
+            tileMap.set(legacyCoord, { coord: legacyCoord, x: props.x, y: props.y, levels: [], files: [] });
+          }
+          const tileData = tileMap.get(legacyCoord)!;
+          if (!tileData.levels.includes(level)) tileData.levels.push(level);
+          tileData.files.push({ url: fileUrl, level });
         }
-        const tileData = tileMap.get(coord)!;
-        if (!tileData.levels.includes(level)) tileData.levels.push(level);
-        tileData.files.push({ url: fileUrl, level });
       });
 
-      // Synthétiser le niveau 01 pour les tuiles qui n'en ont pas.
-      // Romain a généré tous les niveaux simplifiés sur S3 ; le GeoJSON est incomplet
-      // (limite listObjects), donc on construit l'URL en remplaçant _11.drc → _01.drc.
+      // Synthétiser le niveau 01 pour les tuiles qui n'en ont pas
       tileMap.forEach((tileData) => {
         if (tileData.levels.includes("01")) return;
         const file11 = tileData.files.find((f) => f.level === "11");
