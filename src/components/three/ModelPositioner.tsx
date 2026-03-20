@@ -53,7 +53,7 @@ export default function ModelPositioner({
           referenceY={referenceY}
           marginKm={7}
           opacity={controls?.basemapOpacity ?? 1}
-          yOffset={2.5}
+          yOffset={-0.05}
           layer={(controls?.basemapLayer as IGNLayer) ?? 'PLANIGNV2'}
         />
       )}
