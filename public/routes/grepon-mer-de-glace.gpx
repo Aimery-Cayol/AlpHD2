@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="AlpHD" xmlns="http://www.topografix.com/GPX/1/1">
+  <trk>
+    <name>Aiguille du Grépon — Face Mer de Glace (voie normale)</name>
+    <trkseg>
+      <!-- ===================================================================== -->
+      <!-- PHASE 1 : Pied des échelles Montenvers — entrée sur la Mer de Glace  -->
+      <!-- Tile : 1003_6543 (lat=[45.9191,45.9277], lon=[6.9109,6.9245])        -->
+      <!-- ===================================================================== -->
+      <trkpt lat="45.92680" lon="6.92100"><ele>1718.0</ele></trkpt>
+      <trkpt lat="45.92642" lon="6.92115"><ele>1720.0</ele></trkpt>
+      <trkpt lat="45.92600" lon="6.92128"><ele>1723.0</ele></trkpt>
+      <trkpt lat="45.92554" lon="6.92142"><ele>1727.0</ele></trkpt>
+      <trkpt lat="45.92505" lon="6.92155"><ele>1732.0</ele></trkpt>
+      <trkpt lat="45.92452" lon="6.92168"><ele>1738.0</ele></trkpt>
+      <trkpt lat="45.92396" lon="6.92180"><ele>1745.0</ele></trkpt>
+      <trkpt lat="45.92338" lon="6.92193"><ele>1754.0</ele></trkpt>
+      <trkpt lat="45.92278" lon="6.92206"><ele>1763.0</ele></trkpt>
+      <!-- ===================================================================== -->
+      <!-- PHASE 2 : Traversée Mer de Glace vers le SE                          -->
+      <!-- Tiles : 1003_6543 → 1003_6542 (lat=[45.9102,45.9187])               -->
+      <!-- ===================================================================== -->
+      <trkpt lat="45.92215" lon="6.92220"><ele>1774.0</ele></trkpt>
+      <trkpt lat="45.92150" lon="6.92233"><ele>1786.0</ele></trkpt>
+      <trkpt lat="45.92083" lon="6.92246"><ele>1800.0</ele></trkpt>
+      <trkpt lat="45.92015" lon="6.92260"><ele>1815.0</ele></trkpt>
+      <trkpt lat="45.91945" lon="6.92275"><ele>1832.0</ele></trkpt>
+      <trkpt lat="45.91873" lon="6.92290"><ele>1850.0</ele></trkpt>
+      <trkpt lat="45.91800" lon="6.92308"><ele>1870.0</ele></trkpt>
+      <trkpt lat="45.91726" lon="6.92328"><ele>1892.0</ele></trkpt>
+      <trkpt lat="45.91650" lon="6.92350"><ele>1917.0</ele></trkpt>
+      <trkpt lat="45.91573" lon="6.92374"><ele>1945.0</ele></trkpt>
+      <trkpt lat="45.91495" lon="6.92400"><ele>1975.0</ele></trkpt>
+      <!-- ===================================================================== -->
+      <!-- PHASE 3 : Virage vers les moraines de l'Envers                       -->
+      <!-- Tile : 1004_6542 (lat=[45.9097,45.9182], lon=[6.9232,6.9367])       -->
+      <!-- ===================================================================== -->
+      <trkpt lat="45.91415" lon="6.92432"><ele>2010.0</ele></trkpt>
+      <trkpt lat="45.91335" lon="6.92468"><ele>2048.0</ele></trkpt>
+      <!-- ===================================================================== -->
+      <!-- PHASE 4 : Montée moraines → Refuge de l'Envers des Aiguilles        -->
+      <!-- Tiles : 1004_6542 → 1004_6541 → 1004_6540                          -->
+      <!-- ===================================================================== -->
+      <trkpt lat="45.91252" lon="6.92505"><ele>2090.0</ele></trkpt>
+      <trkpt lat="45.91168" lon="6.92543"><ele>2135.0</ele></trkpt>
+      <trkpt lat="45.91082" lon="6.92578"><ele>2183.0</ele></trkpt>
+      <trkpt lat="45.90994" lon="6.92612"><ele>2234.0</ele></trkpt>
+      <trkpt lat="45.90905" lon="6.92643"><ele>2288.0</ele></trkpt>
+      <trkpt lat="45.90815" lon="6.92670"><ele>2344.0</ele></trkpt>
+      <trkpt lat="45.90724" lon="6.92695"><ele>2402.0</ele></trkpt>
+      <trkpt lat="45.90632" lon="6.92715"><ele>2456.0</ele></trkpt>
+      <trkpt lat="45.90538" lon="6.92730"><ele>2488.0</ele></trkpt>
+      <trkpt lat="45.90444" lon="6.92742"><ele>2508.0</ele></trkpt>
+      <trkpt lat="45.90350" lon="6.92752"><ele>2517.0</ele></trkpt>
+      <trkpt lat="45.90255" lon="6.92758"><ele>2521.0</ele></trkpt>
+      <!-- Refuge de l'Envers des Aiguilles (2523 m) — lat=45.90000°N          -->
+      <trkpt lat="45.90000" lon="6.92760"><ele>2523.0</ele></trkpt>
+      <!-- ===================================================================== -->
+      <!-- PHASE 5 : Glacier de Trélaporte — remontée NNW vers la face         -->
+      <!-- Tiles : 1004_6540 → 1004_6541 → 1003_6541                          -->
+      <!-- ===================================================================== -->
+      <trkpt lat="45.90095" lon="6.92702"><ele>2548.0</ele></trkpt>
+      <trkpt lat="45.90192" lon="6.92640"><ele>2578.0</ele></trkpt>
+      <trkpt lat="45.90290" lon="6.92572"><ele>2612.0</ele></trkpt>
+      <trkpt lat="45.90386" lon="6.92502"><ele>2650.0</ele></trkpt>
+      <trkpt lat="45.90480" lon="6.92430"><ele>2692.0</ele></trkpt>
+      <trkpt lat="45.90568" lon="6.92358"><ele>2736.0</ele></trkpt>
+      <trkpt lat="45.90620" lon="6.92280"><ele>2772.0</ele></trkpt>
+      <!-- Rimaye principale (bergschrund) — transition glace/rocher            -->
+      <trkpt lat="45.90638" lon="6.92210"><ele>2808.0</ele></trkpt>
+      <!-- ===================================================================== -->
+      <!-- PHASE 6 : Face rocheuse — 680 m de D+ sur granit compact            -->
+      <!-- Tile : 1003_6541 (lat=[45.9012,45.9097], lon=[6.9097,6.9232])       -->
+      <!-- ===================================================================== -->
+      <!-- Dalles polies inférieures (III), progression vers le haut-gauche     -->
+      <trkpt lat="45.90618" lon="6.92178"><ele>2870.0</ele></trkpt>
+      <trkpt lat="45.90595" lon="6.92148"><ele>2942.0</ele></trkpt>
+      <!-- Niche des Amis — terrasse de bivouac                                 -->
+      <trkpt lat="45.90570" lon="6.92120"><ele>3022.0</ele></trkpt>
+      <trkpt lat="45.90542" lon="6.92095"><ele>3098.0</ele></trkpt>
+      <!-- Éperon de la République — longueurs IV, rappel 12 m                  -->
+      <trkpt lat="45.90512" lon="6.92072"><ele>3168.0</ele></trkpt>
+      <trkpt lat="45.90480" lon="6.92052"><ele>3240.0</ele></trkpt>
+      <!-- Pilier Balfour — dièdres et fissures (IV+)                           -->
+      <trkpt lat="45.90448" lon="6.92034"><ele>3310.0</ele></trkpt>
+      <trkpt lat="45.90415" lon="6.92018"><ele>3372.0</ele></trkpt>
+      <!-- Brèche Balfour (~3420 m) — dépôt des sacs, terrasse exposée         -->
+      <trkpt lat="45.90382" lon="6.92004"><ele>3420.0</ele></trkpt>
+      <!-- Fissure Knubel (5c) — dièdre vertical 20 m, passage-clé             -->
+      <trkpt lat="45.90330" lon="6.91978"><ele>3458.0</ele></trkpt>
+      <!-- Sommet de l'Aiguille du Grépon (3482 m) — 45°54'09"N 6°55'09"E     -->
+      <trkpt lat="45.90250" lon="6.91920"><ele>3482.0</ele></trkpt>
+    </trkseg>
+  </trk>
+</gpx>

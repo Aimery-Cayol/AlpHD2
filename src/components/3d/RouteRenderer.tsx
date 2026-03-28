@@ -35,9 +35,10 @@ interface RouteRendererProps {
 /** Offset vertical (km) au-dessus de la surface du terrain */
 const VERTICAL_OFFSET_KM = 0.003; // 3 m
 /** Rayon du tube (km) */
-const TUBE_RADIUS_KM = 0.002; // 2 m
-/** Rayon des sphères de départ / arrivée */
-const SPHERE_RADIUS_KM = 0.025; // 25 m
+const TUBE_RADIUS_KM = 0.0015; // 1.5 m
+/** Marqueurs départ / arrivée : cône hexagonal fin */
+const MARKER_RADIUS_KM = 0.005; // base 5 m
+const MARKER_HEIGHT_KM = 0.028; // hauteur 28 m
 
 /** Raycaster réutilisé (allocation unique partagée entre toutes les voies) */
 const _raycaster = new THREE.Raycaster();
@@ -141,17 +142,13 @@ function SingleRouteRenderer({ route, refX, refY }: SingleRouteRendererProps) {
     const firstPt = scenePoints[0];
     const lastPt = scenePoints[scenePoints.length - 1];
 
-    // Sphères légèrement au-dessus du tube pour visibilité
-    const sphereOffset = VERTICAL_OFFSET_KM * 3;
+    // Cônes positionnés base au sol (centre à MARKER_HEIGHT_KM/2 au-dessus)
+    const coneOffset = MARKER_HEIGHT_KM / 2 + VERTICAL_OFFSET_KM;
     return {
       tube: tubeGeo,
       color: col,
-      startPt: new THREE.Vector3(
-        firstPt.x,
-        firstPt.y + sphereOffset,
-        firstPt.z
-      ),
-      endPt: new THREE.Vector3(lastPt.x, lastPt.y + sphereOffset, lastPt.z),
+      startPt: new THREE.Vector3(firstPt.x, firstPt.y + coneOffset, firstPt.z),
+      endPt: new THREE.Vector3(lastPt.x, lastPt.y + coneOffset, lastPt.z),
       midPoint: mid,
     };
   }, [route, gpsPoints, refX, refY, collidersRef, version]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -186,19 +183,19 @@ function SingleRouteRenderer({ route, refX, refY }: SingleRouteRendererProps) {
         />
       </mesh>
 
-      {/* Marqueur départ — sphère verte */}
+      {/* Marqueur départ — cône hexagonal vert */}
       {startPt && (
         <mesh position={startPt}>
-          <sphereGeometry args={[SPHERE_RADIUS_KM, 8, 8]} />
-          <meshBasicMaterial color="#22c55e" depthWrite={false} />
+          <coneGeometry args={[MARKER_RADIUS_KM, MARKER_HEIGHT_KM, 6]} />
+          <meshBasicMaterial color="#4ade80" depthWrite={false} />
         </mesh>
       )}
 
-      {/* Marqueur arrivée — sphère rouge */}
+      {/* Marqueur arrivée — cône hexagonal couleur voie */}
       {endPt && (
         <mesh position={endPt}>
-          <sphereGeometry args={[SPHERE_RADIUS_KM, 8, 8]} />
-          <meshBasicMaterial color="#ef4444" depthWrite={false} />
+          <coneGeometry args={[MARKER_RADIUS_KM, MARKER_HEIGHT_KM, 6]} />
+          <meshBasicMaterial color={color} depthWrite={false} />
         </mesh>
       )}
 
