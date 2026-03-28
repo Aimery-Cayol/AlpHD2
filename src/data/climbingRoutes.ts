@@ -428,6 +428,35 @@ export const CLIMBING_ROUTES: Record<string, ClimbingRoute[]> = {
   ],
 
   // ==========================================================================
+  // AIGUILLE DU GRÉPON — 45.9025°N 6.9192°E 3482m
+  // Tuiles : 1003_6541, 1003_6542, 1003_6543, 1004_6540, 1004_6541
+  // ==========================================================================
+  grepon: [
+    {
+      id: "grepon-mer-de-glace",
+      name: "Grépon - Face Mer de Glace",
+      activity: "alpinisme",
+      grade: "TD",
+      gradeText: "rocher 5c max, 800m D+, engagement haute montagne",
+      description:
+        "Grande classique du massif du Mont-Blanc, la voie Mer de Glace du Grépon remonte la face est depuis le Refuge de l'Envers des Aiguilles (2523m). Approche par Montenvers et la Mer de Glace, puis 800m d'escalade sur granit d'exception. La Fissure Knubel (5c) est le passage-clé menant à l'arête sommitale. Longtemps considérée par Mummery comme la montagne la plus difficile du monde.",
+      c2cUrl: "https://www.camptocamp.org/routes/53905/fr/grepon-mer-de-glace",
+      c2cId: "53905",
+      track: [
+        { lon: 6.921, lat: 45.9265, altM: 1720 }, // Mer de Glace - pied des échelles Montenvers
+        { lon: 6.9225, lat: 45.918, altM: 1900 }, // Progression sur glacier
+        { lon: 6.923, lat: 45.912, altM: 2050 }, // Rive gauche - vers l'Envers
+        { lon: 6.924, lat: 45.907, altM: 2200 }, // Montée moraines
+        { lon: 6.9276, lat: 45.9, altM: 2523 }, // Refuge de l'Envers des Aiguilles
+        { lon: 6.9255, lat: 45.905, altM: 2700 }, // Glacier de Trélaporte
+        { lon: 6.9215, lat: 45.9035, altM: 2800 }, // Rimaye - pied de la face
+        { lon: 6.92, lat: 45.9028, altM: 3150 }, // Mi-face (longueurs III-IV)
+        { lon: 6.9192, lat: 45.9022, altM: 3420 }, // Brèche Balfour
+        { lon: 6.9192, lat: 45.9025, altM: 3482 }, // Sommet Aiguille du Grépon
+      ],
+    },
+  ],
+
   // AIGUILLES DE CHAMONIX — secteur 3400-3842m
   // Tuiles : 1002_6541, 1003_6541, 1003_6542, 1003_6543, 1004_6542
   // ==========================================================================
