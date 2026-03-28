@@ -55,6 +55,8 @@ export async function GET(req: NextRequest) {
 
   // ------------------------------------------------------------------
   // 2. API Camptocamp — avec c2cId numérique
+  //    a) geom_detail de la route
+  //    b) fallback : meilleures sorties (outings) associées à la route
   // ------------------------------------------------------------------
   if (c2cId && /^\d+$/.test(c2cId)) {
     try {
@@ -81,6 +83,60 @@ export async function GET(req: NextRequest) {
 
           const points = downsamplePoints(raw, MAX_POINTS);
           if (points.length >= 2) {
+            return NextResponse.json(points, {
+              headers: { "Cache-Control": "public, max-age=3600" },
+            });
+          }
+        }
+
+        // Pas de geom_detail sur la route → chercher dans les sorties associées
+        const outingDocs: { document_id: number }[] =
+          data?.associations?.recent_outings?.documents ?? [];
+
+        if (outingDocs.length > 0) {
+          // Récupère les sorties en parallèle (max 20)
+          const candidates = outingDocs.slice(0, 20);
+          const outingResults = await Promise.allSettled(
+            candidates.map((o) =>
+              fetch(`https://api.camptocamp.org/outings/${o.document_id}`, {
+                headers: { Accept: "application/json" },
+                next: { revalidate: 3600 },
+              }).then((r) => r.json())
+            )
+          );
+
+          // Garde la meilleure sortie : priorité aux traces avec altitudes,
+          // puis au nombre de points. Score = nbPts * 10 + (hasAlt ? 1000 : 0)
+          let bestPoints: { lon: number; lat: number; altM: number }[] = [];
+          let bestScore = -1;
+          for (const result of outingResults) {
+            if (result.status !== "fulfilled") continue;
+            const outing = result.value;
+            const gdStr: string | null = outing?.geometry?.geom_detail ?? null;
+            if (!gdStr) continue;
+            try {
+              const gd = JSON.parse(gdStr) as {
+                type: string;
+                coordinates: number[][];
+              };
+              const coords = gd.coordinates;
+              if (coords.length < 2) continue;
+              const hasAlt = coords[0].length >= 3 && coords[0][2] !== 0;
+              const score = coords.length * 10 + (hasAlt ? 1000 : 0);
+              if (score > bestScore) {
+                bestScore = score;
+                bestPoints = coords.map(([x, y, alt]) => {
+                  const [lon, lat] = proj4("EPSG:3857", "EPSG:4326", [x, y]);
+                  return { lon, lat, altM: alt ?? 0 };
+                });
+              }
+            } catch {
+              // ignore
+            }
+          }
+
+          if (bestPoints.length >= 2) {
+            const points = downsamplePoints(bestPoints, MAX_POINTS);
             return NextResponse.json(points, {
               headers: { "Cache-Control": "public, max-age=3600" },
             });
