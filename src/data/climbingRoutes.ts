@@ -442,17 +442,23 @@ export const CLIMBING_ROUTES: Record<string, ClimbingRoute[]> = {
         "Grande classique du massif du Mont-Blanc, la voie Mer de Glace du Grépon remonte la face est depuis le Refuge de l'Envers des Aiguilles (2523m). Approche par Montenvers et la Mer de Glace, puis 800m d'escalade sur granit d'exception. La Fissure Knubel (5c) est le passage-clé menant à l'arête sommitale. Longtemps considérée par Mummery comme la montagne la plus difficile du monde.",
       c2cUrl: "https://www.camptocamp.org/routes/53905/fr/grepon-mer-de-glace",
       c2cId: "53905",
+      // Fallback : points-clés vérifiés via C2C API (GPX local public/routes/grepon-mer-de-glace.gpx prioritaire)
       track: [
-        { lon: 6.921, lat: 45.9265, altM: 1720 }, // Mer de Glace - pied des échelles Montenvers
-        { lon: 6.9225, lat: 45.918, altM: 1900 }, // Progression sur glacier
-        { lon: 6.923, lat: 45.912, altM: 2050 }, // Rive gauche - vers l'Envers
-        { lon: 6.924, lat: 45.907, altM: 2200 }, // Montée moraines
-        { lon: 6.9276, lat: 45.9, altM: 2523 }, // Refuge de l'Envers des Aiguilles
-        { lon: 6.9255, lat: 45.905, altM: 2700 }, // Glacier de Trélaporte
-        { lon: 6.9215, lat: 45.9035, altM: 2800 }, // Rimaye - pied de la face
-        { lon: 6.92, lat: 45.9028, altM: 3150 }, // Mi-face (longueurs III-IV)
-        { lon: 6.9192, lat: 45.9022, altM: 3420 }, // Brèche Balfour
-        { lon: 6.9192, lat: 45.9025, altM: 3482 }, // Sommet Aiguille du Grépon
+        { lon: 6.9175, lat: 45.9317, altM: 1913 }, // Montenvers (C2C exact)
+        { lon: 6.9177, lat: 45.9292, altM: 1490 }, // Pied des échelles — glacier
+        { lon: 6.9202, lat: 45.9212, altM: 1635 }, // Mer de Glace — traverse vers SE
+        { lon: 6.9231, lat: 45.9123, altM: 1750 }, // Glacier SE — vers rive Envers
+        { lon: 6.9252, lat: 45.906, altM: 1820 }, // Pied moraines Envers
+        { lon: 6.9275, lat: 45.9000, altM: 2493 }, // Refuge de l'Envers des Aiguilles (C2C exact)
+        { lon: 6.9245, lat: 45.9046, altM: 2822 }, // Tour Rouge (C2C exact)
+        { lon: 6.9218, lat: 45.9056, altM: 2830 }, // Contournement Tour Rouge N → cirque
+        { lon: 6.9215, lat: 45.9048, altM: 2790 }, // Rimaye — bergschrund
+        { lon: 6.9209, lat: 45.9068, altM: 3010 }, // Face rocheuse — section NNW
+        { lon: 6.9200, lat: 45.9096, altM: 3275 }, // Sommet section NNW — traverse gauche
+        { lon: 6.9198, lat: 45.9062, altM: 3340 }, // Rappel 12 m — pied éperon E
+        { lon: 6.9194, lat: 45.9040, altM: 3393 }, // Terrasse des Amis
+        { lon: 6.9193, lat: 45.9029, altM: 3422 }, // Brèche Balfour
+        { lon: 6.9192, lat: 45.9025, altM: 3482 }, // Sommet Aiguille du Grépon (C2C exact)
       ],
     },
   ],
