@@ -2,25 +2,9 @@
 <gpx version="1.1" creator="AlpHD" xmlns="http://www.topografix.com/GPX/1/1">
   <trk>
     <!-- Source: C2C outing 562372 "Grépon : Mer de Glace" — trace GPS réelle enregistrée -->
+    <!-- 60 points bruts EPSG:3857 convertis WGS84, altitudes GPS réelles -->
     <name>Aiguille du Grépon — Face Mer de Glace</name>
     <trkseg>
-      <!-- Approche : Montenvers → Mer de Glace -->
-      <trkpt lat="45.931700" lon="6.917500"><ele>1913.0</ele></trkpt>
-      <trkpt lat="45.929200" lon="6.917700"><ele>1490.0</ele></trkpt>
-      <trkpt lat="45.926000" lon="6.918400"><ele>1490.0</ele></trkpt>
-      <trkpt lat="45.923500" lon="6.919300"><ele>1510.0</ele></trkpt>
-      <trkpt lat="45.920800" lon="6.920200"><ele>1530.0</ele></trkpt>
-      <trkpt lat="45.918000" lon="6.921100"><ele>1560.0</ele></trkpt>
-      <trkpt lat="45.915200" lon="6.922000"><ele>1600.0</ele></trkpt>
-      <trkpt lat="45.912500" lon="6.922900"><ele>1650.0</ele></trkpt>
-      <trkpt lat="45.910000" lon="6.923800"><ele>1720.0</ele></trkpt>
-      <trkpt lat="45.907500" lon="6.924700"><ele>1800.0</ele></trkpt>
-      <trkpt lat="45.905500" lon="6.925400"><ele>1880.0</ele></trkpt>
-      <trkpt lat="45.903500" lon="6.926000"><ele>1980.0</ele></trkpt>
-      <trkpt lat="45.902000" lon="6.926500"><ele>2100.0</ele></trkpt>
-      <trkpt lat="45.901000" lon="6.926900"><ele>2280.0</ele></trkpt>
-
-      <!-- Voie : trace GPS réelle (C2C outing 562372) -->
       <trkpt lat="45.9000200" lon="6.9264500"><ele>2430.0</ele></trkpt>
       <trkpt lat="45.9005400" lon="6.9268600"><ele>2452.0</ele></trkpt>
       <trkpt lat="45.9006400" lon="6.9267700"><ele>2452.0</ele></trkpt>

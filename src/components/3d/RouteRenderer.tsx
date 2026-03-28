@@ -47,12 +47,15 @@ const _rayDown = new THREE.Vector3(0, -1, 0);
 
 /**
  * Snap d'un point (sx, sz) sur le terrain via raycast vertical.
- * Retourne Y + offset ou null si hors des dalles chargées.
+ * Si le hit est plus de 300 m sous l'altitude GPS (face quasi-verticale ou
+ * paroi en surplomb), on ignore le snap et retourne null pour forcer le
+ * fallback sur l'altitude GPS réelle.
  */
 function snapToTerrain(
   sx: number,
   sz: number,
-  colliders: THREE.Mesh[]
+  colliders: THREE.Mesh[],
+  gpsAltKm?: number
 ): number | null {
   if (colliders.length === 0) return null;
   _rayOrigin.set(sx, 20, sz);
@@ -60,7 +63,11 @@ function snapToTerrain(
   _raycaster.far = 30;
   const hits = _raycaster.intersectObjects(colliders, false);
   if (hits.length === 0) return null;
-  return hits[0].point.y + VERTICAL_OFFSET_KM;
+  const hitY = hits[0].point.y;
+  // Ignore le snap si le terrain est plus de 300 m sous l'altitude GPS
+  // (cas d'une face rocheuse quasi-verticale : le raycast hit le glacier en dessous)
+  if (gpsAltKm !== undefined && gpsAltKm - hitY > 0.3) return null;
+  return hitY + VERTICAL_OFFSET_KM;
 }
 
 // =============================================================================
@@ -110,7 +117,7 @@ function SingleRouteRenderer({ route, refX, refY }: SingleRouteRendererProps) {
       const { lx, ly } = wgs84ToLambert93Km(p.lon, p.lat);
       const sx = lx - refX;
       const sz = -(ly - refY);
-      const terrainY = snapToTerrain(sx, sz, colliders) ?? (p.altM / 1000);
+      const terrainY = snapToTerrain(sx, sz, colliders, p.altM / 1000) ?? (p.altM / 1000 + VERTICAL_OFFSET_KM);
       scenePoints.push(new THREE.Vector3(sx, terrainY, sz));
     }
 
