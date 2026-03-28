@@ -3,109 +3,99 @@
   <trk>
     <name>Aiguille du Grépon — Face Mer de Glace (voie normale)</name>
     <trkseg>
-      <!-- ============================================================ -->
-      <!-- PHASE 1 : Montenvers → Glacier (descente échelles fixes)    -->
-      <!-- Montenvers C2C: lon=6.917500 lat=45.931667 alt=1913m        -->
-      <!-- ============================================================ -->
-      <trkpt lat="45.931667" lon="6.917500"><ele>1913.0</ele></trkpt>
-      <trkpt lat="45.930800" lon="6.917580"><ele>1760.0</ele></trkpt>
-      <trkpt lat="45.930100" lon="6.917650"><ele>1620.0</ele></trkpt>
+      <!-- ==================================================================== -->
+      <!-- PHASE 1 : Montenvers → Mer de Glace (descente échelles fixes)       -->
+      <!-- Montenvers C2C wp/104374 : lat=45.9317 lon=6.9175 alt=1913m        -->
+      <!-- ==================================================================== -->
+      <trkpt lat="45.931700" lon="6.917500"><ele>1913.0</ele></trkpt>
+      <trkpt lat="45.930400" lon="6.917600"><ele>1800.0</ele></trkpt>
+      <trkpt lat="45.929200" lon="6.917700"><ele>1650.0</ele></trkpt>
       <!-- Pied des échelles — surface de la Mer de Glace -->
-      <trkpt lat="45.929200" lon="6.917700"><ele>1490.0</ele></trkpt>
+      <trkpt lat="45.928100" lon="6.917800"><ele>1490.0</ele></trkpt>
 
-      <!-- ============================================================ -->
-      <!-- PHASE 2 : Traversée Mer de Glace vers l'Envers (tile 1003_6543 → 1003_6542) -->
-      <!-- Remontée du glacier vers le SE (sens amont) -->
-      <!-- ============================================================ -->
-      <trkpt lat="45.927400" lon="6.918200"><ele>1530.0</ele></trkpt>
-      <trkpt lat="45.925600" lon="6.918800"><ele>1565.0</ele></trkpt>
-      <trkpt lat="45.923500" lon="6.919500"><ele>1600.0</ele></trkpt>
-      <trkpt lat="45.921200" lon="6.920200"><ele>1635.0</ele></trkpt>
-      <trkpt lat="45.919000" lon="6.920900"><ele>1665.0</ele></trkpt>
-      <trkpt lat="45.916800" lon="6.921600"><ele>1695.0</ele></trkpt>
-      <trkpt lat="45.914500" lon="6.922400"><ele>1725.0</ele></trkpt>
-      <trkpt lat="45.912300" lon="6.923100"><ele>1750.0</ele></trkpt>
-      <!-- Virage rive droite vers l'Envers (tile 1004_6542) -->
-      <trkpt lat="45.910000" lon="6.923900"><ele>1775.0</ele></trkpt>
-      <trkpt lat="45.907700" lon="6.924700"><ele>1800.0</ele></trkpt>
-      <trkpt lat="45.906000" lon="6.925200"><ele>1820.0</ele></trkpt>
+      <!-- ==================================================================== -->
+      <!-- PHASE 2 : Traversée Mer de Glace vers le SE (remonter vers amont)  -->
+      <!-- ==================================================================== -->
+      <trkpt lat="45.926500" lon="6.918500"><ele>1510.0</ele></trkpt>
+      <trkpt lat="45.924500" lon="6.919400"><ele>1530.0</ele></trkpt>
+      <trkpt lat="45.922200" lon="6.920200"><ele>1555.0</ele></trkpt>
+      <trkpt lat="45.919800" lon="6.921100"><ele>1580.0</ele></trkpt>
+      <trkpt lat="45.917300" lon="6.921900"><ele>1605.0</ele></trkpt>
+      <trkpt lat="45.914700" lon="6.922700"><ele>1630.0</ele></trkpt>
+      <trkpt lat="45.912100" lon="6.923500"><ele>1655.0</ele></trkpt>
+      <!-- Pied des moraines rive droite (côté Envers) -->
+      <trkpt lat="45.909400" lon="6.924200"><ele>1680.0</ele></trkpt>
+      <trkpt lat="45.907200" lon="6.924800"><ele>1720.0</ele></trkpt>
+      <trkpt lat="45.905600" lon="6.925200"><ele>1760.0</ele></trkpt>
 
-      <!-- ============================================================ -->
-      <!-- PHASE 3 : Moraines Envers des Aiguilles → Refuge (tiles 1004_6541 → 1004_6540) -->
-      <!-- ============================================================ -->
-      <trkpt lat="45.904200" lon="6.925800"><ele>1920.0</ele></trkpt>
-      <trkpt lat="45.903000" lon="6.926200"><ele>2040.0</ele></trkpt>
-      <trkpt lat="45.902000" lon="6.926600"><ele>2160.0</ele></trkpt>
-      <trkpt lat="45.901200" lon="6.926900"><ele>2280.0</ele></trkpt>
-      <trkpt lat="45.900600" lon="6.927100"><ele>2390.0</ele></trkpt>
-      <!-- Refuge de l'Envers des Aiguilles — C2C exact: lon=6.927489 lat=45.899963 alt=2493m -->
+      <!-- ==================================================================== -->
+      <!-- PHASE 3 : Montée moraines Envers → Refuge de l'Envers des Aiguilles -->
+      <!-- C2C wp/104077 : lat=45.8999 lon=6.9275 alt=2493m                   -->
+      <!-- ==================================================================== -->
+      <trkpt lat="45.903800" lon="6.925700"><ele>1850.0</ele></trkpt>
+      <trkpt lat="45.902400" lon="6.926200"><ele>1980.0</ele></trkpt>
+      <trkpt lat="45.901200" lon="6.926700"><ele>2150.0</ele></trkpt>
+      <trkpt lat="45.900400" lon="6.927100"><ele>2320.0</ele></trkpt>
+      <!-- Refuge de l'Envers des Aiguilles — ancre C2C exacte -->
       <trkpt lat="45.899963" lon="6.927489"><ele>2493.0</ele></trkpt>
 
-      <!-- ============================================================ -->
-      <!-- PHASE 4 : Glacier de Trélaporte — NNW vers la Tour Rouge    -->
-      <!-- Tour Rouge C2C: lon=6.924466 lat=45.904601 alt=2822m        -->
-      <!-- ============================================================ -->
-      <trkpt lat="45.900600" lon="6.926900"><ele>2530.0</ele></trkpt>
-      <trkpt lat="45.901600" lon="6.926200"><ele>2580.0</ele></trkpt>
-      <trkpt lat="45.902600" lon="6.925500"><ele>2635.0</ele></trkpt>
-      <trkpt lat="45.903500" lon="6.924900"><ele>2695.0</ele></trkpt>
-      <!-- Tour Rouge (C2C exact) -->
+      <!-- ==================================================================== -->
+      <!-- PHASE 4 : Glacier de Trélaporte — NW depuis le refuge               -->
+      <!-- Tour Rouge C2C wp/1310495 : lat=45.9046 lon=6.9245 alt=2822m       -->
+      <!-- ==================================================================== -->
+      <trkpt lat="45.900700" lon="6.926800"><ele>2540.0</ele></trkpt>
+      <trkpt lat="45.901700" lon="6.926000"><ele>2590.0</ele></trkpt>
+      <trkpt lat="45.902700" lon="6.925100"><ele>2645.0</ele></trkpt>
+      <trkpt lat="45.903700" lon="6.924200"><ele>2705.0</ele></trkpt>
+      <!-- Tour Rouge — ancre C2C exacte -->
       <trkpt lat="45.904601" lon="6.924466"><ele>2822.0</ele></trkpt>
+      <!-- Passage au N de la Tour Rouge → cirque le plus à droite du glacier  -->
+      <trkpt lat="45.905500" lon="6.923300"><ele>2835.0</ele></trkpt>
+      <trkpt lat="45.906100" lon="6.922200"><ele>2830.0</ele></trkpt>
+      <trkpt lat="45.905800" lon="6.921000"><ele>2820.0</ele></trkpt>
 
-      <!-- ============================================================ -->
-      <!-- PHASE 5 : Contournement Tour Rouge → cirque Trélaporte      -->
-      <!-- (tile 1003_6541 → 1004_6541 boundary lon≈6.923)            -->
-      <!-- ============================================================ -->
-      <!-- Passer au N de la Tour Rouge, plonger dans le cirque à droite du glacier -->
-      <trkpt lat="45.905400" lon="6.923600"><ele>2835.0</ele></trkpt>
-      <trkpt lat="45.905800" lon="6.922600"><ele>2820.0</ele></trkpt>
-      <trkpt lat="45.905600" lon="6.921800"><ele>2800.0</ele></trkpt>
-      <!-- Rimaye principale — bergschrund traversant le bas du cirque -->
-      <trkpt lat="45.904800" lon="6.921500"><ele>2785.0</ele></trkpt>
-      <!-- Passage rimaye (côté droit, rampe rocheuse) -->
-      <trkpt lat="45.904300" lon="6.921300"><ele>2810.0</ele></trkpt>
-      <!-- Pied de la voie rocheuse — grande terrasse finale (fin de saison) -->
-      <trkpt lat="45.903900" lon="6.921100"><ele>2840.0</ele></trkpt>
+      <!-- ==================================================================== -->
+      <!-- PHASE 5 : Traversée du cirque → passage des deux rimayes            -->
+      <!-- "passer une grande crevasse... le plus à droite possible"           -->
+      <!-- ==================================================================== -->
+      <trkpt lat="45.905000" lon="6.920400"><ele>2800.0</ele></trkpt>
+      <trkpt lat="45.904200" lon="6.920000"><ele>2810.0</ele></trkpt>
+      <!-- Rampe rocheuse entre les deux rimayes -->
+      <trkpt lat="45.903500" lon="6.919800"><ele>2855.0</ele></trkpt>
+      <!-- Grande terrasse finale — bas de la voie rocheuse (~2950m)           -->
+      <trkpt lat="45.903000" lon="6.919600"><ele>2950.0</ele></trkpt>
 
-      <!-- ============================================================ -->
-      <!-- PHASE 6 : FACE ROCHEUSE — 800 m D+ sur granit              -->
-      <!-- tile 1003_6541 (lat=[45.9012,45.9097], lon=[6.9097,6.9232]) -->
-      <!-- ============================================================ -->
-
-      <!-- Section basse : cheminées et vires, ascendance vers 10h/NNW (III-IV) -->
-      <trkpt lat="45.904800" lon="6.920900"><ele>2920.0</ele></trkpt>
-      <trkpt lat="45.905800" lon="6.920600"><ele>3010.0</ele></trkpt>
-      <trkpt lat="45.906800" lon="6.920400"><ele>3090.0</ele></trkpt>
-      <!-- tile 1003_6542 (lat=[45.9102,45.9187], lon=[6.9103,6.9238]) -->
-      <trkpt lat="45.907800" lon="6.920200"><ele>3160.0</ele></trkpt>
-      <!-- Passage du bloc coincé → gradins gris, bifurcation République -->
-      <trkpt lat="45.908800" lon="6.920100"><ele>3225.0</ele></trkpt>
-      <trkpt lat="45.909600" lon="6.920000"><ele>3275.0</ele></trkpt>
-
-      <!-- Grande traversée OBLIQUE À GAUCHE (vers le S) — vire horizontale 50 m -->
-      <!-- Retour en tile 1003_6541 -->
-      <trkpt lat="45.908600" lon="6.919900"><ele>3300.0</ele></trkpt>
-      <trkpt lat="45.907400" lon="6.919800"><ele>3335.0</ele></trkpt>
-      <trkpt lat="45.906200" lon="6.919800"><ele>3362.0</ele></trkpt>
-
-      <!-- Rappel 12 m dans couloir profond → éperon E (ligne directrice finale) -->
-      <trkpt lat="45.905200" lon="6.919700"><ele>3340.0</ele></trkpt>
-
-      <!-- Éperon E — Terrasse des Amis (~4×4 m, bivouac) -->
-      <trkpt lat="45.904600" lon="6.919600"><ele>3365.0</ele></trkpt>
-      <trkpt lat="45.904000" lon="6.919500"><ele>3393.0</ele></trkpt>
-
-      <!-- Dülfer + traversée gauche vers Brèche Balfour -->
-      <trkpt lat="45.903400" lon="6.919400"><ele>3416.0</ele></trkpt>
-      <!-- Brèche Balfour — dépôt sacs, col exposé -->
-      <trkpt lat="45.902900" lon="6.919300"><ele>3422.0</ele></trkpt>
-
-      <!-- Fissure Knubel (5c) — dièdre vertical 20 m, passage-clé -->
-      <trkpt lat="45.902700" lon="6.919250"><ele>3455.0</ele></trkpt>
-      <trkpt lat="45.902600" lon="6.919200"><ele>3474.0</ele></trkpt>
-
-      <!-- Sommet Aiguille du Grépon — C2C exact: lon=6.919167 lat=45.902500 alt=3482m -->
-      <trkpt lat="45.902500" lon="6.919167"><ele>3482.0</ele></trkpt>
+      <!-- ==================================================================== -->
+      <!-- PHASE 6 : VOIE ROCHEUSE — 532 m de dénivelé sur granit             -->
+      <!-- Face E quasi-verticale : lon reste 6.918–6.920, lat varie ~300m    -->
+      <!-- C2C desc. : "direction 10h/11h" = NNW les 200 premiers mètres      -->
+      <!-- ==================================================================== -->
+      <!-- Cheminées inférieures III-IV, progression NNW -->
+      <trkpt lat="45.903400" lon="6.919500"><ele>3010.0</ele></trkpt>
+      <trkpt lat="45.903800" lon="6.919400"><ele>3075.0</ele></trkpt>
+      <trkpt lat="45.904200" lon="6.919300"><ele>3140.0</ele></trkpt>
+      <trkpt lat="45.904600" lon="6.919200"><ele>3200.0</ele></trkpt>
+      <!-- Gradins gris — bifurcation voie Grépon / République               -->
+      <trkpt lat="45.904900" lon="6.919150"><ele>3250.0</ele></trkpt>
+      <!-- Grande traversée oblique à GAUCHE (50 m vers S) -->
+      <trkpt lat="45.904500" lon="6.919100"><ele>3275.0</ele></trkpt>
+      <trkpt lat="45.904000" lon="6.919050"><ele>3295.0</ele></trkpt>
+      <trkpt lat="45.903500" lon="6.919000"><ele>3315.0</ele></trkpt>
+      <!-- Rappel 12 m dans couloir profond → prise de l'éperon E             -->
+      <trkpt lat="45.903200" lon="6.918950"><ele>3300.0</ele></trkpt>
+      <!-- Éperon E — ligne directrice finale vers la brèche                  -->
+      <trkpt lat="45.903100" lon="6.919000"><ele>3340.0</ele></trkpt>
+      <!-- Terrasse des Amis (4×4 m, bivouac possible)                        -->
+      <trkpt lat="45.903000" lon="6.919050"><ele>3365.0</ele></trkpt>
+      <trkpt lat="45.902900" lon="6.919100"><ele>3393.0</ele></trkpt>
+      <!-- Dülfer + traversée gauche vers Brèche Balfour                      -->
+      <trkpt lat="45.902800" lon="6.919150"><ele>3416.0</ele></trkpt>
+      <!-- Brèche Balfour — col exposé, dépôt des sacs                        -->
+      <trkpt lat="45.902700" lon="6.919200"><ele>3422.0</ele></trkpt>
+      <!-- Fissure Knubel (5c) — dièdre 20 m, passage-clé                     -->
+      <trkpt lat="45.902650" lon="6.919200"><ele>3458.0</ele></trkpt>
+      <!-- Sommet Aiguille du Grépon — C2C+PeakVisor : lat=45.9030 lon=6.9192 -->
+      <trkpt lat="45.902976" lon="6.919192"><ele>3482.0</ele></trkpt>
     </trkseg>
   </trk>
 </gpx>
