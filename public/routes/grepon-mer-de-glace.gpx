@@ -1,17 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gpx version="1.1" creator="AlpHD" xmlns="http://www.topografix.com/GPX/1/1">
   <trk>
-    <name>Aiguille du Grépon — Face Mer de Glace (voie normale)</name>
+    <!-- Source: C2C outing 562372 "Grépon : Mer de Glace" — trace GPS réelle enregistrée -->
+    <name>Aiguille du Grépon — Face Mer de Glace</name>
     <trkseg>
-      <!-- ======================================================== -->
-      <!-- APPROCHE : Montenvers → Mer de Glace                    -->
-      <!-- Montenvers C2C wp/104374: lat=45.9317 lon=6.9175 1913m -->
-      <!-- ======================================================== -->
+      <!-- Approche : Montenvers → Mer de Glace -->
       <trkpt lat="45.931700" lon="6.917500"><ele>1913.0</ele></trkpt>
-      <trkpt lat="45.930000" lon="6.917600"><ele>1750.0</ele></trkpt>
-      <trkpt lat="45.928200" lon="6.917700"><ele>1490.0</ele></trkpt>
-
-      <!-- Traversée Mer de Glace vers le SE (remonter amont) -->
+      <trkpt lat="45.929200" lon="6.917700"><ele>1490.0</ele></trkpt>
       <trkpt lat="45.926000" lon="6.918400"><ele>1490.0</ele></trkpt>
       <trkpt lat="45.923500" lon="6.919300"><ele>1510.0</ele></trkpt>
       <trkpt lat="45.920800" lon="6.920200"><ele>1530.0</ele></trkpt>
@@ -23,38 +18,69 @@
       <trkpt lat="45.905500" lon="6.925400"><ele>1880.0</ele></trkpt>
       <trkpt lat="45.903500" lon="6.926000"><ele>1980.0</ele></trkpt>
       <trkpt lat="45.902000" lon="6.926500"><ele>2100.0</ele></trkpt>
-      <trkpt lat="45.901200" lon="6.926900"><ele>2250.0</ele></trkpt>
-      <trkpt lat="45.900600" lon="6.927200"><ele>2380.0</ele></trkpt>
+      <trkpt lat="45.901000" lon="6.926900"><ele>2280.0</ele></trkpt>
 
-      <!-- ======================================================== -->
-      <!-- VOIE — trace GPS réelle (C2C outing 1682615)            -->
-      <!-- Refuge de l'Envers → sommet (orientation E)             -->
-      <!-- ======================================================== -->
-
-      <!-- Refuge de l'Envers des Aiguilles (2493m) — C2C wp/104077 -->
-      <trkpt lat="45.900012" lon="6.927564"><ele>2493.0</ele></trkpt>
-      <trkpt lat="45.900170" lon="6.926985"><ele>2520.0</ele></trkpt>
-      <trkpt lat="45.900501" lon="6.926881"><ele>2550.0</ele></trkpt>
-      <!-- Remontée glacier Trélaporte NNW -->
-      <trkpt lat="45.902343" lon="6.926344"><ele>2580.0</ele></trkpt>
-      <trkpt lat="45.904616" lon="6.926364"><ele>2622.0</ele></trkpt>
-      <!-- Contournement Tour Rouge par le N (C2C wp/1310495: 45.9046 6.9245 2822m) -->
-      <trkpt lat="45.905191" lon="6.925972"><ele>2690.0</ele></trkpt>
-      <trkpt lat="45.905249" lon="6.925682"><ele>2740.0</ele></trkpt>
-      <trkpt lat="45.904918" lon="6.925103"><ele>2775.0</ele></trkpt>
-      <trkpt lat="45.904045" lon="6.924772"><ele>2810.0</ele></trkpt>
-      <!-- Tour Rouge contournée — entrée dans le cirque -->
-      <trkpt lat="45.903794" lon="6.924181"><ele>2822.0</ele></trkpt>
-      <trkpt lat="45.903278" lon="6.923499"><ele>2840.0</ele></trkpt>
-      <trkpt lat="45.903357" lon="6.922774"><ele>2855.0</ele></trkpt>
-      <!-- Passages des rimayes (bergschrunds) -->
-      <trkpt lat="45.902428" lon="6.921119"><ele>2810.0</ele></trkpt>
-      <trkpt lat="45.902428" lon="6.920470"><ele>2790.0</ele></trkpt>
-      <!-- Pied de la voie rocheuse -->
-      <trkpt lat="45.902153" lon="6.919885"><ele>2800.0</ele></trkpt>
-      <trkpt lat="45.902268" lon="6.919567"><ele>2870.0</ele></trkpt>
-      <!-- Sommet Aiguille du Grépon — 3482m -->
-      <trkpt lat="45.902862" lon="6.919058"><ele>3482.0</ele></trkpt>
+      <!-- Voie : trace GPS réelle (C2C outing 562372) -->
+      <trkpt lat="45.9000200" lon="6.9264500"><ele>2430.0</ele></trkpt>
+      <trkpt lat="45.9005400" lon="6.9268600"><ele>2452.0</ele></trkpt>
+      <trkpt lat="45.9006400" lon="6.9267700"><ele>2452.0</ele></trkpt>
+      <trkpt lat="45.9010700" lon="6.9273700"><ele>2537.0</ele></trkpt>
+      <trkpt lat="45.9015000" lon="6.9275700"><ele>2553.0</ele></trkpt>
+      <trkpt lat="45.9018700" lon="6.9276100"><ele>2567.0</ele></trkpt>
+      <trkpt lat="45.9023200" lon="6.9275200"><ele>2576.0</ele></trkpt>
+      <trkpt lat="45.9027000" lon="6.9272900"><ele>2589.0</ele></trkpt>
+      <trkpt lat="45.9029800" lon="6.9270300"><ele>2595.0</ele></trkpt>
+      <trkpt lat="45.9033900" lon="6.9264500"><ele>2627.0</ele></trkpt>
+      <trkpt lat="45.9038400" lon="6.9265600"><ele>2654.0</ele></trkpt>
+      <trkpt lat="45.9045900" lon="6.9259400"><ele>2670.0</ele></trkpt>
+      <trkpt lat="45.9050600" lon="6.9258700"><ele>2691.0</ele></trkpt>
+      <trkpt lat="45.9052600" lon="6.9256800"><ele>2696.0</ele></trkpt>
+      <trkpt lat="45.9051900" lon="6.9256400"><ele>2696.0</ele></trkpt>
+      <trkpt lat="45.9051900" lon="6.9250800"><ele>2685.0</ele></trkpt>
+      <trkpt lat="45.9050400" lon="6.9248600"><ele>2732.0</ele></trkpt>
+      <trkpt lat="45.9048900" lon="6.9243300"><ele>2732.0</ele></trkpt>
+      <trkpt lat="45.9042900" lon="6.9245000"><ele>2732.0</ele></trkpt>
+      <trkpt lat="45.9044200" lon="6.9244600"><ele>2732.0</ele></trkpt>
+      <trkpt lat="45.9043600" lon="6.9243700"><ele>2732.0</ele></trkpt>
+      <trkpt lat="45.9042700" lon="6.9245200"><ele>2820.0</ele></trkpt>
+      <trkpt lat="45.9042700" lon="6.9238800"><ele>2840.0</ele></trkpt>
+      <trkpt lat="45.9039000" lon="6.9237300"><ele>2882.0</ele></trkpt>
+      <trkpt lat="45.9034800" lon="6.9237000"><ele>2886.0</ele></trkpt>
+      <trkpt lat="45.9038200" lon="6.9235300"><ele>2898.0</ele></trkpt>
+      <trkpt lat="45.9038200" lon="6.9232500"><ele>2930.0</ele></trkpt>
+      <trkpt lat="45.9035000" lon="6.9230200"><ele>2952.0</ele></trkpt>
+      <trkpt lat="45.9034500" lon="6.9227400"><ele>2982.0</ele></trkpt>
+      <trkpt lat="45.9033300" lon="6.9226500"><ele>3018.0</ele></trkpt>
+      <trkpt lat="45.9032200" lon="6.9223700"><ele>3019.0</ele></trkpt>
+      <trkpt lat="45.9032600" lon="6.9218200"><ele>3049.0</ele></trkpt>
+      <trkpt lat="45.9030500" lon="6.9215600"><ele>3108.0</ele></trkpt>
+      <trkpt lat="45.9030900" lon="6.9215800"><ele>3117.0</ele></trkpt>
+      <trkpt lat="45.9029600" lon="6.9211100"><ele>3132.0</ele></trkpt>
+      <trkpt lat="45.9030000" lon="6.9211500"><ele>3135.0</ele></trkpt>
+      <trkpt lat="45.9029200" lon="6.9206100"><ele>3135.0</ele></trkpt>
+      <trkpt lat="45.9028100" lon="6.9210000"><ele>3155.0</ele></trkpt>
+      <trkpt lat="45.9029600" lon="6.9204600"><ele>3155.0</ele></trkpt>
+      <trkpt lat="45.9027000" lon="6.9204400"><ele>3186.0</ele></trkpt>
+      <trkpt lat="45.9026200" lon="6.9198800"><ele>3186.0</ele></trkpt>
+      <trkpt lat="45.9028300" lon="6.9201400"><ele>3186.0</ele></trkpt>
+      <trkpt lat="45.9027900" lon="6.9207200"><ele>3238.0</ele></trkpt>
+      <trkpt lat="45.9027000" lon="6.9201400"><ele>3271.0</ele></trkpt>
+      <trkpt lat="45.9024900" lon="6.9197600"><ele>3326.0</ele></trkpt>
+      <trkpt lat="45.9026200" lon="6.9195200"><ele>3326.0</ele></trkpt>
+      <trkpt lat="45.9027200" lon="6.9197100"><ele>3326.0</ele></trkpt>
+      <trkpt lat="45.9024700" lon="6.9192600"><ele>3326.0</ele></trkpt>
+      <trkpt lat="45.9026800" lon="6.9190000"><ele>3326.0</ele></trkpt>
+      <trkpt lat="45.9025300" lon="6.9188500"><ele>3418.0</ele></trkpt>
+      <trkpt lat="45.9026800" lon="6.9192400"><ele>3450.0</ele></trkpt>
+      <trkpt lat="45.9025500" lon="6.9192400"><ele>3450.0</ele></trkpt>
+      <trkpt lat="45.9027200" lon="6.9185300"><ele>3449.0</ele></trkpt>
+      <trkpt lat="45.9024900" lon="6.9193900"><ele>3442.0</ele></trkpt>
+      <trkpt lat="45.9025300" lon="6.9192800"><ele>3442.0</ele></trkpt>
+      <trkpt lat="45.9024500" lon="6.9199100"><ele>3442.0</ele></trkpt>
+      <trkpt lat="45.9025300" lon="6.9193900"><ele>3442.0</ele></trkpt>
+      <trkpt lat="45.9024700" lon="6.9194800"><ele>3442.0</ele></trkpt>
+      <trkpt lat="45.9025700" lon="6.9190300"><ele>3432.0</ele></trkpt>
+      <trkpt lat="45.9024700" lon="6.9189000"><ele>3452.0</ele></trkpt>
     </trkseg>
   </trk>
 </gpx>
