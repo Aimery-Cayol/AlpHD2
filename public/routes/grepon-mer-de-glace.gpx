@@ -1,10 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gpx version="1.1" creator="AlpHD" xmlns="http://www.topografix.com/GPX/1/1">
   <trk>
-    <!-- Source: C2C outing 562372 "Grépon : Mer de Glace" — trace GPS réelle enregistrée -->
-    <!-- 60 points bruts EPSG:3857 convertis WGS84, altitudes GPS réelles -->
+    <!-- Approche : VisuGPX WyYbFz3Ya2 — trace GPS réelle Montenvers → Refuge Envers -->
+    <!-- Voie : C2C outing 562372 "Grépon : Mer de Glace" — GPS réel refuge → sommet -->
     <name>Aiguille du Grépon — Face Mer de Glace</name>
     <trkseg>
+      <!-- Approche Montenvers → Refuge de l'Envers des Aiguilles (VisuGPX réel) -->
+      <trkpt lat="45.93026" lon="6.92202"><ele>1720.2</ele></trkpt>
+      <trkpt lat="45.92856" lon="6.92313"><ele>1766.7</ele></trkpt>
+      <trkpt lat="45.92634" lon="6.92349"><ele>1774.5</ele></trkpt>
+      <trkpt lat="45.92320" lon="6.92402"><ele>1818.0</ele></trkpt>
+      <trkpt lat="45.92158" lon="6.92581"><ele>1853.1</ele></trkpt>
+      <trkpt lat="45.91941" lon="6.92921"><ele>1890.6</ele></trkpt>
+      <trkpt lat="45.91440" lon="6.93584"><ele>1964.3</ele></trkpt>
+      <trkpt lat="45.91329" lon="6.93447"><ele>1988.1</ele></trkpt>
+      <trkpt lat="45.91374" lon="6.93219"><ele>2031.7</ele></trkpt>
+      <trkpt lat="45.91273" lon="6.93211"><ele>2109.3</ele></trkpt>
+      <trkpt lat="45.91225" lon="6.93275"><ele>2151.4</ele></trkpt>
+      <trkpt lat="45.91058" lon="6.93417"><ele>2203.4</ele></trkpt>
+      <trkpt lat="45.90835" lon="6.93368"><ele>2310.2</ele></trkpt>
+      <trkpt lat="45.90673" lon="6.93340"><ele>2345.7</ele></trkpt>
+      <trkpt lat="45.90571" lon="6.93258"><ele>2373.6</ele></trkpt>
+      <trkpt lat="45.90386" lon="6.93202"><ele>2377.9</ele></trkpt>
+      <trkpt lat="45.90190" lon="6.93066"><ele>2408.0</ele></trkpt>
+      <trkpt lat="45.90028" lon="6.92891"><ele>2433.2</ele></trkpt>
+      <trkpt lat="45.89944" lon="6.92857"><ele>2437.1</ele></trkpt>
+      <trkpt lat="45.89915" lon="6.92797"><ele>2463.5</ele></trkpt>
+      <trkpt lat="45.89941" lon="6.92715"><ele>2503.4</ele></trkpt>
+      <!-- Refuge de l'Envers des Aiguilles (2493m) -->
+      <trkpt lat="45.90001" lon="6.92728"><ele>2512.6</ele></trkpt>
+
+      <!-- Voie — GPS réel C2C outing 562372 "Grépon : Mer de Glace" -->
       <trkpt lat="45.9000200" lon="6.9264500"><ele>2430.0</ele></trkpt>
       <trkpt lat="45.9005400" lon="6.9268600"><ele>2452.0</ele></trkpt>
       <trkpt lat="45.9006400" lon="6.9267700"><ele>2452.0</ele></trkpt>
