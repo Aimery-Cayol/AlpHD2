@@ -88,12 +88,11 @@ function SingleRouteRenderer({ route, refX, refY }: SingleRouteRendererProps) {
   // Garde une ref de la dernière TubeGeometry pour dispose()
   const prevTubeRef = useRef<THREE.TubeGeometry | null>(null);
 
-  const { tube, color, startPt, endPt, midPoint } = useMemo(() => {
+  const { tube, color, startPt, midPoint } = useMemo(() => {
     const empty = {
       tube: null,
       color: "#ffffff",
       startPt: null,
-      endPt: null,
       midPoint: null,
     };
 
@@ -140,15 +139,12 @@ function SingleRouteRenderer({ route, refX, refY }: SingleRouteRendererProps) {
 
     const mid = scenePoints[Math.floor(scenePoints.length / 2)];
     const firstPt = scenePoints[0];
-    const lastPt = scenePoints[scenePoints.length - 1];
 
-    // Cônes positionnés base au sol (centre à MARKER_HEIGHT_KM/2 au-dessus)
     const coneOffset = MARKER_HEIGHT_KM / 2 + VERTICAL_OFFSET_KM;
     return {
       tube: tubeGeo,
       color: col,
       startPt: new THREE.Vector3(firstPt.x, firstPt.y + coneOffset, firstPt.z),
-      endPt: new THREE.Vector3(lastPt.x, lastPt.y + coneOffset, lastPt.z),
       midPoint: mid,
     };
   }, [route, gpsPoints, refX, refY, collidersRef, version]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -191,13 +187,6 @@ function SingleRouteRenderer({ route, refX, refY }: SingleRouteRendererProps) {
         </mesh>
       )}
 
-      {/* Marqueur arrivée — cône hexagonal couleur voie */}
-      {endPt && (
-        <mesh position={endPt}>
-          <coneGeometry args={[MARKER_RADIUS_KM, MARKER_HEIGHT_KM, 6]} />
-          <meshBasicMaterial color={color} depthWrite={false} />
-        </mesh>
-      )}
 
       {/* Label au point médian */}
       {midPoint && (
