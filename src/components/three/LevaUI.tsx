@@ -360,6 +360,13 @@ export default function MyLevaUI({
   showAvalanchePentes: boolean;
 }) {
   const controlsValue = Params();
+  const [levaVisible, setLevaVisible] = useState(false);
+
+  useEffect(() => {
+    const handler = () => setLevaVisible((v) => !v);
+    window.addEventListener("alphd:toggle-params", handler);
+    return () => window.removeEventListener("alphd:toggle-params", handler);
+  }, []);
 
   return (
     <>
@@ -368,17 +375,17 @@ export default function MyLevaUI({
       >
         <Leva
           theme={lightTheme}
+          hidden={!levaVisible}
           hideCopyButton={true}
           flat={false}
-          collapsed={true}
+          collapsed={false}
           oneLineLabels={false}
           titleBar={{
-            // Configure title bar options
-            title: "Paramètres", // Custom title
-            drag: true, // Enable dragging
-            filter: false, // Enable filter/search
-            position: { x: 0, y: 0 }, // Initial position (when drag is enabled)
-            onDrag: (position) => {}, // Callback when dragged
+            title: "Paramètres",
+            drag: true,
+            filter: false,
+            position: { x: 0, y: 0 },
+            onDrag: () => {},
           }}
         />
 
@@ -388,15 +395,13 @@ export default function MyLevaUI({
           top: 5px !important;
           left: 5px !important;
           right: auto !important;
-          // bottom: 5px !important;
-          max-height: calc(60vh - 5px) !important;
+          max-height: calc(70vh - 5px) !important;
           overflow-y: auto !important;
           backdrop-filter: blur(10px);
+          z-index: 160 !important;
         }
-          
       `}</style>
         {children}
-        {/* Le contexte est maintenant disponible pour tous les composants enfants */}
       </SceneControlsContext.Provider>
     </>
   );

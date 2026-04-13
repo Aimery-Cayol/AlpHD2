@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState, useMemo, Suspense } from "react";
+import React, { useRef, useMemo, Suspense } from "react";
 import * as THREE from "three";
 import { Canvas, useThree, useFrame } from "@react-three/fiber";
 import { CameraControls } from "@react-three/drei";
@@ -41,6 +41,7 @@ interface ThreeSceneProps {
   neighborCoords?: Set<string>;
   onNeighborHover?: (coord: string | null) => void;
   onNeighborClick?: (coord: string) => void;
+  showAvalanchePentes?: boolean;
 }
 
 /** Empêche la caméra de passer à travers le terrain (raycast multi-directionnel) */
@@ -196,9 +197,8 @@ function SceneContent({ models, neighborCoords, onNeighborHover, onNeighborClick
 /**
  * Composant principal de la scène 3D
  */
-export default function ThreeScene({ models, neighborCoords, onNeighborHover, onNeighborClick }: ThreeSceneProps) {
+export default function ThreeScene({ models, neighborCoords, onNeighborHover, onNeighborClick, showAvalanchePentes = false }: ThreeSceneProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [showAvalanchePentes, setShowAvalanchePentes] = useState(false);
 
   const webglSupported = useWebGLDetection();
   const { isFullscreen, toggleFullscreen } = useFullscreen(containerRef);
@@ -224,8 +224,6 @@ export default function ThreeScene({ models, neighborCoords, onNeighborHover, on
         <SceneOverlay
           isFullscreen={isFullscreen}
           onToggleFullscreen={toggleFullscreen}
-          showAvalanchePentes={showAvalanchePentes}
-          onToggleAvalanchePentes={() => setShowAvalanchePentes(!showAvalanchePentes)}
         />
       </MyLevaUI>
     </div>

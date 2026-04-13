@@ -27,7 +27,9 @@ import {
   Search,
   Menu,
   Layers,
+  SlidersHorizontal,
 } from "lucide-react";
+import { TbMountain } from "react-icons/tb";
 import dynamic from "next/dynamic";
 import { useAppContext } from "@/contexts/AppContext";
 import Compass3D from "@/components/three/Compass3D";
@@ -461,6 +463,8 @@ function HomePageContent() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showDataLayers, setShowDataLayers] = useState(false);
   const [showRouteLibrary, setShowRouteLibrary] = useState(false);
+  const [showAvalanchePentes, setShowAvalanchePentes] = useState(false);
+  const [showParams, setShowParams] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
 
@@ -789,6 +793,7 @@ function HomePageContent() {
       setShowTileInfo(false);
       setMeasurementEnabled(false);
       setSidebarOpen(false); // fermer le drawer mobile pour libérer le viewport
+      setPoiEnabled(true); // afficher automatiquement les Lieux associés au sommet
     }
   };
 
@@ -1127,6 +1132,7 @@ function HomePageContent() {
                     setConfirmHdCoord(coord);
                     setConfirmPos(mousePos);
                   }}
+                  showAvalanchePentes={showAvalanchePentes}
                 />
               </div>
               {hoveredNeighbor && mousePos && !confirmHdCoord && (
@@ -1176,7 +1182,7 @@ function HomePageContent() {
                   }}
                 >
                   <span style={{ color: "rgba(255,255,255,0.75)", fontSize: 12 }}>
-                    Charger cette zone en HD ?
+                    Charger cette nouvelle zone en HD ?
                   </span>
                   <div style={{ display: "flex", gap: 6 }}>
                     <button
@@ -1239,99 +1245,127 @@ function HomePageContent() {
                 </div>
               )}
 
-              {/* Barre d'outils à droite */}
-              <div className="absolute right-3 top-1/2 -translate-y-1/2 z-40 flex flex-col gap-1.5">
-                {selectedRouteInfo && !measurementEnabled && (
+              {/* ─── Panneau unifié "Outils et paramètres" ─── */}
+              <div className="absolute right-3 top-1/2 -translate-y-1/2 z-[150] flex flex-col bg-white/92 backdrop-blur-md border border-slate-200/80 rounded-2xl shadow-xl overflow-hidden" style={{ maxHeight: "calc(100% - 140px)" }}>
+                {/* En-tête */}
+                <div className="px-3 py-2 bg-slate-50/70 border-b border-slate-100 flex items-center gap-2 flex-shrink-0">
+                  <span className="text-[9px] font-black uppercase tracking-[0.18em] text-slate-400">Outils &amp; Paramètres</span>
+                </div>
+
+                {/* Corps — scrollable si beaucoup d'entrées */}
+                <div className="flex flex-col overflow-y-auto divide-y divide-slate-50">
+
+                  {/* Mesure */}
                   <button
-                    title="Infos sommet"
-                    onClick={() => { const s = !showSummitInfo; setShowSummitInfo(s); if (s) setShowDetails(true); }}
-                    className={`relative group p-2.5 backdrop-blur border rounded-xl shadow-xl transition-all ${showSummitInfo ? "bg-orange-500 text-white border-orange-600" : "bg-white/90 border-slate-200 hover:bg-orange-500 hover:text-white"}`}
+                    onClick={() => setMeasurementEnabled(!measurementEnabled)}
+                    className={`flex items-center gap-2.5 px-3 py-2.5 w-full text-left transition-colors ${measurementEnabled ? "bg-blue-50 text-blue-700" : "text-slate-600 hover:bg-slate-50"}`}
                   >
-                    <Info className="h-4 w-4" />
-                    <span className="pointer-events-none absolute right-full mr-2 top-1/2 -translate-y-1/2 whitespace-nowrap bg-slate-900/90 text-white text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">Infos sommet</span>
+                    <Ruler className="h-4 w-4 flex-shrink-0" />
+                    <span className="text-[11px] font-semibold whitespace-nowrap">Mesure</span>
                   </button>
-                )}
-                {selectedTiles.length > 0 && !selectedRouteInfo && !measurementEnabled && (
+
+                  {/* Lieux */}
                   <button
-                    title="Infos dalles"
-                    onClick={() => { const s = !showTileInfo; setShowTileInfo(s); if (s) setShowDetails(true); }}
-                    className={`relative group p-2.5 backdrop-blur border rounded-xl shadow-xl transition-all ${showTileInfo ? "bg-green-500 text-white border-green-600" : "bg-white/90 border-slate-200 hover:bg-green-500 hover:text-white"}`}
+                    onClick={() => { setPoiEnabled(!poiEnabled); if (poiEnabled) setPoiPlacing(false); }}
+                    className={`flex items-center gap-2.5 px-3 py-2.5 w-full text-left transition-colors ${poiEnabled ? "bg-orange-50 text-orange-700" : "text-slate-600 hover:bg-slate-50"}`}
                   >
-                    <Info className="h-4 w-4" />
-                    <span className="pointer-events-none absolute right-full mr-2 top-1/2 -translate-y-1/2 whitespace-nowrap bg-slate-900/90 text-white text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">Infos dalles</span>
+                    <MapPin className="h-4 w-4 flex-shrink-0" />
+                    <span className="text-[11px] font-semibold whitespace-nowrap">Lieux</span>
                   </button>
-                )}
-                <button
-                  title="Mesure"
-                  onClick={() => setMeasurementEnabled(!measurementEnabled)}
-                  className={`relative group p-2.5 backdrop-blur border rounded-xl shadow-xl transition-all ${measurementEnabled ? "bg-blue-600 text-white border-blue-700" : "bg-white/90 border-slate-200 hover:bg-blue-600 hover:text-white"}`}
-                >
-                  <Ruler className="h-4 w-4" />
-                  <span className="pointer-events-none absolute right-full mr-2 top-1/2 -translate-y-1/2 whitespace-nowrap bg-slate-900/90 text-white text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">Mesure</span>
-                </button>
-                <button
-                  title="Lieux"
-                  onClick={() => { setPoiEnabled(!poiEnabled); if (poiEnabled) setPoiPlacing(false); }}
-                  className={`relative group p-2.5 backdrop-blur border rounded-xl shadow-xl transition-all ${poiEnabled ? "bg-orange-500 text-white border-orange-600" : "bg-white/90 border-slate-200 hover:bg-orange-500 hover:text-white"}`}
-                >
-                  <MapPin className="h-4 w-4" />
-                  <span className="pointer-events-none absolute right-full mr-2 top-1/2 -translate-y-1/2 whitespace-nowrap bg-slate-900/90 text-white text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">Lieux</span>
-                </button>
-                {poiEnabled && (
-                  <button
-                    title={poiPlacing ? "Annuler" : "Ajouter un lieu"}
-                    onClick={() => setPoiPlacing(!poiPlacing)}
-                    className={`relative group p-2.5 backdrop-blur border rounded-xl shadow-xl transition-all text-sm font-bold leading-none ${poiPlacing ? "bg-orange-600 text-white border-orange-700" : "bg-white/90 border-orange-200 text-orange-500 hover:bg-orange-500 hover:text-white"}`}
-                  >
-                    {poiPlacing ? "✕" : "+"}
-                    <span className="pointer-events-none absolute right-full mr-2 top-1/2 -translate-y-1/2 whitespace-nowrap bg-slate-900/90 text-white text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
-                      {poiPlacing ? "Annuler" : "Ajouter un lieu"}
-                    </span>
-                  </button>
-                )}
-                {/* Bouton couches de données */}
-                <button
-                  title="Couches de données"
-                  onClick={() => setShowDataLayers(!showDataLayers)}
-                  className={`relative group p-2.5 backdrop-blur border rounded-xl shadow-xl transition-all ${showDataLayers ? "bg-violet-600 text-white border-violet-700" : "bg-white/90 border-slate-200 hover:bg-violet-600 hover:text-white"}`}
-                >
-                  <Layers className="h-4 w-4" />
-                  <span className="pointer-events-none absolute right-full mr-2 top-1/2 -translate-y-1/2 whitespace-nowrap bg-slate-900/90 text-white text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">Couches</span>
-                </button>
-                {/* Bouton voies d'alpinisme */}
-                <button
-                  title="Voies d'alpinisme"
-                  onClick={() => setShowRouteLibrary(!showRouteLibrary)}
-                  className={`relative group p-2.5 backdrop-blur border rounded-xl shadow-xl transition-all ${showRouteLibrary ? "bg-orange-500 text-white border-orange-600" : visibleRoutes.length > 0 ? "bg-orange-100 text-orange-600 border-orange-200" : "bg-white/90 border-slate-200 hover:bg-orange-500 hover:text-white"}`}
-                >
-                  <Mountain className="h-4 w-4" />
-                  {visibleRoutes.length > 0 && (
-                    <span className="absolute -top-1 -right-1 w-4 h-4 bg-orange-500 text-white text-[8px] font-black rounded-full flex items-center justify-center leading-none">
-                      {visibleRoutes.length}
-                    </span>
+
+                  {/* + Ajouter un lieu (sous-entrée) */}
+                  {poiEnabled && (
+                    <button
+                      onClick={() => setPoiPlacing(!poiPlacing)}
+                      className={`flex items-center gap-2 pl-8 pr-3 py-1.5 w-full text-left transition-colors ${poiPlacing ? "bg-orange-100 text-orange-700" : "text-orange-500 hover:bg-orange-50"}`}
+                    >
+                      <span className="text-[10px] font-bold whitespace-nowrap">{poiPlacing ? "✕  Annuler" : "+  Ajouter"}</span>
+                    </button>
                   )}
-                  <span className="pointer-events-none absolute right-full mr-2 top-1/2 -translate-y-1/2 whitespace-nowrap bg-slate-900/90 text-white text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">Voies</span>
-                </button>
+
+                  {/* Voies d'alpinisme */}
+                  <button
+                    onClick={() => setShowRouteLibrary(!showRouteLibrary)}
+                    className={`flex items-center gap-2.5 px-3 py-2.5 w-full text-left transition-colors ${showRouteLibrary ? "bg-orange-50 text-orange-700" : visibleRoutes.length > 0 ? "bg-orange-50/50 text-orange-600" : "text-slate-600 hover:bg-slate-50"}`}
+                  >
+                    <Mountain className="h-4 w-4 flex-shrink-0" />
+                    <span className="text-[11px] font-semibold whitespace-nowrap">Voies</span>
+                    {visibleRoutes.length > 0 && (
+                      <span className="ml-auto w-4 h-4 bg-orange-500 text-white text-[8px] font-black rounded-full flex items-center justify-center leading-none flex-shrink-0">
+                        {visibleRoutes.length}
+                      </span>
+                    )}
+                  </button>
+
+                  {/* Couches de données */}
+                  <button
+                    onClick={() => setShowDataLayers(!showDataLayers)}
+                    className={`flex items-center gap-2.5 px-3 py-2.5 w-full text-left transition-colors ${showDataLayers ? "bg-violet-50 text-violet-700" : "text-slate-600 hover:bg-slate-50"}`}
+                  >
+                    <Layers className="h-4 w-4 flex-shrink-0" />
+                    <span className="text-[11px] font-semibold whitespace-nowrap">Couches</span>
+                  </button>
+
+                  {/* Info sommet (conditionnel) */}
+                  {selectedRouteInfo && !measurementEnabled && (
+                    <button
+                      onClick={() => { const s = !showSummitInfo; setShowSummitInfo(s); if (s) setShowDetails(true); }}
+                      className={`flex items-center gap-2.5 px-3 py-2.5 w-full text-left transition-colors ${showSummitInfo ? "bg-orange-50 text-orange-700" : "text-slate-600 hover:bg-slate-50"}`}
+                    >
+                      <Info className="h-4 w-4 flex-shrink-0" />
+                      <span className="text-[11px] font-semibold whitespace-nowrap">Info sommet</span>
+                    </button>
+                  )}
+
+                  {/* Info dalles (conditionnel) */}
+                  {selectedTiles.length > 0 && !selectedRouteInfo && !measurementEnabled && (
+                    <button
+                      onClick={() => { const s = !showTileInfo; setShowTileInfo(s); if (s) setShowDetails(true); }}
+                      className={`flex items-center gap-2.5 px-3 py-2.5 w-full text-left transition-colors ${showTileInfo ? "bg-green-50 text-green-700" : "text-slate-600 hover:bg-slate-50"}`}
+                    >
+                      <Info className="h-4 w-4 flex-shrink-0" />
+                      <span className="text-[11px] font-semibold whitespace-nowrap">Info dalles</span>
+                    </button>
+                  )}
+
+                  {/* Pentes avalancheuses */}
+                  <button
+                    onClick={() => setShowAvalanchePentes(!showAvalanchePentes)}
+                    className={`flex items-center gap-2.5 px-3 py-2.5 w-full text-left transition-colors ${showAvalanchePentes ? "bg-red-50 text-red-700" : "text-slate-600 hover:bg-slate-50"}`}
+                  >
+                    <TbMountain className="h-4 w-4 flex-shrink-0" />
+                    <span className="text-[11px] font-semibold whitespace-nowrap">Avalanche</span>
+                  </button>
+
+                  {/* Séparateur */}
+                  <div className="h-px bg-slate-100 flex-shrink-0" />
+
+                  {/* Paramètres (ouvre le panneau Leva) */}
+                  <button
+                    onClick={() => {
+                      setShowParams((s) => !s);
+                      window.dispatchEvent(new CustomEvent("alphd:toggle-params"));
+                    }}
+                    className={`flex items-center gap-2.5 px-3 py-2.5 w-full text-left transition-colors ${showParams ? "bg-slate-100 text-slate-800" : "text-slate-500 hover:bg-slate-50"}`}
+                  >
+                    <SlidersHorizontal className="h-4 w-4 flex-shrink-0" />
+                    <span className="text-[11px] font-semibold whitespace-nowrap">Paramètres</span>
+                  </button>
+                </div>
               </div>
 
               {/* Panneau couches de données temps réel */}
               {showDataLayers && (
-                <DataLayersPanel className="absolute bottom-16 right-3 z-40" onHide={() => setShowDataLayers(false)} />
+                <DataLayersPanel className="absolute top-4 right-[180px] z-[150]" onHide={() => setShowDataLayers(false)} />
               )}
 
               {/* Panneau bibliothèque de voies */}
               {showRouteLibrary && (
                 <RouteLibrary
-                  className={`absolute bottom-16 z-40 ${showDataLayers ? "right-[244px]" : "right-3"}`}
+                  className={`absolute top-4 z-[150] ${showDataLayers ? "right-[424px]" : "right-[180px]"}`}
                   selectedSummitId={selectedSummitId}
+                  onHide={() => setShowRouteLibrary(false)}
                 />
-              )}
-
-              {/* Profil altimétrique — visible dès qu'une voie est affichée */}
-              {visibleRoutes.length > 0 && (
-                <div className="absolute bottom-3 left-3 z-40">
-                  <AltitudeProfile routes={visibleRoutes} />
-                </div>
               )}
 
               {/* Boussole 3D */}
@@ -1571,12 +1605,6 @@ function HomePageContent() {
                       </section>
                     )}
 
-                    {selectedRouteInfo.c2c && (
-                      <a href={selectedRouteInfo.c2c} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-5 bg-white border-2 border-blue-600 text-blue-600 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-blue-600 hover:text-white transition-all shadow-lg shadow-blue-100 active:scale-95 group">
-                        <div className="flex items-center gap-3"><CamptocampLogo /> <span>Fiche Camptocamp</span></div>
-                        <span className="opacity-0 group-hover:opacity-100 transition-opacity">→</span>
-                      </a>
-                    )}
                   </>
                 ) : (
                   /* Contenu Dalles */
