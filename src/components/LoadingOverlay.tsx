@@ -1,68 +1,110 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
+import {
+  Ruler,
+  Mountain,
+  MapPin,
+  Info,
+  SlidersHorizontal,
+  Plus,
+} from "lucide-react";
 
 interface LoadingOverlayProps {
   visible: boolean;
   progress: number; // 0 to 1
 }
 
-// Le bonhomme grimpe le flanc gauche de la montagne (de bas-gauche vers le sommet)
-// Flanc gauche : de (60, 170) à (150, 50)
-function getClimberPosition(progress: number) {
-  const startX = 65, startY = 165;
-  const peakX = 150, peakY = 55;
-  const t = Math.min(1, Math.max(0, progress));
-  return {
-    x: startX + (peakX - startX) * t,
-    y: startY + (peakY - startY) * t,
-  };
-}
+const MAX_DURATION_MS = 9000;
 
-const MAX_OVERLAY_DURATION_MS = 7000;
+const FEATURES = [
+  {
+    icon: <Plus className="w-4 h-4" />,
+    color: "#60a5fa",
+    bg: "rgba(59,130,246,0.13)",
+    border: "rgba(59,130,246,0.22)",
+    title: "Zones voisines",
+    desc: 'Les boutons "+" chargent les dalles adjacentes en haute résolution.',
+  },
+  {
+    icon: <Ruler className="w-4 h-4" />,
+    color: "#34d399",
+    bg: "rgba(16,185,129,0.13)",
+    border: "rgba(16,185,129,0.22)",
+    title: "Mesure",
+    desc: "Mesurez distances et dénivelés directement sur le terrain 3D.",
+  },
+  {
+    icon: <Mountain className="w-4 h-4" />,
+    color: "#fb923c",
+    bg: "rgba(249,115,22,0.13)",
+    border: "rgba(249,115,22,0.22)",
+    title: "Voies",
+    desc: "Visualisez les grandes voies d'alpinisme tracées en 3D sur le relief.",
+  },
+  {
+    icon: <MapPin className="w-4 h-4" />,
+    color: "#f472b6",
+    bg: "rgba(244,114,182,0.13)",
+    border: "rgba(244,114,182,0.22)",
+    title: "Lieux",
+    desc: "Épinglez et nommez vos points d'intérêt sur la carte.",
+  },
+  {
+    icon: <Info className="w-4 h-4" />,
+    color: "#c084fc",
+    bg: "rgba(168,85,247,0.13)",
+    border: "rgba(168,85,247,0.22)",
+    title: "Info sommet",
+    desc: "Accédez à l'historique, l'altitude et la description du sommet.",
+  },
+  {
+    icon: <SlidersHorizontal className="w-4 h-4" />,
+    color: "#94a3b8",
+    bg: "rgba(100,116,139,0.13)",
+    border: "rgba(100,116,139,0.22)",
+    title: "Paramètres",
+    desc: "Personnalisez matériaux, éclairage et fond de carte IGN.",
+  },
+];
 
 export default function LoadingOverlay({ visible, progress }: LoadingOverlayProps) {
   const [show, setShow] = useState(visible);
   const [fadeOut, setFadeOut] = useState(false);
   const [forceHide, setForceHide] = useState(false);
 
-  // Quand visible passe à true : afficher, reset le forceHide et lancer le timer de 7s
   useEffect(() => {
     if (visible) {
       setShow(true);
       setFadeOut(false);
       setForceHide(false);
-
-      const maxTimer = setTimeout(() => setForceHide(true), MAX_OVERLAY_DURATION_MS);
-      return () => clearTimeout(maxTimer);
+      const t = setTimeout(() => setForceHide(true), MAX_DURATION_MS);
+      return () => clearTimeout(t);
     } else if (show) {
       setFadeOut(true);
-      const timer = setTimeout(() => setShow(false), 800);
-      return () => clearTimeout(timer);
+      const t = setTimeout(() => setShow(false), 800);
+      return () => clearTimeout(t);
     }
   }, [visible]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Quand le timer de 7s expire : fade-out
   useEffect(() => {
     if (forceHide && show) {
       setFadeOut(true);
-      const timer = setTimeout(() => setShow(false), 800);
-      return () => clearTimeout(timer);
+      const t = setTimeout(() => setShow(false), 800);
+      return () => clearTimeout(t);
     }
   }, [forceHide]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Progression temporelle : avance de 0 à 1 en 7s (ease-out)
+  // Progression temporelle de secours (avance de 0→1 en MAX_DURATION_MS)
   const [timeProgress, setTimeProgress] = useState(0);
-  const startTimeRef = useRef<number>(0);
+  const startRef = useRef<number>(0);
   const rafRef = useRef<number>(0);
 
   useEffect(() => {
     if (!visible) return;
-    startTimeRef.current = Date.now();
+    startRef.current = Date.now();
     const tick = () => {
-      const elapsed = Date.now() - startTimeRef.current;
-      const t = Math.min(1, elapsed / MAX_OVERLAY_DURATION_MS);
-      // ease-out cubique pour un mouvement naturel
+      const t = Math.min(1, (Date.now() - startRef.current) / MAX_DURATION_MS);
       setTimeProgress(1 - Math.pow(1 - t, 3));
       if (t < 1) rafRef.current = requestAnimationFrame(tick);
     };
@@ -72,164 +114,121 @@ export default function LoadingOverlay({ visible, progress }: LoadingOverlayProp
 
   if (!show) return null;
 
-  // Prendre le max entre progression réelle et progression temporelle
-  const effectiveProgress = Math.max(progress, timeProgress);
-  const pos = getClimberPosition(effectiveProgress);
-  const pct = Math.round(effectiveProgress * 100);
+  const eff = Math.max(progress, timeProgress);
+  const pct = Math.round(eff * 100);
 
   return (
     <div
-      className={`absolute inset-0 z-50 flex flex-col items-center justify-center bg-slate-900 transition-opacity duration-700 ${
+      className={`absolute inset-0 z-50 flex flex-col items-center justify-center bg-slate-950 transition-opacity duration-700 ${
         fadeOut ? "opacity-0 pointer-events-none" : "opacity-100"
       }`}
     >
-      <svg
-        viewBox="0 0 300 220"
-        className="w-96 h-64"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        {/* Montagne principale */}
-        <path
-          d="M60 170 L150 50 L240 170 Z"
-          stroke="white"
-          strokeWidth="2"
-          strokeLinejoin="round"
-          fill="none"
-          style={{
-            strokeDasharray: 600,
-            strokeDashoffset: 0,
-            animation: "mountain-draw 1.5s ease-out forwards",
-          }}
-        />
-        {/* Neige au sommet */}
-        <path
-          d="M130 82 L150 50 L170 82 L160 78 L150 85 L140 78 Z"
-          stroke="white"
-          strokeWidth="1.5"
-          strokeLinejoin="round"
-          fill="none"
-          style={{
-            strokeDasharray: 600,
-            strokeDashoffset: 0,
-            animation: "mountain-draw 1.5s ease-out forwards 0.4s",
-          }}
-        />
-        {/* Sol */}
-        <line
-          x1="30" y1="170" x2="270" y2="170"
-          stroke="white" strokeWidth="1" opacity="0.2"
-        />
-
-        {/* Trace pointillee du chemin parcouru */}
-        <line
-          x1="65" y1="165"
-          x2={pos.x} y2={pos.y}
-          stroke="white" strokeWidth="1"
-          strokeDasharray="3 4" opacity="0.3"
-        />
-
-        {/* Petits points de passage sur le chemin */}
-        {[0.25, 0.5, 0.75].map((p) => {
-          if (progress < p) return null;
-          const dot = getClimberPosition(p);
-          return (
-            <circle
-              key={p}
-              cx={dot.x} cy={dot.y}
-              r="1.5" fill="white" opacity="0.2"
-            />
-          );
-        })}
-
-        {/* Grimpeur : g externe = position, g interne = animation de marche */}
-        <g transform={`translate(${pos.x}, ${pos.y})`}>
-          <g style={{ animation: "climber-bob 0.6s ease-in-out infinite" }}>
-            {/* Tete */}
-            <circle cx="0" cy="-22" r="5" stroke="white" strokeWidth="1.5" fill="none" />
-            {/* Corps */}
-            <line x1="0" y1="-17" x2="0" y2="-2" stroke="white" strokeWidth="1.5" />
-            {/* Bras gauche (tient le piolet) */}
-            <line x1="0" y1="-12" x2="-10" y2="-6" stroke="white" strokeWidth="1.5" />
-            {/* Bras droit (en haut, grimpe) */}
-            <line x1="0" y1="-12" x2="8" y2="-18" stroke="white" strokeWidth="1.5" />
-            {/* Jambe gauche (en avant) */}
-            <line x1="0" y1="-2" x2="-6" y2="10" stroke="white" strokeWidth="1.5" />
-            {/* Jambe droite (en arriere) */}
-            <line x1="0" y1="-2" x2="5" y2="10" stroke="white" strokeWidth="1.5" />
-
-            {/* Piolet dans la main gauche */}
-            <line x1="-10" y1="-6" x2="-16" y2="-20" stroke="white" strokeWidth="1.2" />
-            {/* Lame du piolet */}
-            <path
-              d="M-16 -20 L-22 -18 L-16 -16"
-              stroke="white" strokeWidth="1.2"
-              strokeLinejoin="round" fill="none"
-            />
-            {/* Pique en bas du piolet */}
-            <line x1="-10" y1="-6" x2="-9" y2="-2" stroke="white" strokeWidth="1.2" />
-          </g>
-        </g>
-
-        {/* Drapeau au sommet (visible si progres > 90%) */}
-        {progress > 0.9 && (
-          <g opacity={Math.min(1, (progress - 0.9) * 10)}>
-            <line x1="150" y1="50" x2="150" y2="35" stroke="white" strokeWidth="1.5" />
-            <path d="M150 35 L162 39 L150 43" fill="white" opacity="0.7" />
-          </g>
-        )}
-      </svg>
-
-      {/* Texte et progression */}
-      <div className="mt-4 flex flex-col items-center gap-3">
-        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/70">
-          Chargement du relief
+      {/* ── En-tête ── */}
+      <div className="text-center mb-6 px-6">
+        <p className="text-[9px] font-black uppercase tracking-[0.35em] text-white/25 mb-2">
+          Chargement du relief en cours
         </p>
-        <div className="w-48 h-1 bg-white/10 rounded-full overflow-hidden">
+        <h2 className="text-lg font-black text-white uppercase tracking-tight leading-tight">
+          Découvrez les outils disponibles
+        </h2>
+      </div>
+
+      {/* ── Grille des fonctionnalités ── */}
+      <div
+        className="grid gap-2.5 px-5 w-full"
+        style={{ gridTemplateColumns: "repeat(3, 1fr)", maxWidth: 480 }}
+      >
+        {FEATURES.map((f, i) => (
           <div
-            className="h-full bg-blue-500 rounded-full transition-all duration-500 ease-out"
-            style={{ width: `${pct}%` }}
+            key={i}
+            className="flex flex-col gap-1.5 p-3 rounded-xl"
+            style={{
+              background: f.bg,
+              border: `1px solid ${f.border}`,
+            }}
+          >
+            {/* Icône colorée */}
+            <div
+              className="flex items-center justify-center w-7 h-7 rounded-lg flex-shrink-0"
+              style={{ color: f.color, background: f.border }}
+            >
+              {f.icon}
+            </div>
+            {/* Nom */}
+            <p
+              className="text-[10px] font-bold leading-tight"
+              style={{ color: f.color }}
+            >
+              {f.title}
+            </p>
+            {/* Description */}
+            <p className="text-[9px] text-white/35 leading-[1.45]">{f.desc}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* ── Barre de progression ── */}
+      <div className="mt-8 flex flex-col items-center gap-2 w-full px-5" style={{ maxWidth: 480 }}>
+        {/* Label */}
+        <div className="flex justify-between w-full mb-0.5">
+          <span className="text-[9px] font-bold uppercase tracking-widest text-white/25">
+            Chargement des dalles
+          </span>
+          <span className="text-[10px] font-black text-white/40 tabular-nums">
+            {pct}&thinsp;%
+          </span>
+        </div>
+
+        {/* Barre */}
+        <div className="w-full h-2 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.07)" }}>
+          <div
+            className="h-full rounded-full transition-all duration-500 ease-out"
+            style={{
+              width: `${pct}%`,
+              background: "linear-gradient(90deg, #3b82f6 0%, #60a5fa 60%, #93c5fd 100%)",
+              boxShadow: "0 0 10px rgba(96,165,250,0.5)",
+            }}
           />
         </div>
-        <p className="text-[11px] font-bold text-white/40 tabular-nums">
-          {pct}%
-        </p>
-      </div>
 
-      {/* Légende des boutons d'interaction */}
-      <div className="mt-8 flex flex-col items-center gap-2.5">
-        <p className="text-[8px] font-black uppercase tracking-[0.25em] text-white/30">
-          Navigation du relief
-        </p>
-        <div className="flex gap-5">
-          <div className="flex items-center gap-2">
-            <span style={{
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "#3b82f6",
-              fontSize: 18,
-              fontWeight: 700,
-              lineHeight: 1,
-              width: 24,
-              height: 24,
-              textShadow: "0 1px 4px rgba(0,0,0,0.5)",
-            }}>+</span>
-            <span className="text-[10px] text-white/40">Charger une dalle voisine</span>
-          </div>
+        {/* Segments discrets (jalons à 25, 50, 75 %) */}
+        <div className="relative w-full h-1 -mt-1 pointer-events-none">
+          {[0.25, 0.5, 0.75].map((p) => (
+            <div
+              key={p}
+              className="absolute top-0 w-px h-3 -translate-x-1/2 -translate-y-1"
+              style={{
+                left: `${p * 100}%`,
+                background: "rgba(255,255,255,0.12)",
+              }}
+            />
+          ))}
         </div>
       </div>
 
-      <style jsx>{`
-        @keyframes mountain-draw {
-          from { stroke-dashoffset: 600; }
-          to { stroke-dashoffset: 0; }
-        }
-        @keyframes climber-bob {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-3px); }
-        }
-      `}</style>
+      {/* ── Navigation rapide ── */}
+      <div className="mt-5 flex items-center gap-4">
+        <div className="flex items-center gap-1.5">
+          <kbd className="px-1.5 py-0.5 bg-white/10 rounded text-[9px] font-mono text-white/40 border border-white/10">
+            clic gauche
+          </kbd>
+          <span className="text-[9px] text-white/25">Rotation</span>
+        </div>
+        <div className="w-px h-3 bg-white/10" />
+        <div className="flex items-center gap-1.5">
+          <kbd className="px-1.5 py-0.5 bg-white/10 rounded text-[9px] font-mono text-white/40 border border-white/10">
+            molette
+          </kbd>
+          <span className="text-[9px] text-white/25">Zoom</span>
+        </div>
+        <div className="w-px h-3 bg-white/10" />
+        <div className="flex items-center gap-1.5">
+          <kbd className="px-1.5 py-0.5 bg-white/10 rounded text-[9px] font-mono text-white/40 border border-white/10">
+            clic droit
+          </kbd>
+          <span className="text-[9px] text-white/25">Panoramique</span>
+        </div>
+      </div>
     </div>
   );
 }
