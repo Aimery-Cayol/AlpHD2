@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="AlpHD" xmlns="http://www.topografix.com/GPX/1/1">
+  <trk>
+    <name>Aiguille du Midi — Face S Voie Rébuffat-Baquet #1</name>
+    <trkseg>
+      <trkpt lat="45.879263" lon="6.888676"><ele>3750.2</ele></trkpt>
+      <trkpt lat="45.879590" lon="6.889085"><ele>3729.0</ele></trkpt>
+      <trkpt lat="45.879989" lon="6.890231"><ele>3680.0</ele></trkpt>
+      <trkpt lat="45.879521" lon="6.890592"><ele>3654.2</ele></trkpt>
+      <trkpt lat="45.879216" lon="6.891175"><ele>3637.0</ele></trkpt>
+      <trkpt lat="45.879106" lon="6.890896"><ele>3628.8</ele></trkpt>
+      <trkpt lat="45.878987" lon="6.890608"><ele>3625.2</ele></trkpt>
+      <trkpt lat="45.878171" lon="6.889571"><ele>3616.8</ele></trkpt>
+      <trkpt lat="45.878135" lon="6.889280"><ele>3624.0</ele></trkpt>
+      <trkpt lat="45.878078" lon="6.888980"><ele>3642.4</ele></trkpt>
+      <trkpt lat="45.877930" lon="6.889156"><ele>3645.4</ele></trkpt>
+      <trkpt lat="45.878024" lon="6.889518"><ele>3645.2</ele></trkpt>
+      <trkpt lat="45.877970" lon="6.888939"><ele>3644.6</ele></trkpt>
+      <trkpt lat="45.877897" lon="6.888701"><ele>3690.4</ele></trkpt>
+      <trkpt lat="45.878169" lon="6.888470"><ele>3745.4</ele></trkpt>
+      <trkpt lat="45.877976" lon="6.888556"><ele>3747.6</ele></trkpt>
+      <trkpt lat="45.878168" lon="6.888582"><ele>3780.2</ele></trkpt>
+      <trkpt lat="45.878125" lon="6.888250"><ele>3796.8</ele></trkpt>
+    </trkseg>
+  </trk>
+</gpx>

@@ -152,7 +152,12 @@ export default function PoiTool({ models }: { models: TileModel[] }) {
       if (point) {
         setPendingPosition(point);
         window.dispatchEvent(new CustomEvent("poi-pending", {
-          detail: { x: point.x, y: point.y, z: point.z, tileId: nearestTileId(point) },
+          detail: {
+            x: point.x, y: point.y, z: point.z,
+            tileId: nearestTileId(point),
+            lx: refX + point.x,
+            ly: refY - point.z,
+          },
         }));
         window.dispatchEvent(new CustomEvent("poi-look-at", {
           detail: { x: point.x, y: point.y + POI_LABEL_HEIGHT * 0.35, z: point.z },

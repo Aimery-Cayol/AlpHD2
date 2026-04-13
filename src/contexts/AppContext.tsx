@@ -78,7 +78,7 @@ interface AppContextType {
   poiPlacing: boolean;
   setPoiPlacing: (placing: boolean) => void;
   pois: Poi[];
-  addPoi: (poi: Omit<Poi, "id">) => void;
+  addPoi: (poi: Omit<Poi, "id"> & { id?: string }) => void;
   updatePoi: (id: string, updates: Partial<Omit<Poi, "id">>) => void;
   removePoi: (id: string) => void;
 
@@ -149,8 +149,9 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [pois, setPois] = useState<Poi[]>([]);
   const poisLoadedRef = useRef(false);
 
-  const addPoi = useCallback((poi: Omit<Poi, "id">) => {
-    setPois(prev => [...prev, { ...poi, id: crypto.randomUUID() }]);
+  const addPoi = useCallback((poi: Omit<Poi, "id"> & { id?: string }) => {
+    const { id, ...rest } = poi;
+    setPois(prev => [...prev, { ...rest, id: id ?? crypto.randomUUID() }]);
   }, []);
 
   const updatePoi = useCallback((id: string, updates: Partial<Omit<Poi, "id">>) => {

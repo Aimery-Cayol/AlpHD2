@@ -3,19 +3,14 @@
 // =============================================================================
 // RouteLibrary — panneau DOM de sélection des voies d'alpinisme
 // =============================================================================
-// Composant React normal (hors Canvas) à superposer sur le viewport 3D.
-// Communique avec le 3D via useRouteStore (Zustand).
-//
-// Fonctionnalités :
-//   • Voies groupées par sommet
-//   • Filtres par famille de difficulté (F/PD → ED)
-//   • Toggle visibilité par voie
-//   • Badge couleur + cotation + lien C2C
-//   • Compteur de voies actives
-// =============================================================================
 
-import React, { useState } from "react";
-import { CLIMBING_ROUTES, gradeToColor } from "@/data/climbingRoutes";
+import React, { useState, useEffect, useMemo } from "react";
+import {
+  CLIMBING_ROUTES,
+  gradeToColor,
+  MONT_BLANC_SUMMIT_IDS,
+  GPX_ROUTE_IDS,
+} from "@/data/climbingRoutes";
 import { useRouteStore } from "@/store/route-store";
 import type { ClimbingRoute, RouteGrade } from "@/types/routes";
 
@@ -62,10 +57,11 @@ const SUMMIT_NAMES: Record<string, string> = {
   "mont-blanc": "Mont Blanc · 4808m",
   tacul: "Mont Blanc du Tacul · 4248m",
   maudit: "Mont Maudit · 4465m",
+  bionnassay: "Aiguille de Bionnassay · 4052m",
+  "domes-miage": "Dômes de Miage · 3673m",
   "dome-gouter": "Dôme du Goûter · 4304m",
   geant: "Dent du Géant · 4013m",
   rochefort: "Arête de Rochefort · 4001m",
-  "tour-ronde": "Tour Ronde · 3792m",
   jorasses: "Grandes Jorasses · 4208m",
   talefre: "Aiguille de Talèfre · 3730m",
   // --- Massif des Écrins ---
@@ -100,8 +96,6 @@ function RouteRow({
 }) {
   const { visibleRoutes, toggleRoute } = useRouteStore();
 
-  // Appliquer le filtre : si un filtre est actif et que la voie n'en fait pas
-  // partie, on ne l'affiche pas
   if (
     filterFamilies.size > 0 &&
     !filterFamilies.has(routeFamily(route.grade))
@@ -169,22 +163,6 @@ function RouteRow({
             {route.gradeText}
           </div>
         )}
-        {route.c2cUrl && (
-          <a
-            href={route.c2cUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              fontSize: 8,
-              color: "#3b82f6",
-              textDecoration: "none",
-              marginTop: 1,
-              display: "inline-block",
-            }}
-          >
-            ↗ C2C
-          </a>
-        )}
       </div>
 
       {/* Bouton toggle */}
@@ -223,21 +201,23 @@ function RouteRow({
 function SummitGroup({
   summitId,
   filterFamilies,
+  defaultOpen = true,
 }: {
   summitId: string;
   filterFamilies: Set<GradeFamily>;
+  defaultOpen?: boolean;
 }) {
-  const routes = CLIMBING_ROUTES[summitId];
-  const [open, setOpen] = useState(true);
+  const allRoutes = CLIMBING_ROUTES[summitId] ?? [];
+  // Seulement les voies avec un tracé GPS réel
+  const routes = allRoutes.filter((r) => GPX_ROUTE_IDS.has(r.id));
+  const [open, setOpen] = useState(defaultOpen);
   const { visibleRoutes } = useRouteStore();
 
-  // Voies du sommet qui passent le filtre
   const matchingRoutes = routes.filter(
     (r) =>
       filterFamilies.size === 0 || filterFamilies.has(routeFamily(r.grade))
   );
 
-  // Si aucune voie ne correspond au filtre, on masque le groupe entier
   if (matchingRoutes.length === 0) return null;
 
   const activeCount = routes.filter((r) =>
@@ -246,7 +226,6 @@ function SummitGroup({
 
   return (
     <div style={{ marginBottom: 8 }}>
-      {/* En-tête sommet */}
       <button
         onClick={() => setOpen((v) => !v)}
         style={{
@@ -310,14 +289,41 @@ function SummitGroup({
 
 interface RouteLibraryProps {
   className?: string;
+  selectedSummitId?: string | null;
 }
 
-export default function RouteLibrary({ className }: RouteLibraryProps) {
+export default function RouteLibrary({
+  className,
+  selectedSummitId,
+}: RouteLibraryProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [activeFilters, setActiveFilters] = useState<Set<GradeFamily>>(
     new Set()
   );
+  const [showAllSummits, setShowAllSummits] = useState(false);
   const { visibleRoutes, clearRoutes } = useRouteStore();
+
+  // Réinitialiser "voir toutes les voies" quand le sommet sélectionné change
+  useEffect(() => {
+    setShowAllSummits(false);
+  }, [selectedSummitId]);
+
+  // Le sommet principal : celui sélectionné dans l'UI, s'il est dans le MB
+  const primarySummitId =
+    selectedSummitId && MONT_BLANC_SUMMIT_IDS.has(selectedSummitId)
+      ? selectedSummitId
+      : null;
+
+  // Tous les sommets MB ayant au moins une voie avec GPX
+  const allMBSummitIds = useMemo(
+    () =>
+      Object.keys(CLIMBING_ROUTES).filter(
+        (id) =>
+          MONT_BLANC_SUMMIT_IDS.has(id) &&
+          (CLIMBING_ROUTES[id] ?? []).some((r) => GPX_ROUTE_IDS.has(r.id))
+      ),
+    []
+  );
 
   function toggleFilter(f: GradeFamily) {
     setActiveFilters((prev) => {
@@ -328,7 +334,13 @@ export default function RouteLibrary({ className }: RouteLibraryProps) {
     });
   }
 
-  const summitIds = Object.keys(CLIMBING_ROUTES);
+  // Sommets à afficher en premier (le sommet sélectionné)
+  // + éventuellement les autres si showAllSummits
+  const primaryIds = primarySummitId ? [primarySummitId] : allMBSummitIds;
+  const otherIds = primarySummitId
+    ? allMBSummitIds.filter((id) => id !== primarySummitId)
+    : [];
+  const hasOthers = otherIds.length > 0;
 
   return (
     <div
@@ -450,14 +462,100 @@ export default function RouteLibrary({ className }: RouteLibraryProps) {
             )}
           </div>
 
-          {/* Liste des sommets */}
-          {summitIds.map((id) => (
+          {/* Sommets principaux */}
+          {primaryIds.map((id) => (
             <SummitGroup
               key={id}
               summitId={id}
               filterFamilies={activeFilters}
+              defaultOpen
             />
           ))}
+
+          {/* Autres sommets (quand showAllSummits) */}
+          {showAllSummits && otherIds.length > 0 && (
+            <>
+              <div
+                style={{
+                  borderTop: "1px solid rgba(255,255,255,0.06)",
+                  paddingTop: 8,
+                  marginTop: 4,
+                  marginBottom: 8,
+                  fontSize: 9,
+                  color: "#475569",
+                  fontWeight: 700,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.07em",
+                }}
+              >
+                Autres sommets
+              </div>
+              {otherIds.map((id) => (
+                <SummitGroup
+                  key={id}
+                  summitId={id}
+                  filterFamilies={activeFilters}
+                  defaultOpen={false}
+                />
+              ))}
+            </>
+          )}
+
+          {/* Bouton "Explorer d'autres voies" */}
+          {hasOthers && !showAllSummits && (
+            <div
+              style={{
+                borderTop: "1px solid rgba(255,255,255,0.06)",
+                paddingTop: 8,
+                marginTop: 4,
+              }}
+            >
+              <button
+                onClick={() => setShowAllSummits(true)}
+                style={{
+                  width: "100%",
+                  background: "none",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  borderRadius: 6,
+                  color: "#60a5fa",
+                  fontSize: 10,
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  padding: "5px 8px",
+                  textAlign: "center",
+                }}
+              >
+                Explorer d&apos;autres voies →
+              </button>
+            </div>
+          )}
+
+          {/* Réduire la liste complète */}
+          {showAllSummits && hasOthers && (
+            <div
+              style={{
+                paddingTop: 8,
+                marginTop: 4,
+              }}
+            >
+              <button
+                onClick={() => setShowAllSummits(false)}
+                style={{
+                  width: "100%",
+                  background: "none",
+                  border: "1px solid rgba(255,255,255,0.08)",
+                  borderRadius: 6,
+                  color: "#475569",
+                  fontSize: 10,
+                  cursor: "pointer",
+                  padding: "5px 8px",
+                  textAlign: "center",
+                }}
+              >
+                ← Réduire
+              </button>
+            </div>
+          )}
 
           {/* Pied de panneau — tout masquer */}
           {visibleRoutes.length > 0 && (

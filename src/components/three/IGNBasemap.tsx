@@ -10,6 +10,21 @@ import {
   IGNLayer,
 } from "@/utils/coordinateUtils";
 
+class BasemapErrorBoundary extends React.Component<
+  { children: React.ReactNode; fallback: React.ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { children: React.ReactNode; fallback: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() { return { hasError: true }; }
+  render() {
+    if (this.state.hasError) return this.props.fallback;
+    return this.props.children;
+  }
+}
+
 interface TileData {
   x: number; // km
   y: number; // km
@@ -105,27 +120,29 @@ export default function IGNBasemap({
 
   if (!basemapData) return null;
 
-  return (
-    <React.Suspense
-      fallback={
-        <mesh
-          rotation={[-Math.PI / 2, 0, 0]}
-          position={[basemapData.positionX, yOffset, basemapData.positionZ]}
-        >
-          <planeGeometry args={[basemapData.planeWidth, basemapData.planeHeight]} />
-          <meshBasicMaterial color="#888888" side={THREE.DoubleSide} depthWrite={false} />
-        </mesh>
-      }
+  const fallbackMesh = (
+    <mesh
+      rotation={[-Math.PI / 2, 0, 0]}
+      position={[basemapData.positionX, yOffset, basemapData.positionZ]}
     >
-      <BasemapPlane
-        textureUrl={basemapData.textureUrl}
-        planeWidth={basemapData.planeWidth}
-        planeHeight={basemapData.planeHeight}
-        positionX={basemapData.positionX}
-        positionZ={basemapData.positionZ}
-        yOffset={yOffset}
-        opacity={opacity}
-      />
-    </React.Suspense>
+      <planeGeometry args={[basemapData.planeWidth, basemapData.planeHeight]} />
+      <meshBasicMaterial color="#888888" side={THREE.DoubleSide} depthWrite={false} />
+    </mesh>
+  );
+
+  return (
+    <BasemapErrorBoundary fallback={null}>
+      <React.Suspense fallback={fallbackMesh}>
+        <BasemapPlane
+          textureUrl={basemapData.textureUrl}
+          planeWidth={basemapData.planeWidth}
+          planeHeight={basemapData.planeHeight}
+          positionX={basemapData.positionX}
+          positionZ={basemapData.positionZ}
+          yOffset={yOffset}
+          opacity={opacity}
+        />
+      </React.Suspense>
+    </BasemapErrorBoundary>
   );
 }

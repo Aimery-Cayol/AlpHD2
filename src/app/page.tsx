@@ -41,6 +41,7 @@ import type { TileModel, TileData } from "@/types/models";
 import type { TileCoord } from "@/utils/fileUtils";
 import { CLIMBING_ROUTES, gradeToColor } from "@/data/climbingRoutes";
 import { useRouteStore } from "@/store/route-store";
+import { wgs84ToLambert93Km } from "@/utils/coordinateUtils";
 
 const ThreeScene = dynamic(() => import("@/components/three/ThreeScene"), { ssr: false });
 
@@ -101,7 +102,7 @@ const MOUNTAIN_TREE = [
         id: "secteur-tour-argentiere",
         name: "1. Secteur Tour - Argentière",
         children: [
-          { id: "tour", name: "Aiguille du Tour (3540m)", altitude: "3540m", c2c: "https://www.camptocamp.org/waypoints/37508/fr/aiguille-du-tour", firstAscent: "1864 — J.-J. Maquignaz, A. Maquignaz et J.-P. Maquignaz", description: "Sommet très classique et accessible du massif du Mont-Blanc, idéal pour une première haute montagne. Son panorama depuis la cime offre une vue exceptionnelle sur le bassin d'Argentière, la mer de Glace et les sommets environnants.", dalles: [{ path: "meshes/1010_6552_11.drc", x: 1010, y: 6552 }] },
+          { id: "tour", name: "Aiguille du Tour (3540m)", altitude: "3540m", c2c: "https://www.camptocamp.org/waypoints/37508/fr/aiguille-du-tour", firstAscent: "1864 — J.-J. Maquignaz, A. Maquignaz et J.-P. Maquignaz", description: "Sommet très classique et accessible du massif du Mont-Blanc, idéal pour une première haute montagne. Son panorama depuis la cime offre une vue exceptionnelle sur le bassin d'Argentière, la mer de Glace et les sommets environnants.", dalles: [{ path: "meshes/1010_6551_11.drc", x: 1010, y: 6551 }, { path: "meshes/1010_6552_11.drc", x: 1010, y: 6552 }] },
           { id: "chardonnet", name: "Aiguille du Chardonnet (3824m)", altitude: "3824m", c2c: "https://www.camptocamp.org/waypoints/37433/fr/aiguille-du-chardonnet", firstAscent: "1865 — Edward Whymper avec les guides Michel Croz et Christian Almer", description: "L'une des plus belles courses mixtes du massif. Son arête Forbes, longue arête neigeuse et aérienne, est une classique de toute première catégorie. Le versant nord offre des itinéraires glaciaires exigeants.", dalles: [{ path: "meshes/1009_6549_11.drc", x: 1009, y: 6549 }, { path: "meshes/1009_6550_11.drc", x: 1009, y: 6550 }, { path: "meshes/1010_6549_11.drc", x: 1010, y: 6549 }, { path: "meshes/1010_6550_11.drc", x: 1010, y: 6550 }, { path: "meshes/1011_6550_11.drc", x: 1011, y: 6550 }] },
         ],
       },
@@ -111,17 +112,17 @@ const MOUNTAIN_TREE = [
         children: [
           { id: "verte", name: "Aiguille Verte (4122m)", altitude: "4122m", c2c: "https://www.camptocamp.org/waypoints/37435/fr/aiguille-verte", firstAscent: "1865 — Edward Whymper avec les guides Michel Croz, Christian Almer et Franz Biener, par le couloir Whymper", description: "L'Aiguille Verte est un sommet mythique du massif du Mont-Blanc. Avant la Verte on est alpiniste, après la Verte on devient montagnard. Son ascension par le couloir Whymper ou l'arête des Grands Montets constitue une référence en alpinisme de haute montagne.", waypoints: [{name: "Couloir Whymper", type: "Couloir"}, {name: "Arête des Grands Montets", type: "Arête"}], dalles: [{ path: "meshes/1006_6545_11.drc", x: 1006, y: 6545 }, { path: "meshes/1006_6546_11.drc", x: 1006, y: 6546 }, { path: "meshes/1006_6547_11.drc", x: 1006, y: 6547 }, { path: "meshes/1007_6545_11.drc", x: 1007, y: 6545 }, { path: "meshes/1007_6546_11.drc", x: 1007, y: 6546 }, { path: "meshes/1007_6547_11.drc", x: 1007, y: 6547 }, { path: "meshes/1008_6546_11.drc", x: 1008, y: 6546 }] },
           { id: "drus", name: "Les Drus (3754m)", altitude: "3754m", c2c: "https://www.camptocamp.org/waypoints/221771/fr/les-drus", firstAscent: "Grand Dru 1878 — Clinton Dent et J.-W. Hartley avec les guides Alexander Burgener et Kaspar Maurer ; Petit Dru 1879 — J. Charlet-Straton, P. Payot et F. Folliguet", description: "Les Drus sont deux aiguilles jumelles d'une verticalité saisissante dominant Chamonix. La face ouest du Petit Dru, avec le légendaire Pilier Bonatti gravi en solitaire en 1955, est l'une des grandes faces rocheuses des Alpes. Un éboulement massif en 2005 en a profondément remodélé la silhouette.", youtube: "https://www.youtube.com/watch?v=nYQ5NgP3GGw", dalles: [{ path: "meshes/1006_6545_11.drc", x: 1006, y: 6545 }] },
-          { id: "droites", name: "Les Droites (4001m)", altitude: "4001m", c2c: "https://www.camptocamp.org/waypoints/37434/fr/les-droites", firstAscent: "1876 — A. Adams-Reilly et A.W. Moore avec les guides Johann Jaun et Ulrich Almer", description: "Les Droites forment avec les Courtes et l'Aiguille Verte la trilogie des grands sommets du bassin d'Argentière. Leur face nord constitue un mur de glace et de roc de 1 000 m, parmi les plus redoutables des Alpes.", dalles: [{ path: "meshes/1008_6545_11.drc", x: 1008, y: 6545 }, { path: "meshes/1008_6546_11.drc", x: 1008, y: 6546 }, { path: "meshes/1009_6545_11.drc", x: 1009, y: 6545 }, { path: "meshes/1009_6546_11.drc", x: 1009, y: 6546 }] },
-          { id: "courtes", name: "Les Courtes (3856m)", altitude: "3856m", c2c: "https://www.camptocamp.org/waypoints/37432/fr/les-courtes", firstAscent: "1876 — A. Adams-Reilly et A.W. Moore avec les guides Johann Jaun et Ulrich Almer", description: "Les Courtes se distinguent par leur face nord d'une rectitude parfaite, classique de glace PD+ à AD. Situées entre le glacier d'Argentière et le glacier du Tour Noir, elles offrent une course glaciaire élégante et engagée.", dalles: [{ path: "meshes/1009_6544_11.drc", x: 1009, y: 6544 }, { path: "meshes/1009_6545_11.drc", x: 1009, y: 6545 }, { path: "meshes/1010_6544_11.drc", x: 1010, y: 6544 }, { path: "meshes/1010_6545_11.drc", x: 1010, y: 6545 }] },
-          { id: "moine", name: "Aiguille du Moine (3412m)", altitude: "3412m", c2c: "https://www.camptocamp.org/waypoints/37505/fr/aiguille-du-moine", firstAscent: "1881 — C.E. Eaton avec les guides Michel et Jean Simond", description: "L'Aiguille du Moine est une pyramide rocheuse élégante dominant le glacier de Talèfre et d'Argentière. Sa voie normale par l'arête sud est une classique en rocher offrant de belles vues sur l'Aiguille Verte et les Drus.", dalles: [{ path: "meshes/1006_6543_11.drc", x: 1006, y: 6543 }, { path: "meshes/1006_6544_11.drc", x: 1006, y: 6544 }, { path: "meshes/1007_6543_11.drc", x: 1007, y: 6543 }, { path: "meshes/1007_6544_11.drc", x: 1007, y: 6544 }] },
+          { id: "droites", name: "Les Droites (4001m)", altitude: "4001m", c2c: "https://www.camptocamp.org/waypoints/37434/fr/les-droites", firstAscent: "1876 — A. Adams-Reilly et A.W. Moore avec les guides Johann Jaun et Ulrich Almer", description: "Les Droites forment avec les Courtes et l'Aiguille Verte la trilogie des grands sommets du bassin d'Argentière. Leur face nord constitue un mur de glace et de roc de 1 000 m, parmi les plus redoutables des Alpes.", dalles: [{ path: "meshes/1007_6545_11.drc", x: 1007, y: 6545 }, { path: "meshes/1007_6546_11.drc", x: 1007, y: 6546 }, { path: "meshes/1008_6545_11.drc", x: 1008, y: 6545 }, { path: "meshes/1008_6546_11.drc", x: 1008, y: 6546 }] },
+          { id: "courtes", name: "Les Courtes (3856m)", altitude: "3856m", c2c: "https://www.camptocamp.org/waypoints/37432/fr/les-courtes", firstAscent: "1876 — A. Adams-Reilly et A.W. Moore avec les guides Johann Jaun et Ulrich Almer", description: "Les Courtes se distinguent par leur face nord d'une rectitude parfaite, classique de glace PD+ à AD. Situées entre le glacier d'Argentière et le glacier du Tour Noir, elles offrent une course glaciaire élégante et engagée.", dalles: [{ path: "meshes/1007_6547_11.drc", x: 1007, y: 6547 }, { path: "meshes/1007_6548_11.drc", x: 1007, y: 6548 }, { path: "meshes/1008_6547_11.drc", x: 1008, y: 6547 }, { path: "meshes/1008_6548_11.drc", x: 1008, y: 6548 }] },
+          { id: "moine", name: "Aiguille du Moine (3412m)", altitude: "3412m", c2c: "https://www.camptocamp.org/waypoints/37505/fr/aiguille-du-moine", firstAscent: "1881 — C.E. Eaton avec les guides Michel et Jean Simond", description: "L'Aiguille du Moine est une pyramide rocheuse élégante dominant le glacier de Talèfre et d'Argentière. Sa voie normale par l'arête sud est une classique en rocher offrant de belles vues sur l'Aiguille Verte et les Drus.", dalles: [{ path: "meshes/1005_6542_11.drc", x: 1005, y: 6542 }, { path: "meshes/1005_6543_11.drc", x: 1005, y: 6543 }, { path: "meshes/1006_6542_11.drc", x: 1006, y: 6542 }, { path: "meshes/1006_6543_11.drc", x: 1006, y: 6543 }] },
         ],
       },
       {
         id: "secteur-aiguilles-chamonix",
         name: "3. Secteur Aiguilles de Chamonix",
         children: [
-          { id: "midi", name: "Aiguille du Midi (3842m)", altitude: "3842m", c2c: "https://www.camptocamp.org/waypoints/37402/fr/aiguille-du-midi", firstAscent: "1818 — les frères Joseph-Marie et Jacques-Michel Balmat", description: "L'Aiguille du Midi est le belvédère emblématique de Chamonix, reliée à la vallée par le téléphérique le plus haut d'Europe. Son arête sommitale, exposée et aérienne, conduit à 3 842 m avec une vue panoramique à 360° sur le Mont-Blanc, la Vallée Blanche et les Grandes Jorasses.", dalles: [{ path: "meshes/1000_6539_11.drc", x: 1000, y: 6539 }, { path: "meshes/1001_6539_11.drc", x: 1001, y: 6539 }, { path: "meshes/1001_6540_11.drc", x: 1001, y: 6540 }] },
-          { id: "plan", name: "Aiguille du Plan (3673m)", altitude: "3673m", c2c: "https://www.camptocamp.org/waypoints/37427/fr/aiguille-du-plan", firstAscent: "1871 — G.E. Foster avec les guides Melchior et Andreas Imseng", description: "L'Aiguille du Plan est une des aiguilles de Chamonix les plus prisées des alpinistes confirmés. Son versant nord présente plusieurs voies de glace et mixte de haut niveau, dont le couloir des Frendo. La vue depuis la cime sur la Vallée Blanche et le Mont-Blanc est saisissante.", dalles: [{ path: "meshes/1002_6540_11.drc", x: 1002, y: 6540 }, { path: "meshes/1002_6541_11.drc", x: 1002, y: 6541 }, { path: "meshes/1003_6540_11.drc", x: 1003, y: 6540 }, { path: "meshes/1003_6541_11.drc", x: 1003, y: 6541 }] },
+          { id: "midi", name: "Aiguille du Midi (3842m)", altitude: "3842m", c2c: "https://www.camptocamp.org/waypoints/37402/fr/aiguille-du-midi", firstAscent: "1818 — les frères Joseph-Marie et Jacques-Michel Balmat", description: "L'Aiguille du Midi est le belvédère emblématique de Chamonix, reliée à la vallée par le téléphérique le plus haut d'Europe. Son arête sommitale, exposée et aérienne, conduit à 3 842 m avec une vue panoramique à 360° sur le Mont-Blanc, la Vallée Blanche et les Grandes Jorasses.", dalles: [{ path: "meshes/1001_6538_11.drc", x: 1001, y: 6538 }, { path: "meshes/1000_6539_11.drc", x: 1000, y: 6539 }, { path: "meshes/1001_6539_11.drc", x: 1001, y: 6539 }, { path: "meshes/1001_6540_11.drc", x: 1001, y: 6540 }] },
+          { id: "plan", name: "Aiguille du Plan (3673m)", altitude: "3673m", c2c: "https://www.camptocamp.org/waypoints/37427/fr/aiguille-du-plan", firstAscent: "1871 — G.E. Foster avec les guides Melchior et Andreas Imseng", description: "L'Aiguille du Plan est une des aiguilles de Chamonix les plus prisées des alpinistes confirmés. Son versant nord présente plusieurs voies de glace et mixte de haut niveau, dont le couloir des Frendo. La vue depuis la cime sur la Vallée Blanche et le Mont-Blanc est saisissante.", dalles: [{ path: "meshes/1001_6538_11.drc", x: 1001, y: 6538 }, { path: "meshes/1002_6538_11.drc", x: 1002, y: 6538 }, { path: "meshes/1001_6539_11.drc", x: 1001, y: 6539 }, { path: "meshes/1002_6539_11.drc", x: 1002, y: 6539 }, { path: "meshes/1003_6539_11.drc", x: 1003, y: 6539 }, { path: "meshes/1002_6540_11.drc", x: 1002, y: 6540 }, { path: "meshes/1002_6541_11.drc", x: 1002, y: 6541 }, { path: "meshes/1003_6540_11.drc", x: 1003, y: 6540 }, { path: "meshes/1003_6541_11.drc", x: 1003, y: 6541 }] },
           { id: "chamonix-needles", name: "Aiguilles de Chamonix", altitude: "3400m-3842m", dalles: [{ path: "meshes/1002_6541_11.drc", x: 1002, y: 6541 }, { path: "meshes/1002_6542_11.drc", x: 1002, y: 6542 }, { path: "meshes/1003_6541_11.drc", x: 1003, y: 6541 }, { path: "meshes/1003_6542_11.drc", x: 1003, y: 6542 }, { path: "meshes/1003_6543_11.drc", x: 1003, y: 6543 }, { path: "meshes/1004_6542_11.drc", x: 1004, y: 6542 }] },
           { id: "grepon", name: "Aiguille du Grépon (3482m)", altitude: "3482m", c2c: "https://www.camptocamp.org/waypoints/37428/fr/aiguille-du-grepon", firstAscent: "1881 — A.F. Mummery avec les guides Alexander Burgener et Benedikt Venetz", description: "L'Aiguille du Grépon, longtemps considérée comme la plus difficile du monde, est aujourd'hui une grande classique du granit chamonix. Sa face Mer de Glace, accessible depuis Montenvers via le Refuge de l'Envers des Aiguilles (2523m), offre 800m d'escalade sur un granit d'exception avec pour passage-clé la célèbre Fissure Knubel (5c).", dalles: [{ path: "meshes/1003_6541_11.drc", x: 1003, y: 6541 }, { path: "meshes/1003_6542_11.drc", x: 1003, y: 6542 }, { path: "meshes/1003_6543_11.drc", x: 1003, y: 6543 }, { path: "meshes/1004_6540_11.drc", x: 1004, y: 6540 }, { path: "meshes/1004_6541_11.drc", x: 1004, y: 6541 }, { path: "meshes/1004_6542_11.drc", x: 1004, y: 6542 }] },
         ],
@@ -137,19 +138,30 @@ const MOUNTAIN_TREE = [
         ],
       },
       {
+        id: "secteur-gouter-bionnassay-miage",
+        name: "5. Secteur Goûter - Bionnassay - Miage",
+        children: [
+          { id: "gouter", name: "Aiguille du Goûter (3863m)", altitude: "3863m", c2c: "https://www.camptocamp.org/waypoints/37406/fr/aiguille-du-gouter", firstAscent: "1784 — M.-G. Paccard et J. Balmat lors de leur reconnaissance du Mont-Blanc", description: "L'Aiguille du Goûter (3 863 m) est l'étape-clé de la voie normale du Mont-Blanc. Son fameux couloir, exposé aux chutes de pierres, est l'un des passages les plus fréquentés et les plus dangereux des Alpes. Le refuge du Goûter au sommet est le plus haut refuge gardé d'Europe.", dalles: [{ path: "meshes/0996_6536_11.drc", x: 996, y: 6536 }, { path: "meshes/0997_6536_11.drc", x: 997, y: 6536 }, { path: "meshes/0997_6535_11.drc", x: 997, y: 6535 }, { path: "meshes/0996_6535_11.drc", x: 996, y: 6535 }] },
+          { id: "bionnassay", name: "Aiguille de Bionnassay (4052m)", altitude: "4052m", c2c: "https://www.camptocamp.org/waypoints/37405/fr/aiguille-de-bionnassay", firstAscent: "1865 — E.N. Buxton, F.C. Grove et R.S. MacDonald avec les guides Michel Payot et Johann Knubel", description: "L'Aiguille de Bionnassay (4 052 m) est le 4 000 m le plus occidental du massif du Mont-Blanc. Son arête SW, longue et aérienne, est une grande classique. Sa traversée depuis le Dôme du Goûter, sur la frontière franco-italienne, offre un panorama exceptionnel sur les glaciers de Miage et de Bionnassay.", dalles: [{ path: "meshes/0996_6534_11.drc", x: 996, y: 6534 }, { path: "meshes/0995_6534_11.drc", x: 995, y: 6534 }, { path: "meshes/0995_6533_11.drc", x: 995, y: 6533 }, { path: "meshes/0996_6533_11.drc", x: 996, y: 6533 }] },
+          { id: "domes-miage", name: "Dômes de Miage (3673m)", altitude: "3673m", c2c: "https://www.camptocamp.org/waypoints/37408/fr/domes-de-miage", firstAscent: "1770 — premières ascensions par des chasseurs locaux", description: "Les Dômes de Miage forment une longue arête glaciaire de cinq sommets entre 3 570 m et 3 673 m, dominant le glacier de Miage côté français et les glaciers italiens du versant opposé. Grande course glaciaire classique depuis les Contamines-Montjoie, souvent couplée à l'Aiguille de Bionnassay.", dalles: [{ path: "meshes/0995_6531_11.drc", x: 995, y: 6531 }, { path: "meshes/0994_6531_11.drc", x: 994, y: 6531 }, { path: "meshes/0994_6532_11.drc", x: 994, y: 6532 }, { path: "meshes/0993_6530_11.drc", x: 993, y: 6530 }, { path: "meshes/0993_6531_11.drc", x: 993, y: 6531 }, { path: "meshes/0994_6530_11.drc", x: 994, y: 6530 }] },
+          { id: "tre-la-tete", name: "Aiguille du Tré la Tête (3930m)", altitude: "3930m", c2c: "https://www.camptocamp.org/waypoints/37409/fr/aiguille-du-tre-la-tete", firstAscent: "1864 — E. Whymper avec les guides Michel Croz et Christian Almer", description: "L'Aiguille du Tré la Tête (3 930 m) domine le glacier du même nom et offre un magnifique panorama sur la chaîne du Mont-Blanc et le groupe du Mont Blanc de Courmayeur. Son ascension depuis le refuge Robert Blanc constitue une grande course glaciaire peu fréquentée.", dalles: [{ path: "meshes/0996_6529_11.drc", x: 996, y: 6529 }, { path: "meshes/0995_6529_11.drc", x: 995, y: 6529 }, { path: "meshes/0995_6530_11.drc", x: 995, y: 6530 }, { path: "meshes/0996_6530_11.drc", x: 996, y: 6530 }] },
+          { id: "aiguille-glaciers", name: "Aiguille des Glaciers (3816m)", altitude: "3816m", c2c: "https://www.camptocamp.org/waypoints/37410/fr/aiguille-des-glaciers", firstAscent: "1772 — Pierre Balmat et Jean-Nicolas Couteran", description: "L'Aiguille des Glaciers (3 816 m) marque l'extrémité méridionale du massif du Mont-Blanc, sur la frontière franco-italienne au-dessus du Col des Glaciers. Sommet glaciaire peu fréquenté, accessible depuis le Val Vény (Italie) ou depuis les Contamines par le Col des Glaciers.", dalles: [{ path: "meshes/0995_6527_11.drc", x: 995, y: 6527 }, { path: "meshes/0994_6527_11.drc", x: 994, y: 6527 }, { path: "meshes/0994_6528_11.drc", x: 994, y: 6528 }, { path: "meshes/0995_6528_11.drc", x: 995, y: 6528 }] },
+          { id: "mont-tondu", name: "Mont Tondu (3196m)", altitude: "3196m", c2c: "https://www.camptocamp.org/waypoints/37411/fr/mont-tondu", firstAscent: "XIXe siècle", description: "Le Mont Tondu (3 196 m) est un sommet accessible dominant les Contamines-Montjoie et le val Montjoie. Son ascension depuis Notre-Dame-de-la-Gorge est une belle randonnée alpine avec vue sur les glaciers de Miage et la chaîne du Mont-Blanc.", dalles: [{ path: "meshes/0991_6526_11.drc", x: 991, y: 6526 }, { path: "meshes/0992_6526_11.drc", x: 992, y: 6526 }, { path: "meshes/0992_6527_11.drc", x: 992, y: 6527 }, { path: "meshes/0991_6527_11.drc", x: 991, y: 6527 }] },
+        ],
+      },
+      {
         id: "secteur-geant-vallee-blanche",
-        name: "5. Secteur Géant - Vallée Blanche",
+        name: "6. Secteur Géant - Vallée Blanche",
         children: [
           { id: "geant", name: "Dent du Géant (4013m)", altitude: "4013m", c2c: "https://www.camptocamp.org/waypoints/37407/fr/dent-du-geant", firstAscent: "1882 — W.W. Graham avec Jean-Joseph et Baptiste Maquignaz", description: "Obélisque granitique de 4 013 m dominant le glacier du Géant côté italien. Longtemps réputée absolument inaccessible, la Dent du Géant est désormais une grande classique grâce aux cordes fixes installées sur son ressaut sommital. La vue sur la Vallée Blanche et les sommets environnants y est spectaculaire.", dalles: [{ path: "meshes/1006_6537_11.drc", x: 1006, y: 6537 }] },
           { id: "rochefort", name: "Arête de Rochefort", altitude: "4001m", c2c: "https://www.camptocamp.org/waypoints/37416/fr/arete-de-rochefort", firstAscent: "1873 — J. Eccles avec les guides Michel et Alphonse Payot", description: "Longue arête neigeuse et aérienne à 4 001 m reliant la Dent du Géant en direction des Grandes Jorasses. L'un des itinéraires glaciaires les plus esthétiques du massif, avec une vue imprenable sur la Vallée Blanche d'un côté et les glaciers italiens de l'autre.", dalles: [{ path: "meshes/1006_6537_11.drc", x: 1006, y: 6537 }, { path: "meshes/1006_6538_11.drc", x: 1006, y: 6538 }, { path: "meshes/1007_6537_11.drc", x: 1007, y: 6537 }, { path: "meshes/1007_6538_11.drc", x: 1007, y: 6538 }] },
-          { id: "tour-ronde", name: "Tour Ronde (3792m)", altitude: "3792m", c2c: "https://www.camptocamp.org/waypoints/37404/fr/tour-ronde", firstAscent: "1867 — F.C. Grove, W.E. Mathews et J.C. Jacomb avec les guides Melchior et Jakob Anderegg", description: "Sommet rocheux et neigeux de 3 792 m au cœur de la Vallée Blanche, entre l'Aiguille du Midi et le Col du Géant. Sa voie normale est accessible depuis le refuge Torino côté italien ; son versant nord, en glace raide, offre des courses très prisées des amateurs de glace.", dalles: [{ path: "meshes/1002_6535_11.drc", x: 1002, y: 6535 }, { path: "meshes/1003_6535_11.drc", x: 1003, y: 6535 }] },
           { id: "periades", name: "Les Périades (3549m)", altitude: "3549m", c2c: "https://www.camptocamp.org/waypoints/37520/fr/les-periades", description: "Crête acérée et très découpée s'étendant du Col du Tacul au Col du Mont Mallet.", dalles: [{ path: "meshes/1006_6539_11.drc", x: 1006, y: 6539 }, { path: "meshes/1006_6540_11.drc", x: 1006, y: 6540 }, { path: "meshes/1007_6539_11.drc", x: 1007, y: 6539 }, { path: "meshes/1007_6540_11.drc", x: 1007, y: 6540 }] },
           { id: "leschaux-geant", name: "Aiguille de Leschaux (3759m)", altitude: "3759m", c2c: "https://www.camptocamp.org/waypoints/37512/fr/aiguille-de-leschaux", description: "Vue depuis le secteur Géant, sur la crête entre Mont Dolent et Grandes Jorasses.", dalles: [{ path: "meshes/1006_6539_11.drc", x: 1006, y: 6539 }, { path: "meshes/1006_6540_11.drc", x: 1006, y: 6540 }, { path: "meshes/1007_6539_11.drc", x: 1007, y: 6539 }, { path: "meshes/1007_6540_11.drc", x: 1007, y: 6540 }] },
         ]
       },
       {
         id: "secteur-jorasses",
-        name: "6. Secteur Grandes Jorasses",
+        name: "7. Secteur Grandes Jorasses",
         children: [
           { id: "jorasses", name: "Grandes Jorasses (4208m)", altitude: "4208m", c2c: "https://www.camptocamp.org/waypoints/37419/fr/grandes-jorasses", firstAscent: "Pointe Whymper 1865 — Edward Whymper avec les guides Michel Croz, C. Almer et F. Biener ; Pointe Walker 1868 — Horace Walker avec les guides Johann Jaun et Melchior Anderegg", description: "Les Grandes Jorasses sont l'un des six grands défis classiques des Alpes. Leur face nord, haute de 1 200 m, domine le glacier de Leschaux d'une verticalité terrifiante. L'Éperon Walker, premier gravi par Riccardo Cassin en 1938, est considéré comme l'une des plus grandes réalisations de l'alpinisme.", waypoints: [{name: "Pointe Walker", type: "Sommet"}, {name: "Éperon Walker", type: "Pilier"}], dalles: [{ path: "meshes/1008_6538_11.drc", x: 1008, y: 6538 }, { path: "meshes/1008_6539_11.drc", x: 1008, y: 6539 }, { path: "meshes/1009_6538_11.drc", x: 1009, y: 6538 }, { path: "meshes/1009_6539_11.drc", x: 1009, y: 6539 }] },
           { id: "petites-jorasses", name: "Petites Jorasses (3650m)", altitude: "3650m", c2c: "https://www.camptocamp.org/waypoints/37513/fr/petites-jorasses", description: "Sommet voisin des Grandes Jorasses, situé entre les glaciers de Leschaux et de Frébouze.", dalles: [{ path: "meshes/1009_6539_11.drc", x: 1009, y: 6539 }, { path: "meshes/1009_6540_11.drc", x: 1009, y: 6540 }, { path: "meshes/1010_6539_11.drc", x: 1010, y: 6539 }, { path: "meshes/1010_6540_11.drc", x: 1010, y: 6540 }] },
@@ -436,7 +448,7 @@ function HomePageContent() {
     pendingLoads, loadingProgress, resetLoadingProgress,
     poiEnabled, setPoiEnabled,
     poiPlacing, setPoiPlacing,
-    pois,
+    pois, addPoi, updatePoi, removePoi,
   } = useAppContext();
 
   const [selectedSummitId, setSelectedSummitId] = useState<string | null>(null);
@@ -452,7 +464,84 @@ function HomePageContent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
 
+  // --- Modal POI (création / édition) ---
+  const [poiModal, setPoiModal] = useState<{
+    mode: "create" | "edit";
+    pending?: { x: number; y: number; z: number; tileId: string; lx: number; ly: number };
+    editId?: string;
+    name: string;
+    type: "sommet" | "col" | "refuge";
+  } | null>(null);
+
   const hasMeasurement = measurementData.points.length >= 2;
+
+  // Écouter les événements POI depuis PoiTool (clic terrain → formulaire)
+  useEffect(() => {
+    const onPending = (e: Event) => {
+      const d = (e as CustomEvent).detail;
+      setPoiModal({ mode: "create", pending: d, name: "", type: "sommet" });
+    };
+    const onEdit = (e: Event) => {
+      const poi = (e as CustomEvent).detail;
+      setPoiModal({ mode: "edit", editId: poi.id, name: poi.name, type: poi.type });
+    };
+    window.addEventListener("poi-pending", onPending);
+    window.addEventListener("poi-edit", onEdit);
+    return () => {
+      window.removeEventListener("poi-pending", onPending);
+      window.removeEventListener("poi-edit", onEdit);
+    };
+  }, []);
+
+  const savePoisToS3 = async (updatedPois: typeof pois) => {
+    try {
+      await fetch("/api/pois", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedPois),
+      });
+    } catch {}
+  };
+
+  const handlePoiConfirm = () => {
+    if (!poiModal) return;
+    if (poiModal.mode === "create" && poiModal.pending) {
+      const d = poiModal.pending;
+      const id = crypto.randomUUID();
+      const newPoi = {
+        id,
+        name: poiModal.name.trim() || "Lieu",
+        type: poiModal.type,
+        position: { x: d.x, y: d.y, z: d.z },
+        tileIds: d.tileId ? [d.tileId] : [],
+        lx: d.lx,
+        ly: d.ly,
+      };
+      addPoi(newPoi);
+      savePoisToS3([...pois, newPoi]);
+      setPoiPlacing(false);
+    } else if (poiModal.mode === "edit" && poiModal.editId) {
+      updatePoi(poiModal.editId, { name: poiModal.name.trim() || "Lieu", type: poiModal.type });
+      const updated = pois.map(p => p.id === poiModal.editId ? { ...p, name: poiModal.name.trim() || "Lieu", type: poiModal.type } : p);
+      savePoisToS3(updated);
+    }
+    window.dispatchEvent(new CustomEvent("poi-confirm"));
+    setPoiModal(null);
+  };
+
+  const handlePoiCancel = () => {
+    window.dispatchEvent(new CustomEvent("poi-cancel"));
+    setPoiModal(null);
+  };
+
+  const handlePoiDelete = () => {
+    if (!poiModal?.editId) return;
+    removePoi(poiModal.editId);
+    const updated = pois.filter(p => p.id !== poiModal.editId);
+    savePoisToS3(updated);
+    window.dispatchEvent(new CustomEvent("poi-cancel"));
+    setPoiModal(null);
+  };
 
   // Charger les données des tuiles depuis le GeoJSON statique (public/tiles.geojson)
   const loadTilesData = async () => {
@@ -559,16 +648,33 @@ function HomePageContent() {
     }
   }, [pendingLoads]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Tuiles traversées par les voies actives → affichage en qualité maximale ("11")
+  const routeMaxQualityTiles = useMemo<Set<TileCoord>>(() => {
+    if (visibleRoutes.length === 0) return new Set();
+    const tileSet = new Set<TileCoord>();
+    for (const route of visibleRoutes) {
+      const points = route.track ?? [];
+      for (const pt of points) {
+        const { lx, ly } = wgs84ToLambert93Km(pt.lon, pt.lat);
+        const coord = toCoord(Math.floor(lx), Math.floor(ly));
+        if (selectedTiles.includes(coord)) tileSet.add(coord);
+      }
+    }
+    return tileSet;
+  }, [visibleRoutes, selectedTiles]);
+
   // Construire les modèles à afficher à partir des tuiles sélectionnées + niveau choisi
   const models: TileModel[] = useMemo(() => {
     return selectedTiles
       .map((coord) => {
         const tileData = tilesData.get(coord);
         if (!tileData) return null;
-        let file = tileData.files.find((f) => f.level === selectedLevel);
+        // Les tuiles traversées par une voie active sont toujours en qualité max
+        const targetLevel = routeMaxQualityTiles.has(coord) ? "11" : selectedLevel;
+        let file = tileData.files.find((f) => f.level === targetLevel);
         if (!file) {
           const sortedFiles = [...tileData.files].sort(
-            (a, b) => Math.abs(parseInt(a.level) - parseInt(selectedLevel)) - Math.abs(parseInt(b.level) - parseInt(selectedLevel))
+            (a, b) => Math.abs(parseInt(a.level) - parseInt(targetLevel)) - Math.abs(parseInt(b.level) - parseInt(targetLevel))
           );
           file = sortedFiles[0];
         }
@@ -576,11 +682,9 @@ function HomePageContent() {
         return { coord, level: file.level, coordinates: { x: tileData.x, y: tileData.y }, availableLevels: tileData.levels };
       })
       .filter(Boolean) as TileModel[];
-  }, [selectedTiles, selectedLevel, tilesData]);
+  }, [selectedTiles, selectedLevel, tilesData, routeMaxQualityTiles]);
 
   // Tuiles voisines — chargées automatiquement au niveau de précision le plus bas
-  // pour remplir l'espace autour des dalles sélectionnées sans surcharger le rendu.
-  // Ne charge une voisine que si elle dispose d'un niveau simplifié (≤ 05).
   const neighborModels: TileModel[] = useMemo(() => {
     if (tilesData.size === 0 || selectedTiles.length === 0) return [];
 
@@ -600,11 +704,9 @@ function HomePageContent() {
         if (selectedTiles.includes(coord)) continue;
         const tileData = tilesData.get(coord);
         if (!tileData) continue;
-        // Niveau 01 garanti : synthétisé au chargement du GeoJSON pour toutes les tuiles
-        const lowestLevel = "01";
         neighbors.push({
           coord,
-          level: lowestLevel,
+          level: "01",
           coordinates: { x: tileData.x, y: tileData.y },
           availableLevels: tileData.levels,
         });
@@ -613,15 +715,18 @@ function HomePageContent() {
     return neighbors;
   }, [selectedTiles, tilesData]);
 
-  // Modèles complets : tuiles principales (haute qualité) + voisines (basse qualité)
+  // Modèles complets : tuiles principales + voisines basse qualité
   const allModels = useMemo(() => [...models, ...neighborModels], [models, neighborModels]);
 
-  // Set des coords voisines — pour la détection de survol dans ModelPositioner
+  // Set des coords voisines
   const neighborCoordsSet = useMemo(() => new Set(neighborModels.map((m) => m.coord)), [neighborModels]);
 
-  // Survol d'une dalle voisine basse résolution
+  // Survol d'une dalle voisine
   const [hoveredNeighbor, setHoveredNeighbor] = useState<string | null>(null);
   const [mousePos, setMousePos] = useState<{ x: number; y: number } | null>(null);
+  // Confirmation avant chargement HD d'une dalle voisine
+  const [confirmHdCoord, setConfirmHdCoord] = useState<string | null>(null);
+  const [confirmPos, setConfirmPos] = useState<{ x: number; y: number } | null>(null);
 
   // Info du sommet sélectionné
   const selectedRouteInfo = useMemo(() => {
@@ -699,6 +804,7 @@ function HomePageContent() {
     setSidebarOpen(false);
     if (item.kind === "summit") {
       handleToggle(item.id);
+      setPoiEnabled(true); // afficher automatiquement les Lieux associés au sommet
     } else {
       // POI → trouver le sommet MOUNTAIN_TREE contenant sa dalle
       const tileId = item.tileIds?.[0];
@@ -746,6 +852,72 @@ function HomePageContent() {
   return (
     <div className="h-screen bg-slate-100 text-slate-900 flex flex-col p-2 lg:p-4 gap-2 lg:gap-3 overflow-hidden">
       <HelpModal isOpen={showHelp} onClose={() => setShowHelp(false)} />
+
+      {/* Modal création / édition POI */}
+      {poiModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+          <div className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl border border-slate-100 animate-in fade-in zoom-in duration-200">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-lg font-bold uppercase tracking-tight text-slate-900">
+                {poiModal.mode === "create" ? "Ajouter un lieu" : "Modifier le lieu"}
+              </h3>
+              <button onClick={handlePoiCancel} className="p-2 hover:bg-slate-100 rounded-full transition-colors">
+                <X className="h-4 w-4 text-slate-400" />
+              </button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1 block">Nom</label>
+                <input
+                  autoFocus
+                  type="text"
+                  value={poiModal.name}
+                  onChange={e => setPoiModal(m => m ? { ...m, name: e.target.value } : m)}
+                  onKeyDown={e => { if (e.key === "Enter") handlePoiConfirm(); if (e.key === "Escape") handlePoiCancel(); }}
+                  placeholder="Ex : Col du Midi, Refuge…"
+                  className="w-full px-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-orange-300 focus:ring-2 focus:ring-orange-100 placeholder:text-slate-400"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1 block">Type</label>
+                <div className="flex gap-2">
+                  {(["sommet", "col", "refuge"] as const).map(t => (
+                    <button
+                      key={t}
+                      onClick={() => setPoiModal(m => m ? { ...m, type: t } : m)}
+                      className={`flex-1 py-2 rounded-xl text-[11px] font-bold uppercase tracking-widest border transition-all ${poiModal.type === t ? "bg-orange-500 text-white border-orange-600" : "bg-slate-50 text-slate-600 border-slate-200 hover:border-orange-300"}`}
+                    >
+                      {t}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div className="flex gap-3 mt-6">
+              {poiModal.mode === "edit" && (
+                <button
+                  onClick={handlePoiDelete}
+                  className="px-4 py-3 bg-red-50 text-red-600 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-red-100 transition-all border border-red-200"
+                >
+                  Supprimer
+                </button>
+              )}
+              <button
+                onClick={handlePoiCancel}
+                className="flex-1 py-3 bg-slate-100 text-slate-600 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-slate-200 transition-all"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={handlePoiConfirm}
+                className="flex-1 py-3 bg-orange-500 text-white rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-orange-600 shadow-lg shadow-orange-200 transition-all"
+              >
+                {poiModal.mode === "create" ? "Ajouter" : "Enregistrer"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Overlay mobile pour fermer la sidebar */}
       {sidebarOpen && (
@@ -951,14 +1123,13 @@ function HomePageContent() {
                   models={allModels}
                   neighborCoords={neighborCoordsSet}
                   onNeighborHover={setHoveredNeighbor}
-                  onNeighborClick={(coord) =>
-                    setSelectedTiles((prev) =>
-                      prev.includes(coord as any) ? prev : [...prev, coord as any]
-                    )
-                  }
+                  onNeighborClick={(coord) => {
+                    setConfirmHdCoord(coord);
+                    setConfirmPos(mousePos);
+                  }}
                 />
               </div>
-              {hoveredNeighbor && mousePos && (
+              {hoveredNeighbor && mousePos && !confirmHdCoord && (
                 <div
                   style={{
                     position: "absolute",
@@ -983,6 +1154,71 @@ function HomePageContent() {
                   <span style={{ color: "#60a5fa", fontSize: 12, fontWeight: 600 }}>
                     Cliquer pour charger en HD
                   </span>
+                </div>
+              )}
+              {confirmHdCoord && confirmPos && (
+                <div
+                  style={{
+                    position: "absolute",
+                    left: Math.min(confirmPos.x + 16, window.innerWidth - 260),
+                    top: Math.max(confirmPos.y - 70, 8),
+                    zIndex: 50,
+                    background: "rgba(15, 23, 42, 0.95)",
+                    backdropFilter: "blur(12px)",
+                    border: "1px solid rgba(96, 165, 250, 0.4)",
+                    borderRadius: 10,
+                    padding: "10px 14px",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 8,
+                    whiteSpace: "nowrap",
+                    boxShadow: "0 4px 24px rgba(0,0,0,0.4)",
+                  }}
+                >
+                  <span style={{ color: "rgba(255,255,255,0.75)", fontSize: 12 }}>
+                    Charger cette zone en HD ?
+                  </span>
+                  <div style={{ display: "flex", gap: 6 }}>
+                    <button
+                      onClick={() => {
+                        setSelectedTiles((prev) =>
+                          prev.includes(confirmHdCoord as any) ? prev : [...prev, confirmHdCoord as any]
+                        );
+                        setConfirmHdCoord(null);
+                        setConfirmPos(null);
+                      }}
+                      style={{
+                        flex: 1,
+                        padding: "4px 10px",
+                        borderRadius: 6,
+                        border: "none",
+                        background: "#3b82f6",
+                        color: "#fff",
+                        fontSize: 11,
+                        fontWeight: 700,
+                        cursor: "pointer",
+                      }}
+                    >
+                      Charger en HD
+                    </button>
+                    <button
+                      onClick={() => {
+                        setConfirmHdCoord(null);
+                        setConfirmPos(null);
+                      }}
+                      style={{
+                        padding: "4px 10px",
+                        borderRadius: 6,
+                        border: "1px solid rgba(255,255,255,0.12)",
+                        background: "transparent",
+                        color: "#94a3b8",
+                        fontSize: 11,
+                        cursor: "pointer",
+                      }}
+                    >
+                      Annuler
+                    </button>
+                  </div>
                 </div>
               )}
               <LoadingOverlay visible={pendingLoads > 0} progress={loadingProgress} />
@@ -1085,7 +1321,10 @@ function HomePageContent() {
 
               {/* Panneau bibliothèque de voies */}
               {showRouteLibrary && (
-                <RouteLibrary className={`absolute bottom-16 z-40 ${showDataLayers ? "right-[244px]" : "right-3"}`} />
+                <RouteLibrary
+                  className={`absolute bottom-16 z-40 ${showDataLayers ? "right-[244px]" : "right-3"}`}
+                  selectedSummitId={selectedSummitId}
+                />
               )}
 
               {/* Profil altimétrique — visible dès qu'une voie est affichée */}

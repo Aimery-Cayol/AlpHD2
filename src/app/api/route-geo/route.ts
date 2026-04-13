@@ -45,7 +45,7 @@ export async function GET(req: NextRequest) {
       const points = downsamplePoints(raw, MAX_POINTS);
       if (points.length >= 2) {
         return NextResponse.json(points, {
-          headers: { "Cache-Control": "public, max-age=86400" }, // 24h
+          headers: { "Cache-Control": "no-cache" },
         });
       }
     } catch (err) {

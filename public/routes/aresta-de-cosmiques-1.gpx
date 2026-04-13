@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="AlpHD" xmlns="http://www.topografix.com/GPX/1/1">
+  <trk>
+    <name>Arête des Cosmiques #1</name>
+    <trkseg>
+      <trkpt lat="45.879065" lon="6.888540"><ele>3756.8</ele></trkpt>
+      <trkpt lat="45.879403" lon="6.888815"><ele>3731.8</ele></trkpt>
+      <trkpt lat="45.880167" lon="6.890140"><ele>3688.0</ele></trkpt>
+      <trkpt lat="45.879857" lon="6.890158"><ele>3679.2</ele></trkpt>
+      <trkpt lat="45.879717" lon="6.890467"><ele>3666.6</ele></trkpt>
+      <trkpt lat="45.879540" lon="6.890655"><ele>3657.0</ele></trkpt>
+      <trkpt lat="45.879155" lon="6.890513"><ele>3635.0</ele></trkpt>
+      <trkpt lat="45.878855" lon="6.890532"><ele>3620.4</ele></trkpt>
+      <trkpt lat="45.877845" lon="6.890018"><ele>3592.6</ele></trkpt>
+      <trkpt lat="45.877460" lon="6.889578"><ele>3583.0</ele></trkpt>
+      <trkpt lat="45.876750" lon="6.889065"><ele>3569.6</ele></trkpt>
+      <trkpt lat="45.876410" lon="6.888902"><ele>3566.4</ele></trkpt>
+      <trkpt lat="45.876228" lon="6.888608"><ele>3565.0</ele></trkpt>
+      <trkpt lat="45.875750" lon="6.888118"><ele>3558.4</ele></trkpt>
+      <trkpt lat="45.875243" lon="6.887505"><ele>3547.2</ele></trkpt>
+      <trkpt lat="45.875068" lon="6.887195"><ele>3546.8</ele></trkpt>
+      <trkpt lat="45.874788" lon="6.886923"><ele>3556.6</ele></trkpt>
+      <trkpt lat="45.874403" lon="6.886310"><ele>3572.2</ele></trkpt>
+      <trkpt lat="45.874367" lon="6.885735"><ele>3576.2</ele></trkpt>
+      <trkpt lat="45.874420" lon="6.885385"><ele>3578.8</ele></trkpt>
+      <trkpt lat="45.874533" lon="6.885052"><ele>3585.6</ele></trkpt>
+      <trkpt lat="45.874822" lon="6.885003"><ele>3590.0</ele></trkpt>
+      <trkpt lat="45.874990" lon="6.885120"><ele>3595.2</ele></trkpt>
+      <trkpt lat="45.875682" lon="6.885790"><ele>3684.6</ele></trkpt>
+      <trkpt lat="45.875807" lon="6.886040"><ele>3690.4</ele></trkpt>
+      <trkpt lat="45.876118" lon="6.886212"><ele>3709.8</ele></trkpt>
+      <trkpt lat="45.876565" lon="6.886530"><ele>3704.8</ele></trkpt>
+      <trkpt lat="45.876713" lon="6.886358"><ele>3711.6</ele></trkpt>
+      <trkpt lat="45.877008" lon="6.886270"><ele>3726.0</ele></trkpt>
+      <trkpt lat="45.877128" lon="6.886637"><ele>3716.6</ele></trkpt>
+      <trkpt lat="45.877910" lon="6.886973"><ele>3768.0</ele></trkpt>
+    </trkseg>
+  </trk>
+</gpx>

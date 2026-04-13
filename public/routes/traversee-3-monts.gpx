@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="AlpHD" xmlns="http://www.topografix.com/GPX/1/1">
+  <trk>
+    <name>Mont Blanc — Traversée des 3 Monts</name>
+    <trkseg>
+      <trkpt lat="45.878935" lon="6.888250"><ele>3729.0</ele></trkpt>
+      <trkpt lat="45.879010" lon="6.888960"><ele>3695.0</ele></trkpt>
+      <trkpt lat="45.879250" lon="6.888880"><ele>3698.0</ele></trkpt>
+      <trkpt lat="45.879750" lon="6.889700"><ele>3675.0</ele></trkpt>
+      <trkpt lat="45.880280" lon="6.889830"><ele>3648.0</ele></trkpt>
+      <trkpt lat="45.879580" lon="6.891430"><ele>3645.0</ele></trkpt>
+      <trkpt lat="45.879116" lon="6.892081"><ele>3625.0</ele></trkpt>
+      <trkpt lat="45.878670" lon="6.892180"><ele>3608.0</ele></trkpt>
+      <trkpt lat="45.878480" lon="6.891860"><ele>3601.0</ele></trkpt>
+      <trkpt lat="45.876350" lon="6.889990"><ele>3556.0</ele></trkpt>
+      <trkpt lat="45.874560" lon="6.888730"><ele>3527.0</ele></trkpt>
+      <trkpt lat="45.869747" lon="6.887192"><ele>3535.0</ele></trkpt>
+      <trkpt lat="45.864963" lon="6.884809"><ele>3612.0</ele></trkpt>
+      <trkpt lat="45.864211" lon="6.883958"><ele>3654.0</ele></trkpt>
+      <trkpt lat="45.863004" lon="6.883161"><ele>3732.0</ele></trkpt>
+      <trkpt lat="45.862850" lon="6.883630"><ele>3748.0</ele></trkpt>
+      <trkpt lat="45.861740" lon="6.883530"><ele>3830.0</ele></trkpt>
+      <trkpt lat="45.861010" lon="6.883100"><ele>3882.0</ele></trkpt>
+      <trkpt lat="45.860550" lon="6.882630"><ele>3915.0</ele></trkpt>
+      <trkpt lat="45.860470" lon="6.881880"><ele>3923.0</ele></trkpt>
+      <trkpt lat="45.858006" lon="6.879645"><ele>4116.0</ele></trkpt>
+      <trkpt lat="45.856368" lon="6.881109"><ele>4077.0</ele></trkpt>
+      <trkpt lat="45.855756" lon="6.881366"><ele>4068.0</ele></trkpt>
+      <trkpt lat="45.853532" lon="6.881743"><ele>4043.0</ele></trkpt>
+      <trkpt lat="45.853042" lon="6.881577"><ele>4042.0</ele></trkpt>
+      <trkpt lat="45.852196" lon="6.880728"><ele>4045.0</ele></trkpt>
+      <trkpt lat="45.851762" lon="6.878890"><ele>4049.0</ele></trkpt>
+      <trkpt lat="45.851024" lon="6.877708"><ele>4075.0</ele></trkpt>
+      <trkpt lat="45.850893" lon="6.876794"><ele>4096.0</ele></trkpt>
+      <trkpt lat="45.849759" lon="6.875440"><ele>4190.0</ele></trkpt>
+      <trkpt lat="45.849550" lon="6.875694"><ele>4203.0</ele></trkpt>
+      <trkpt lat="45.849345" lon="6.875425"><ele>4213.0</ele></trkpt>
+      <trkpt lat="45.849282" lon="6.874735"><ele>4250.0</ele></trkpt>
+      <trkpt lat="45.848776" lon="6.874699"><ele>4292.0</ele></trkpt>
+      <trkpt lat="45.848226" lon="6.873809"><ele>4357.0</ele></trkpt>
+      <trkpt lat="45.847651" lon="6.873909"><ele>4344.0</ele></trkpt>
+      <trkpt lat="45.846570" lon="6.873794"><ele>4332.0</ele></trkpt>
+      <trkpt lat="45.845354" lon="6.873049"><ele>4357.0</ele></trkpt>
+      <trkpt lat="45.844758" lon="6.873618"><ele>4355.0</ele></trkpt>
+      <trkpt lat="45.843656" lon="6.874189"><ele>4339.0</ele></trkpt>
+      <trkpt lat="45.842333" lon="6.873971"><ele>4306.0</ele></trkpt>
+      <trkpt lat="45.840680" lon="6.872678"><ele>4327.0</ele></trkpt>
+      <trkpt lat="45.840187" lon="6.872364"><ele>4342.0</ele></trkpt>
+      <trkpt lat="45.839801" lon="6.872315"><ele>4355.0</ele></trkpt>
+      <trkpt lat="45.839549" lon="6.870983"><ele>4404.0</ele></trkpt>
+      <trkpt lat="45.839499" lon="6.870629"><ele>4427.0</ele></trkpt>
+      <trkpt lat="45.839323" lon="6.870447"><ele>4446.0</ele></trkpt>
+      <trkpt lat="45.839442" lon="6.869733"><ele>4470.0</ele></trkpt>
+      <trkpt lat="45.838101" lon="6.868849"><ele>4479.0</ele></trkpt>
+      <trkpt lat="45.837668" lon="6.868240"><ele>4486.0</ele></trkpt>
+      <trkpt lat="45.837374" lon="6.867384"><ele>4508.0</ele></trkpt>
+      <trkpt lat="45.837437" lon="6.866956"><ele>4512.0</ele></trkpt>
+      <trkpt lat="45.835516" lon="6.866220"><ele>4618.0</ele></trkpt>
+      <trkpt lat="45.835184" lon="6.865673"><ele>4645.0</ele></trkpt>
+      <trkpt lat="45.833755" lon="6.865160"><ele>4745.0</ele></trkpt>
+      <trkpt lat="45.833409" lon="6.865167"><ele>4766.0</ele></trkpt>
+      <trkpt lat="45.832942" lon="6.865613"><ele>4798.0</ele></trkpt>
+      <trkpt lat="45.832568" lon="6.864851"><ele>4812.0</ele></trkpt>
+    </trkseg>
+  </trk>
+</gpx>

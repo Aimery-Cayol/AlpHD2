@@ -28,37 +28,51 @@ export const CLIMBING_ROUTES: Record<string, ClimbingRoute[]> = {
   // ==========================================================================
   tour: [
     {
-      id: "tour-normale",
-      name: "Voie normale — Col du Tour",
+      id: "sommet-s-par-le-col-superieur-du-tour",
+      name: "Voie normale — Col Supérieur du Tour",
       activity: "alpinisme",
       grade: "F+",
-      gradeText: "classique glaciaire d'initiation, 1000m D+, glacier du Tour",
-      description: "L'Aiguille du Tour est l'une des premières grandes courses glaciaires du massif. La voie normale passe par le Refuge Albert 1er puis remonte le glacier du Tour jusqu'au col éponyme avant de rejoindre le sommet par une courte arête.",
-      c2cUrl: "https://www.camptocamp.org/routes/53937/fr/aiguille-du-tour-voie-normale",
-      c2cId: "53937",
+      gradeText: "classique glaciaire d'initiation, 2000m D+, glacier du Tour",
+      description: "L'Aiguille du Tour est l'une des premières grandes courses glaciaires du massif. La voie normale par le Col Supérieur du Tour part du village du Tour, remonte le glacier du Tour jusqu'au col éponyme (3289m) puis rejoint le Sommet S (3540m) par une courte arête rocheuse. Classique idéale pour une première haute montagne.",
+      c2cUrl: "https://www.camptocamp.org/routes/56749/fr/aiguille-du-tour-voie-normale",
+      c2cId: "56749",
       track: [
-        { lon: 7.0180, lat: 45.9970, altM: 2702 }, // Bas du glacier du Tour
-        { lon: 7.0150, lat: 45.9990, altM: 2900 }, // Glacier du Tour
-        { lon: 7.0120, lat: 46.0010, altM: 3100 }, // Mi-glacier
-        { lon: 7.0095, lat: 46.0030, altM: 3289 }, // Col du Tour
-        { lon: 7.0082, lat: 46.0045, altM: 3450 }, // Arête sommitale
-        { lon: 7.0075, lat: 46.0055, altM: 3540 }, // Sommet
+        { lon: 6.94750, lat: 45.99900, altM: 1483 }, // Le Tour (village)
+        { lon: 6.97000, lat: 45.99500, altM: 2000 }, // Glacier du Tour bas
+        { lon: 7.00000, lat: 45.99200, altM: 2900 }, // Glacier du Tour
+        { lon: 7.00500, lat: 45.99200, altM: 3100 }, // Glacier du Tour haut
+        { lon: 7.01031, lat: 45.99437, altM: 3542 }, // Sommet S
       ],
     },
     {
-      id: "tour-ski",
-      name: "Ski de randonnée — Col du Tour",
-      activity: "ski",
-      grade: "F",
-      gradeText: "itinéraire ski de rando classique, 1200m D+, glacier du Tour",
-      description: "Grande classique de ski de randonnée du massif du Mont-Blanc, souvent réalisée en traversée avec la Tête Blanche. Glacier du Tour idéal pour l'initiation.",
-      c2cUrl: "https://www.camptocamp.org/routes/53938/fr/aiguille-du-tour-ski",
-      c2cId: "53938",
+      id: "arete-de-la-table",
+      name: "Arête de la Table (SW)",
+      activity: "alpinisme",
+      grade: "PD",
+      gradeText: "arête mixte variée, neige et rocher, plus technique que la voie normale",
+      description: "Belle course mixte sur l'arête SW de la Table de Roc de l'Aiguille du Tour. Plus technique et variée que la voie normale, elle offre un bel itinéraire sur neige et rocher menant au Sommet S (3540m) par un cheminement aérien.",
+      c2cUrl: "https://www.camptocamp.org/routes/56749/fr/aiguille-du-tour-voie-normale",
+      c2cId: "56749",
       track: [
-        { lon: 7.0180, lat: 45.9970, altM: 2702 }, // Bas glacier
-        { lon: 7.0150, lat: 45.9990, altM: 2900 }, // Glacier bas
-        { lon: 7.0120, lat: 46.0010, altM: 3100 }, // Mi-glacier
-        { lon: 7.0095, lat: 46.0030, altM: 3289 }, // Col du Tour
+        { lon: 6.98649, lat: 45.99678, altM: 2700 }, // Pied de l'arête
+        { lon: 7.00000, lat: 45.99400, altM: 3100 }, // Milieu arête
+        { lon: 7.01031, lat: 45.99436, altM: 3484 }, // Sommet S
+      ],
+    },
+    {
+      id: "couloir-de-la-table",
+      name: "Couloir de la Table",
+      activity: "ski",
+      grade: "AD-",
+      gradeText: "couloir sauvage pente raide, accès refuge Albert 1er",
+      description: "Beau couloir sauvage propice au perfectionnement du ski de pente raide. Accès à la base par le col du Passon ou le refuge Albert 1er.",
+      c2cUrl: "https://www.camptocamp.org/routes/46737",
+      c2cId: "46737",
+      track: [
+        { lon: 6.9875, lat: 45.9945, altM: 2678 }, // Base couloir (glacier du Tour)
+        { lon: 6.9950, lat: 45.9944, altM: 3000 }, // Couloir bas
+        { lon: 7.0030, lat: 45.9944, altM: 3200 }, // Couloir milieu
+        { lon: 7.0103, lat: 45.9943, altM: 3540 }, // Sommet S
       ],
     },
   ],
@@ -73,17 +87,19 @@ export const CLIMBING_ROUTES: Record<string, ClimbingRoute[]> = {
       name: "Arête Forbes",
       activity: "alpinisme",
       grade: "AD",
-      gradeText: "longue arête neigeuse S-N, 1000m D+, exposition modérée",
+      gradeText: "longue arête neigeuse S-N, 1200m D+, exposition modérée",
       description: "L'Arête Forbes est la grande classique du Chardonnet. Longue et aérienne, elle escalade l'arête frontière entre la France et la Suisse depuis le Col d'Argentière. Vue exceptionnelle sur le glacier d'Argentière et le massif.",
-      c2cUrl: "https://www.camptocamp.org/routes/182214/fr/aiguille-du-chardonnet-arete-forbes",
-      c2cId: "182214",
+      c2cUrl: "https://www.camptocamp.org/routes/53806/fr/aiguille-du-chardonnet-arete-forbes",
+      c2cId: "53806",
       track: [
-        { lon: 6.9778, lat: 45.9630, altM: 2771 }, // Refuge d'Argentière
-        { lon: 6.9762, lat: 45.9694, altM: 3100 }, // Glacier d'Argentière
-        { lon: 6.9743, lat: 45.9756, altM: 3552 }, // Col d'Argentière
-        { lon: 6.9757, lat: 45.9798, altM: 3650 }, // Pied arête Forbes
-        { lon: 6.9772, lat: 45.9840, altM: 3750 }, // Mi-arête
-        { lon: 6.9792, lat: 45.9884, altM: 3824 }, // Sommet
+        { lon: 6.9868, lat: 45.9962, altM: 2611 }, // Glacier du Tour (départ)
+        { lon: 6.9897, lat: 45.9936, altM: 2696 }, // Glacier bas
+        { lon: 6.9944, lat: 45.9910, altM: 2777 }, // Glacier moyen
+        { lon: 6.9977, lat: 45.9882, altM: 2905 }, // Col du Chardonnet approche
+        { lon: 7.0033, lat: 45.9872, altM: 3063 }, // Col d'Argentière
+        { lon: 7.0076, lat: 45.9795, altM: 3223 }, // Pied arête Forbes
+        { lon: 7.0091, lat: 45.9711, altM: 3437 }, // Mi-arête
+        { lon: 7.0014, lat: 45.9689, altM: 3824 }, // Sommet
       ],
     },
     {
@@ -94,13 +110,31 @@ export const CLIMBING_ROUTES: Record<string, ClimbingRoute[]> = {
       gradeText: "glacier du Chardonnet, 900m D+, crevasses",
       description: "Voie normale depuis le Col du Passon par le glacier SW du Chardonnet. Itinéraire moins classique que l'arête Forbes mais plus direct, avec un court passage en glace en fin de course.",
       c2cUrl: "https://www.camptocamp.org/routes/182213/fr/aiguille-du-chardonnet-voie-normale",
-      c2cId: "182213",
       track: [
-        { lon: 7.0253, lat: 45.9999, altM: 2702 }, // Refuge Albert 1er
-        { lon: 7.0050, lat: 45.9960, altM: 3200 }, // Col du Passon
-        { lon: 6.9920, lat: 45.9910, altM: 3500 }, // Glacier SW
-        { lon: 6.9850, lat: 45.9895, altM: 3700 }, // Haut glacier
-        { lon: 6.9792, lat: 45.9884, altM: 3824 }, // Sommet
+        { lon: 6.9454, lat: 46.0036, altM: 1465 }, // Le Tour (départ)
+        { lon: 6.9660, lat: 45.9932, altM: 2203 }, // Glacier du Tour
+        { lon: 6.9716, lat: 45.9921, altM: 2331 }, // Glacier moyen
+        { lon: 6.9765, lat: 45.9893, altM: 2545 }, // Glacier haut
+        { lon: 6.9867, lat: 45.9834, altM: 2849 }, // Col du Passon approche
+        { lon: 6.9987, lat: 45.9817, altM: 2979 }, // Col du Passon
+        { lon: 7.0110, lat: 45.9884, altM: 3246 }, // Glacier SW
+        { lon: 7.0010, lat: 45.9689, altM: 3818 }, // Sommet
+      ],
+    },
+    {
+      id: "eperon-migot",
+      name: "Éperon Migot",
+      activity: "alpinisme",
+      grade: "AD+",
+      gradeText: "itinéraire varié mixte + pente de neige, sérac",
+      description: "Itinéraire splendide et très varié : mixte, pente de neige. Ambiance sympa au niveau du sérac.",
+      c2cUrl: "https://www.camptocamp.org/routes/54940",
+      c2cId: "54940",
+      track: [
+        { lon: 6.9978, lat: 45.9630, altM: 2771 }, // Refuge d'Argentière
+        { lon: 7.0010, lat: 45.9650, altM: 3100 }, // Glacier d'Argentière
+        { lon: 7.0020, lat: 45.9670, altM: 3400 }, // Éperon
+        { lon: 7.0014, lat: 45.9689, altM: 3824 }, // Sommet
       ],
     },
   ],
@@ -111,37 +145,37 @@ export const CLIMBING_ROUTES: Record<string, ClimbingRoute[]> = {
   // ==========================================================================
   droites: [
     {
-      id: "droites-arete-ne",
-      name: "Arête NE",
+      id: "droites-eperon-oriental",
+      name: "Éperon Oriental (voie normale)",
       activity: "alpinisme",
-      grade: "D",
-      gradeText: "arête mixte 900m, rocher et glace, exposition soutenue",
-      description: "L'Arête NE des Droites est une grande classique du bassin d'Argentière. Elle remonte la longue arête frontière franco-suisse sur un terrain mixte varié avant de rejoindre le sommet de ce beau 4000m.",
-      c2cUrl: "https://www.camptocamp.org/routes/182349/fr/les-droites-arete-ne",
-      c2cId: "182349",
+      grade: "AD+",
+      gradeText: "couloir-mixte puis arête neigeuse, 800m D+, glacier d'Argentière",
+      description: "Voie normale des Droites par l'éperon oriental. Depuis le glacier d'Argentière SE, on remonte le couloir puis l'éperon oriental jusqu'au sommet W de ce 4000m.",
+      c2cUrl: "https://www.camptocamp.org/routes/54257",
+      c2cId: "54257",
       track: [
-        { lon: 6.9737, lat: 45.9212, altM: 2687 }, // Refuge du Couvercle
-        { lon: 6.9875, lat: 45.9285, altM: 3100 }, // Glacier d'Argentière
-        { lon: 6.9940, lat: 45.9330, altM: 3680 }, // Col des Droites
-        { lon: 6.9965, lat: 45.9355, altM: 3850 }, // Arête NE
-        { lon: 7.0012, lat: 45.9383, altM: 4001 }, // Sommet
+        { lon: 6.99158, lat: 45.91965, altM: 2928 }, // Glacier d'Argentière SE
+        { lon: 6.99303, lat: 45.92355, altM: 3200 }, // Glacier bas
+        { lon: 6.99008, lat: 45.92527, altM: 3400 }, // Pied éperon oriental
+        { lon: 6.99378, lat: 45.92835, altM: 3700 }, // Éperon médian
+        { lon: 6.98911, lat: 45.93042, altM: 4003 }, // Sommet W
       ],
     },
     {
-      id: "droites-couloir-nord",
-      name: "Couloir Nord (Lagarde)",
+      id: "couloir-lagarde",
+      name: "Couloir Lagarde direct",
       activity: "alpinisme",
       grade: "TD",
-      gradeText: "couloir de glace 800m, 55° soutenu, séracs",
-      description: "Couloir mythique des Droites, ouvert par Lagarde. Étroit et direct, il monte droit sur le sommet en passant sous les séracs de la face nord. Réservé aux alpinistes très confirmés en conditions.",
-      c2cUrl: "https://www.camptocamp.org/routes/182350/fr/les-droites-couloir-nord",
-      c2cId: "182350",
+      gradeText: "couloir NE, glace raide, itinéraire direct",
+      description: "Couloir Lagarde direct sur la face nord-est des Droites. Terrain de glace soutenu.",
+      c2cUrl: "https://www.camptocamp.org/routes/57364",
+      c2cId: "57364",
       track: [
-        { lon: 6.9875, lat: 45.9285, altM: 3050 }, // Glacier d'Argentière bas
-        { lon: 6.9980, lat: 45.9330, altM: 3300 }, // Pied couloir N
-        { lon: 6.9998, lat: 45.9355, altM: 3650 }, // Mi-couloir
-        { lon: 7.0010, lat: 45.9375, altM: 3900 }, // Haut couloir
-        { lon: 7.0012, lat: 45.9383, altM: 4001 }, // Sommet
+        { lon: 6.94505, lat: 45.94797, altM: 2755 }, // Départ glacier d'Argentière
+        { lon: 6.97337, lat: 45.94388, altM: 3002 }, // Approche couloir
+        { lon: 6.99572, lat: 45.93772, altM: 2761 }, // Pied couloir (bergschrund)
+        { lon: 6.99490, lat: 45.93229, altM: 3441 }, // Mi-couloir
+        { lon: 6.98960, lat: 45.93073, altM: 3979 }, // Sortie couloir / sommet
       ],
     },
   ],
@@ -152,19 +186,48 @@ export const CLIMBING_ROUTES: Record<string, ClimbingRoute[]> = {
   // ==========================================================================
   courtes: [
     {
-      id: "courtes-face-nord",
-      name: "Face Nord",
+      id: "courtes-voie-normale",
+      name: "Voie normale et traversée",
       activity: "alpinisme",
-      grade: "AD+",
-      gradeText: "glace 50°, 600m, grande classique du bassin d'Argentière",
-      description: "La face nord des Courtes est une grande classique glaciaire à la rectitude parfaite. Accessible depuis le glacier d'Argentière, elle offre une ascension directe et élégante sur une pente de glace régulière.",
-      c2cUrl: "https://www.camptocamp.org/routes/182385/fr/les-courtes-face-nord",
-      c2cId: "182385",
+      grade: "AD",
+      gradeText: "glacier et arête mixte, 1200m D+, depuis le glacier d'Argentière",
+      description: "Voie normale des Courtes depuis le glacier d'Argentière. Longue approche glaciaire puis montée sur l'arête sommitale. Permet la traversée jusqu'au glacier de Talèfre.",
+      c2cUrl: "https://www.camptocamp.org/routes/169662",
+      c2cId: "169662",
       track: [
-        { lon: 7.0053, lat: 45.9222, altM: 3050 }, // Glacier d'Argentière
-        { lon: 7.0098, lat: 45.9251, altM: 3200 }, // Pied face nord
-        { lon: 7.0130, lat: 45.9270, altM: 3600 }, // Mi-face
-        { lon: 7.0157, lat: 45.9291, altM: 3856 }, // Sommet
+        { lon: 6.96552, lat: 45.91030, altM: 2707 }, // Glacier d'Argentière (départ)
+        { lon: 6.99300, lat: 45.92200, altM: 3200 }, // Glacier approche
+        { lon: 7.00339, lat: 45.92738, altM: 3866 }, // Sommet
+      ],
+    },
+    {
+      id: "courtes-voie-des-suisses",
+      name: "Voie des Suisses",
+      activity: "alpinisme",
+      grade: "TD",
+      gradeText: "face N directe, glace 55°, 600m, depuis glacier d'Argentière",
+      description: "Grande voie de la face nord des Courtes. Montée directe en glace soutenue depuis le glacier d'Argentière côté nord. Descente possible par le couloir NE.",
+      c2cUrl: "https://www.camptocamp.org/routes/169662",
+      c2cId: "169662",
+      track: [
+        { lon: 7.00446, lat: 45.94642, altM: 2767 }, // Glacier d'Argentière N
+        { lon: 7.00383, lat: 45.93700, altM: 3200 }, // Face N bas
+        { lon: 7.00320, lat: 45.92750, altM: 3822 }, // Sommet
+      ],
+    },
+    {
+      id: "courtes-voie-autrichiens",
+      name: "Voie des Autrichiens",
+      activity: "alpinisme",
+      grade: "TD",
+      gradeText: "face NE, glace et mixte, depuis le glacier de Talèfre",
+      description: "Grande voie de la face NE des Courtes. Montée depuis le glacier de Talèfre par l'éperon NE, avec passages en mixte et glace raide.",
+      c2cUrl: "https://www.camptocamp.org/routes/169662",
+      c2cId: "169662",
+      track: [
+        { lon: 6.95678, lat: 45.97077, altM: 2038 }, // Départ approche
+        { lon: 7.00000, lat: 45.94000, altM: 3000 }, // Glacier de Talèfre
+        { lon: 7.00341, lat: 45.92742, altM: 3867 }, // Sommet
       ],
     },
   ],
@@ -176,19 +239,36 @@ export const CLIMBING_ROUTES: Record<string, ClimbingRoute[]> = {
   moine: [
     {
       id: "moine-arete-s",
-      name: "Voie normale — Arête S",
+      name: "Face S — Voie normale",
       activity: "alpinisme",
       grade: "AD",
-      gradeText: "arête rocheuse classique, 700m D+, III obligatoire",
-      description: "Belle pyramide rocheuse dominant le glacier de Talèfre. La voie normale par l'arête sud offre une escalade variée sur granite avec quelques pas de III. Vue magnifique sur l'Aiguille Verte et les Drus.",
-      c2cUrl: "https://www.camptocamp.org/routes/54042/fr/aiguille-du-moine-voie-normale-arete-s",
-      c2cId: "54042",
+      gradeText: "face S + arête rocheuse, 700m D+, III obligatoire",
+      description: "Belle pyramide rocheuse dominant le glacier de Talèfre. La voie normale par la face S et l'arête offre une escalade variée sur granite avec quelques pas de III. Vue magnifique sur l'Aiguille Verte et les Drus.",
+      c2cUrl: "https://www.camptocamp.org/routes/56049",
+      c2cId: "56049",
       track: [
         { lon: 6.9737, lat: 45.9212, altM: 2687 }, // Refuge du Couvercle
         { lon: 6.9650, lat: 45.9155, altM: 2900 }, // Glacier de Talèfre
         { lon: 6.9603, lat: 45.9115, altM: 3100 }, // Col du Moine
-        { lon: 6.9597, lat: 45.9090, altM: 3250 }, // Arête S
+        { lon: 6.9597, lat: 45.9090, altM: 3250 }, // Face S
         { lon: 6.9597, lat: 45.9074, altM: 3412 }, // Sommet
+      ],
+    },
+    {
+      id: "arete-s-classique",
+      name: "Arête S Classique",
+      activity: "escalade",
+      grade: "D",
+      gradeText: "arête aérienne esthétique, vues Mer de Glace, très fréquentée",
+      description: "Très belle classique offrant des vues magnifiques sur la Mer de Glace. Itinéraire aérien, esthétique et rapidement en conditions.",
+      c2cUrl: "https://www.camptocamp.org/routes/54075/fr/aiguille-du-moine-arete-s-classique",
+      c2cId: "54075",
+      track: [
+        { lon: 6.91764, lat: 45.93154, altM: 1909 }, // Départ (village / parking)
+        { lon: 6.94783, lat: 45.90985, altM: 2107 }, // Approche glacier
+        { lon: 6.96049, lat: 45.91218, altM: 2853 }, // Pied arête S
+        { lon: 6.96087, lat: 45.91370, altM: 3011 }, // Arête S bas
+        { lon: 6.96109, lat: 45.91634, altM: 3417 }, // Sommet
       ],
     },
   ],
@@ -200,36 +280,42 @@ export const CLIMBING_ROUTES: Record<string, ClimbingRoute[]> = {
   plan: [
     {
       id: "plan-normale",
-      name: "Voie normale",
+      name: "Voie normale — Refuge du Requin",
+      activity: "alpinisme",
+      grade: "PD+",
+      gradeText: "depuis refuge du Requin, arête SW, granit",
+      description: "Voie normale de l'Aiguille du Plan accessible depuis le refuge du Requin. Ascension variée sur granit et neige.",
+      c2cUrl: "https://www.camptocamp.org/routes/1561115",
+      c2cId: "1561115",
+      track: [{ lon: 6.885, lat: 45.885, altM: 2537 }, { lon: 6.864, lat: 45.879, altM: 3628 }],
+    },
+    {
+      id: "traversee-midi-plan",
+      name: "Traversée Midi – Plan",
       activity: "alpinisme",
       grade: "AD",
-      gradeText: "depuis Aig. du Midi, arête neigeuse puis rocher, 200m D+",
-      description: "Accessible depuis l'Aiguille du Midi, la voie normale du Plan emprunte la Vallée Blanche puis l'arête nord-ouest. Course courte mais exposée avec une vue plongeante sur Chamonix.",
-      c2cUrl: "https://www.camptocamp.org/routes/54147/fr/aiguille-du-plan-voie-normale",
-      c2cId: "54147",
+      gradeText: "très bel itinéraire de montagne, abordable mais complet, très populaire",
+      description: "Très bel itinéraire de montagne, abordable mais complet. Très populaire du fait de son accès évident depuis l'Aiguille du Midi.",
+      c2cUrl: "https://www.camptocamp.org/routes/53804",
+      c2cId: "53804",
       track: [
-        { lon: 6.9200, lat: 45.9090, altM: 3050 }, // Vallée Blanche (dans tile)
-        { lon: 6.9100, lat: 45.9040, altM: 3350 }, // Glacier du Plan
-        { lon: 6.9020, lat: 45.8990, altM: 3550 }, // Arête N
-        { lon: 6.8980, lat: 45.8960, altM: 3673 }, // Sommet (approche tile)
+        { lon: 6.88781, lat: 45.87881, altM: 3781 }, // Départ Aiguille du Midi
+        { lon: 6.89384, lat: 45.88006, altM: 3645 }, // Glacier du Plan (descente)
+        { lon: 6.90131, lat: 45.88349, altM: 3459 }, // Col bas (minimum)
+        { lon: 6.90479, lat: 45.88631, altM: 3555 }, // Col du Plan
+        { lon: 6.90724, lat: 45.89174, altM: 3664 }, // Aiguille du Plan
       ],
     },
     {
-      id: "plan-frendo",
-      name: "Éperon Frendo",
-      activity: "alpinisme",
-      grade: "ED",
-      gradeText: "grande face N mythique, mixte glace-rocher, 1100m D+",
-      description: "L'Éperon Frendo est l'une des grandes voies de la face nord de l'Aiguille du Plan. Accessible depuis Chamonix par les remontées mécaniques, il engage sur un terrain de haute difficulté en glace et mixte.",
-      c2cUrl: "https://www.camptocamp.org/routes/54146/fr/aiguille-du-plan-eperon-frendo",
-      c2cId: "54146",
-      track: [
-        { lon: 6.8700, lat: 45.9240, altM: 1035 }, // Chamonix (approach)
-        { lon: 6.9120, lat: 45.9080, altM: 2500 }, // Glacier des Pèlerins (dans tile)
-        { lon: 6.9050, lat: 45.9010, altM: 2900 }, // Pied face N
-        { lon: 6.9010, lat: 45.8970, altM: 3300 }, // Mi-éperon
-        { lon: 6.8980, lat: 45.8960, altM: 3673 }, // Sommet
-      ],
+      id: "arete-ryan",
+      name: "Arête Ryan",
+      activity: "escalade",
+      grade: "D+",
+      gradeText: "grande classique, approche délicate conditions sèches actuelles",
+      description: "Grande classique devenue moins fréquentée en raison des conditions d'accès difficiles ces dernières années à cause du manque de neige.",
+      c2cUrl: "https://www.camptocamp.org/routes/56752",
+      c2cId: "56752",
+      track: [{ lon: 6.911, lat: 45.893, altM: 2458 }, { lon: 6.911, lat: 45.893, altM: 3003 }],
     },
   ],
 
@@ -239,32 +325,14 @@ export const CLIMBING_ROUTES: Record<string, ClimbingRoute[]> = {
   // ==========================================================================
   maudit: [
     {
-      id: "maudit-normale",
-      name: "Voie normale — Col Maudit",
-      activity: "alpinisme",
-      grade: "AD-",
-      gradeText: "glaciaire depuis Midi, 800m D+, exposition séracs",
-      description: "Mont Maudit, troisième sommet de France (4465m). Depuis l'Aiguille du Midi, la voie normale longe le plateau du Tacul et remonte au col Maudit par une pente de glace modérée. Passage sous les séracs de la face nord.",
-      c2cUrl: "https://www.camptocamp.org/routes/53791/fr/mont-maudit-voie-normale",
-      c2cId: "53791",
-      track: [
-        { lon: 6.8873, lat: 45.8788, altM: 3842 }, // Aiguille du Midi
-        { lon: 6.8780, lat: 45.8572, altM: 3532 }, // Col du Midi
-        { lon: 6.8740, lat: 45.8540, altM: 3700 }, // Glacier sous Maudit
-        { lon: 6.8714, lat: 45.8527, altM: 4035 }, // Col Maudit
-        { lon: 6.8714, lat: 45.8521, altM: 4300 }, // Arête W
-        { lon: 6.8713, lat: 45.8521, altM: 4465 }, // Sommet
-      ],
-    },
-    {
       id: "maudit-kuffner",
       name: "Arête Kuffner",
       activity: "alpinisme",
       grade: "D",
       gradeText: "arête franco-italienne, 1200m D+, mixte élégant",
       description: "Grande arête reliant le Col Moore (face S) au sommet du Mont Maudit en traversant la frontière franco-italienne. Itinéraire d'une grande beauté sur terrain mixte, première réalisée par Kuffner en 1887.",
-      c2cUrl: "https://www.camptocamp.org/routes/53793/fr/mont-maudit-arete-kuffner",
-      c2cId: "53793",
+      c2cUrl: "https://www.camptocamp.org/routes/53791",
+      c2cId: "53791",
       track: [
         { lon: 6.8640, lat: 45.8380, altM: 3700 }, // Refuge Fourche (côté IT)
         { lon: 6.8670, lat: 45.8420, altM: 3900 }, // Col Moore
@@ -275,42 +343,38 @@ export const CLIMBING_ROUTES: Record<string, ClimbingRoute[]> = {
     },
   ],
 
+
   // ==========================================================================
-  // DÔME DU GOÛTER — 45.843°N 6.850°E (4304m)
-  // Tuiles : 0997_6534, 0997_6535, 0998_6534, 0998_6535
+  // AIGUILLE DE BIONNASSAY — 45.836°N 6.818°E (4052m)
+  // Tuiles : 0996_6534, 0995_6534, 0995_6533, 0996_6533
   // ==========================================================================
-  "dome-gouter": [
+  bionnassay: [
     {
-      id: "dome-gouter-normale",
-      name: "Voie normale — depuis Refuge du Goûter",
+      id: "arete-s-bionnassay",
+      name: "Arête S (voie normale)",
       activity: "alpinisme",
-      grade: "F",
-      gradeText: "dôme neigeux, 500m D+, point de passage voie normale MB",
-      description: "Le Dôme du Goûter est l'étape incontournable de la voie normale du Mont Blanc. Son vaste dôme neigeux à 4304m marque la frontière franco-italienne. Panorama exceptionnel sur le massif et les Alpes suisses.",
-      c2cUrl: "https://www.camptocamp.org/routes/53781/fr/dome-du-gouter",
-      c2cId: "53795",
-      track: [
-        { lon: 6.8398, lat: 45.8449, altM: 3835 }, // Refuge du Goûter
-        { lon: 6.8430, lat: 45.8438, altM: 4050 }, // Dôme versant NW
-        { lon: 6.8499, lat: 45.8431, altM: 4304 }, // Sommet
-      ],
+      grade: "AD+",
+      gradeText: "longue arête mixte aérienne, 3000m D+, grande course d'altitude",
+      c2cUrl: "https://www.camptocamp.org/outings/1791088/fr/aiguille-de-bionnassay-arete-s-solo-a-la-journee",
+      c2cId: "1791088",
+      track: [],
     },
+  ],
+
+  // ==========================================================================
+  // DÔMES DE MIAGE — 45.786°N 6.766°E (3673m)
+  // Tuiles : 0995_6531, 0994_6531, 0994_6532, 0993_6530, 0993_6531, 0994_6530
+  // ==========================================================================
+  "domes-miage": [
     {
-      id: "dome-gouter-ski",
-      name: "Ski de randonnée — descente par les Bosses",
-      activity: "ski",
-      grade: "AD",
-      gradeText: "ski haute altitude, 1000m de descente, glacier des Bossons",
-      description: "L'une des plus belles descentes à ski haute altitude des Alpes françaises, depuis le Dôme du Goûter par les Bosses jusqu'au glacier des Bossons. Ambiance glaciaire unique.",
-      c2cUrl: "https://www.camptocamp.org/routes/53796/fr/dome-du-gouter-ski",
-      c2cId: "53796",
-      track: [
-        { lon: 6.8499, lat: 45.8431, altM: 4304 }, // Sommet Dôme
-        { lon: 6.8460, lat: 45.8420, altM: 4150 }, // Arête des Bosses
-        { lon: 6.8398, lat: 45.8449, altM: 3835 }, // Refuge du Goûter
-        { lon: 6.8320, lat: 45.8520, altM: 3400 }, // Glacier des Bossons haut
-        { lon: 6.8250, lat: 45.8610, altM: 2800 }, // Glacier des Bossons bas
-      ],
+      id: "domes-miage-traversee",
+      name: "Traversée classique",
+      activity: "alpinisme",
+      grade: "PD+",
+      gradeText: "longue traversée glaciaire des 5 sommets, boucle depuis les Contamines",
+      c2cUrl: "https://www.camptocamp.org/routes/53886/fr/domes-de-miage-traversee-classique",
+      c2cId: "53886",
+      track: [],
     },
   ],
 
@@ -320,21 +384,15 @@ export const CLIMBING_ROUTES: Record<string, ClimbingRoute[]> = {
   // ==========================================================================
   geant: [
     {
-      id: "geant-normale",
-      name: "Voie normale — cordes fixes",
+      id: "sw-face-by-the-burgener-slabs",
+      name: "Voie normale — Burgener Slabs (face SW)",
       activity: "alpinisme",
       grade: "PD",
-      gradeText: "arête W avec cordes fixes, 600m D+, granit excellent",
-      description: "Longtemps jugée inaccessible, la Dent du Géant est désormais une grande classique grâce aux cordes fixes installées sur le ressaut sommital. Depuis le Refuge Torino, montée par le glacier du Géant puis l'arête W pour rejoindre les cordes fixes menant au sommet.",
-      c2cUrl: "https://www.camptocamp.org/routes/54301/fr/dent-du-geant-voie-normale",
-      c2cId: "54301",
-      track: [
-        { lon: 6.9580, lat: 45.8640, altM: 3480 }, // Glacier du Géant (dans tile)
-        { lon: 6.9555, lat: 45.8655, altM: 3665 }, // Pied arête W
-        { lon: 6.9535, lat: 45.8665, altM: 3800 }, // Arête W
-        { lon: 6.9520, lat: 45.8672, altM: 3950 }, // Zone cordes fixes
-        { lon: 6.9510, lat: 45.8677, altM: 4013 }, // Sommet
-      ],
+      gradeText: "depuis refuge Torino, cordes fixes arête W, granit excellent",
+      description: "Depuis le refuge Torino, traverser le glacier du Géant puis rejoindre la face SW par les Burgener Slabs. Cordes fixes sur le ressaut sommital. Grande classique.",
+      c2cUrl: "https://www.camptocamp.org/routes/54431",
+      c2cId: "54431",
+      track: [{ lon: 6.952, lat: 45.862, altM: 3299 }, { lon: 6.952, lat: 45.862, altM: 3978 }],
     },
   ],
 
@@ -344,20 +402,18 @@ export const CLIMBING_ROUTES: Record<string, ClimbingRoute[]> = {
   // ==========================================================================
   rochefort: [
     {
-      id: "rochefort-traversee",
-      name: "Traversée de Rochefort",
+      id: "aretes-de-rochefort-en-ar",
+      name: "Traversée Rochefort — Grandes Jorasses",
       activity: "alpinisme",
-      grade: "PD",
-      gradeText: "arête neigeuse aérienne, 4km de crête, panorama Vallée Blanche",
-      description: "Grande traversée glaciaire reliant la Dent du Géant au Dôme de Rochefort, puis vers les Grandes Jorasses. Itinéraire esthétique sur arête neigeuse avec vue plongeante sur la Vallée Blanche côté français et les glaciers italiens côté S.",
-      c2cUrl: "https://www.camptocamp.org/routes/54303/fr/arete-de-rochefort-traversee",
-      c2cId: "54303",
+      grade: "AD+",
+      gradeText: "arête neigeuse aérienne, traversée Rochefort → Jorasses",
+      description: "Grande traversée glaciaire et aérienne reliant le Dôme de Rochefort aux Grandes Jorasses par l'arête de Rochefort. Itinéraire d'une beauté rare avec vue plongeante sur la Vallée Blanche et les glaciers italiens.",
+      c2cUrl: "https://www.camptocamp.org/outings/1802628/fr/traversee-rochefort-grandes-jorasses",
+      c2cId: "1802628",
       track: [
-        { lon: 6.9829, lat: 45.8622, altM: 4013 }, // Dent du Géant
-        { lon: 6.9742, lat: 45.8680, altM: 4001 }, // Aiguille de Rochefort
-        { lon: 6.9696, lat: 45.8727, altM: 3928 }, // Col de Rochefort
-        { lon: 6.9650, lat: 45.8760, altM: 3928 }, // Dôme de Rochefort
-        { lon: 6.9600, lat: 45.8800, altM: 3750 }, // Extrémité NE
+        { lon: 6.93430, lat: 45.84741, altM: 3281 }, // Départ Rochefort
+        { lon: 6.96000, lat: 45.86200, altM: 4202 }, // Point haut
+        { lon: 6.98493, lat: 45.83228, altM: 1608 }, // Arrivée Jorasses
       ],
     },
   ],
@@ -366,66 +422,13 @@ export const CLIMBING_ROUTES: Record<string, ClimbingRoute[]> = {
   // TOUR RONDE — 45.848°N 6.869°E (3792m)
   // Tuiles : 1002_6535, 1003_6535
   // ==========================================================================
-  "tour-ronde": [
-    {
-      id: "tour-ronde-normale",
-      name: "Voie normale — Arête SE",
-      activity: "alpinisme",
-      grade: "PD",
-      gradeText: "arête neige/rocher, 400m D+, depuis Col du Midi",
-      description: "La Tour Ronde est un sommet incontournable de la Vallée Blanche. Sa voie normale par l'arête SE offre une ascension courte mais variée depuis le Col du Midi. Vue superbe sur le Mont Blanc et la Dent du Géant.",
-      c2cUrl: "https://www.camptocamp.org/routes/54175/fr/tour-ronde-voie-normale",
-      c2cId: "54175",
-      track: [
-        { lon: 6.9170, lat: 45.8560, altM: 3200 }, // Vallée Blanche (dans tile)
-        { lon: 6.9120, lat: 45.8540, altM: 3300 }, // Glacier du Géant
-        { lon: 6.9080, lat: 45.8510, altM: 3400 }, // Pied arête SE
-        { lon: 6.9050, lat: 45.8490, altM: 3600 }, // Arête SE
-        { lon: 6.9030, lat: 45.8475, altM: 3792 }, // Sommet
-      ],
-    },
-    {
-      id: "tour-ronde-nord",
-      name: "Face Nord — couloir E. Gros",
-      activity: "alpinisme",
-      grade: "AD+",
-      gradeText: "couloir de glace 500m, 50°, beau terrain glaciaire",
-      description: "Beau couloir de glace sur la face nord de la Tour Ronde, accessible depuis la Vallée Blanche. Itinéraire élégant sur terrain glaciaire soutenu, avec vue plongeante sur le glacier du Géant.",
-      c2cUrl: "https://www.camptocamp.org/routes/54176/fr/tour-ronde-face-nord",
-      c2cId: "54176",
-      track: [
-        { lon: 6.9150, lat: 45.8555, altM: 3200 }, // Vallée Blanche (dans tile)
-        { lon: 6.9090, lat: 45.8510, altM: 3100 }, // Pied face N
-        { lon: 6.9050, lat: 45.8490, altM: 3500 }, // Mi-face
-        { lon: 6.9030, lat: 45.8475, altM: 3792 }, // Sommet
-      ],
-    },
-  ],
+  "tour-ronde": [],
 
   // ==========================================================================
   // AIGUILLE DE TALÈFRE — 45.889°N 7.039°E (3730m)
   // Tuiles : 1009_6541, 1009_6542, 1010_6541, 1010_6542
   // ==========================================================================
-  talefre: [
-    {
-      id: "talefre-normale",
-      name: "Voie normale — Glacier de Talèfre",
-      activity: "alpinisme",
-      grade: "PD",
-      gradeText: "glacier et arête, 700m D+, beau panorama Jorasses",
-      description: "Belle course glaciaire depuis le Refuge du Couvercle remontant le glacier de Talèfre jusqu'au col éponyme avant d'enchaîner l'arête W menant au sommet. Vue directe sur la face nord des Grandes Jorasses.",
-      c2cUrl: "https://www.camptocamp.org/routes/54510/fr/aiguille-de-talefre-voie-normale",
-      c2cId: "54510",
-      track: [
-        { lon: 6.9737, lat: 45.9212, altM: 2687 }, // Refuge du Couvercle (approach)
-        { lon: 6.9950, lat: 45.9120, altM: 3100 }, // Glacier de Talèfre (dans tile)
-        { lon: 7.0020, lat: 45.9060, altM: 3300 }, // Mi-glacier
-        { lon: 7.0080, lat: 45.9010, altM: 3544 }, // Col de Talèfre
-        { lon: 7.0110, lat: 45.8990, altM: 3620 }, // Arête W
-        { lon: 7.0130, lat: 45.8980, altM: 3730 }, // Sommet
-      ],
-    },
-  ],
+  talefre: [],
 
   // ==========================================================================
   // AIGUILLE DU GRÉPON — 45.9025°N 6.9192°E 3482m
@@ -461,6 +464,21 @@ export const CLIMBING_ROUTES: Record<string, ClimbingRoute[]> = {
         { lon: 6.9192, lat: 45.9025, altM: 3482 }, // Sommet Aiguille du Grépon (C2C exact)
       ],
     },
+    {
+      id: "grepon-charmoz-grepon",
+      name: "Traversée Charmoz - Grépon",
+      activity: "alpinisme",
+      grade: "TD",
+      gradeText: "rocher 5c, traversée classique, 1500m D+",
+      description: "Grande traversée reliant les Grands Charmoz au Grépon par l'arête des Aiguilles de Chamonix. Itinéraire engagé sur un granit exceptionnel, avec passages en rappel entre les différents sommets.",
+      c2cUrl: "https://www.camptocamp.org/routes/53905/fr/grepon-traversee-charmoz-grepon",
+      track: [
+        { lon: 6.90652, lat: 45.90690, altM: 2539 }, // Départ Montenvers
+        { lon: 6.89800, lat: 45.91200, altM: 3000 }, // Grands Charmoz
+        { lon: 6.91920, lat: 45.90250, altM: 3486 }, // Sommet Grépon
+        { lon: 6.87688, lat: 45.92332, altM: 1044 }, // Arrivée Chamonix
+      ],
+    },
   ],
 
   // AIGUILLES DE CHAMONIX — secteur 3400-3842m
@@ -475,12 +493,11 @@ export const CLIMBING_ROUTES: Record<string, ClimbingRoute[]> = {
       gradeText: "rocher de qualité, IV-V obligatoire, 1500m D+",
       description: "La Traversée des Aiguilles de Chamonix relie en une longue journée l'Aiguille du Plan à l'Aiguille de l'M. Itinéraire prestigieux sur les aiguilles de granit de Chamonix, avec des passages de IV et V sur un rocher exceptionnel.",
       c2cUrl: "https://www.camptocamp.org/routes/54155/fr/traversee-des-aiguilles-de-chamonix",
-      c2cId: "54155",
       track: [
-        { lon: 6.8638, lat: 45.8795, altM: 3673 }, // Aiguille du Plan
-        { lon: 6.8700, lat: 45.8840, altM: 3600 }, // Aiguille du Midi versant S
-        { lon: 6.8750, lat: 45.8920, altM: 3400 }, // Aiguilles de Chamonix centrales
-        { lon: 6.8800, lat: 45.9020, altM: 3200 }, // Aiguille de l'M
+        { lon: 6.88789, lat: 45.87846, altM: 3724 }, // Aiguille du Plan (départ S)
+        { lon: 6.88700, lat: 45.88400, altM: 3500 }, // Crête des aiguilles
+        { lon: 6.88600, lat: 45.89200, altM: 3200 }, // Aiguilles centrales
+        { lon: 6.88510, lat: 45.90163, altM: 2222 }, // Aiguille de l'M (arrivée N)
       ],
     },
   ],
@@ -508,40 +525,37 @@ export const CLIMBING_ROUTES: Record<string, ClimbingRoute[]> = {
       ],
     },
     {
-      id: "verte-jardin",
+      id: "greben-jardin",
       name: "Arête du Jardin",
       activity: "alpinisme",
       grade: "D",
-      gradeText: "arête mixte rocher/glace, 1200m de D+",
-      description: "Longue arête mixte par l'Aiguille du Jardin, itinéraire esthétique et engagé sur le flanc nord-est de la Verte.",
-      c2cUrl: "https://www.camptocamp.org/routes/182177/fr/aiguille-verte-arete-du-jardin",
-      c2cId: "182177",
-      track: [
-        { lon: 6.9542, lat: 45.9120, altM: 2090 }, // Refuge du Couvercle
-        { lon: 6.9680, lat: 45.9180, altM: 2900 }, // Glacier des Nantillons
-        { lon: 6.9730, lat: 45.9210, altM: 3400 }, // Épaule de l'arête
-        { lon: 6.9758, lat: 45.9228, altM: 3850 }, // Aiguille du Jardin
-        { lon: 6.9780, lat: 45.9238, altM: 4000 }, // Arête finale
-        { lon: 6.9796, lat: 45.9245, altM: 4122 }, // Sommet
-      ],
+      gradeText: "arête mixte rocher/glace, 1200m de D+, depuis refuge Couvercle",
+      description: "Longue arête mixte par l'Aiguille du Jardin, itinéraire esthétique et engagé sur le flanc nord-est de la Verte. Depuis le refuge du Couvercle, remonter sous le couloir Whymper jusqu'au col de l'Aiguille Verte, puis suivre l'arête du Jardin jusqu'au sommet.",
+      c2cUrl: "https://www.camptocamp.org/routes/55897",
+      c2cId: "55897",
+      track: [{ lon: 6.973, lat: 45.935, altM: 2707 }, { lon: 6.973, lat: 45.935, altM: 4089 }],
     },
     {
-      id: "verte-couturier",
-      name: "Y Couloir (Couturier)",
+      id: "greben-moine",
+      name: "Arête du Moine",
       activity: "alpinisme",
-      grade: "TD+",
-      gradeText: "couloir extrême 55–60°, pente soutenue 800m",
-      description: "Le célèbre Y Couloir, tracé par Lionel Couturier en 1928. Un des couloirs de glace les plus exigeants du massif, exposé aux chutes de pierres.",
-      c2cUrl: "https://www.camptocamp.org/routes/50888/fr/aiguille-verte-y-couloir-couturier",
-      c2cId: "50888",
-      track: [
-        { lon: 6.9650, lat: 45.9120, altM: 2500 }, // Montée glacier Argentière
-        { lon: 6.9710, lat: 45.9165, altM: 3000 }, // Pied du Y couloir
-        { lon: 6.9740, lat: 45.9195, altM: 3400 }, // Fourche du Y
-        { lon: 6.9765, lat: 45.9220, altM: 3800 }, // Branche droite
-        { lon: 6.9780, lat: 45.9235, altM: 3980 }, // Sortie couloir
-        { lon: 6.9796, lat: 45.9245, altM: 4122 }, // Sommet
-      ],
+      grade: "AD+",
+      gradeText: "arête du Moine vers Verte, aussi utilisée en descente quand Whymper hors conditions",
+      description: "Magnifique course de montagne, approche de l'un des sommets les plus convoités des Alpes. Sert également d'itinéraire de descente quand le couloir Whymper n'est plus en bonnes conditions.",
+      c2cUrl: "https://www.camptocamp.org/routes/56802",
+      c2cId: "56802",
+      track: [{ lon: 6.970, lat: 45.935, altM: 2683 }, { lon: 6.970, lat: 45.935, altM: 4081 }],
+    },
+    {
+      id: "couloir-couturier",
+      name: "Couloir Couturier",
+      activity: "ski",
+      grade: "D",
+      gradeText: "magnifique couloir glaciaire, accès au sommet de la Verte, très fréquenté",
+      description: "Magnifique couloir glaciaire, l'un des plus beaux pour accéder au prestigieux sommet de la Verte et également l'un des plus fréquentés. Couloir évident se trouvant derrière le triangle rocheux.",
+      c2cUrl: "https://www.camptocamp.org/routes/54983",
+      c2cId: "54983",
+      track: [{ lon: 6.970, lat: 45.935, altM: 2706 }, { lon: 6.970, lat: 45.935, altM: 4063 }],
     },
   ],
 
@@ -550,43 +564,19 @@ export const CLIMBING_ROUTES: Record<string, ClimbingRoute[]> = {
   // ==========================================================================
   "mont-blanc": [
     {
-      id: "mb-gouter",
-      name: "Voie normale — Refuge du Goûter",
-      activity: "alpinisme",
-      grade: "F+",
-      gradeText: "voie la plus fréquentée, D+ 2300m depuis Nid d'Aigle",
-      description: "La voie normale du Mont Blanc depuis le Nid d'Aigle (Tramway du Mont-Blanc). Passage obligé au couloir du Goûter, exposé aux chutes de pierres.",
-      c2cUrl: "https://www.camptocamp.org/routes/53781/fr/mont-blanc-voie-normale-par-le-refuge-du-gouter",
-      c2cId: "53781",
-      track: [
-        { lon: 6.8273, lat: 45.8794, altM: 2372 }, // Nid d'Aigle (terminus TMB)
-        { lon: 6.8350, lat: 45.8700, altM: 2900 }, // Tête Rousse
-        { lon: 6.8420, lat: 45.8640, altM: 3350 }, // Couloir du Goûter
-        { lon: 6.8470, lat: 45.8560, altM: 3835 }, // Refuge du Goûter
-        { lon: 6.8530, lat: 45.8480, altM: 4304 }, // Dôme du Goûter
-        { lon: 6.8592, lat: 45.8410, altM: 4547 }, // Vallot
-        { lon: 6.8620, lat: 45.8370, altM: 4680 }, // Bosses du Dromadaire — basse
-        { lon: 6.8640, lat: 45.8345, altM: 4741 }, // Bosses du Dromadaire — haute
-        { lon: 6.8651, lat: 45.8327, altM: 4808 }, // Sommet
-      ],
-    },
-    {
-      id: "mb-trois-monts",
-      name: "Voie des Trois Monts",
+      id: "traversee-3-monts",
+      name: "Traversée des 3 Monts",
       activity: "alpinisme",
       grade: "AD",
-      gradeText: "Mont Blanc du Tacul → Mont Maudit → Mont Blanc, D+ 2200m",
-      description: "Grande classique glaciaire par le Triangle du Tacul et l'arête Kuffner. Itinéraire plus engagé que la voie normale, entièrement sur glace et neige.",
-      c2cUrl: "https://www.camptocamp.org/routes/53785/fr/mont-blanc-voie-des-trois-monts",
-      c2cId: "53785",
+      gradeText: "Tacul → Maudit → Mont Blanc, grande classique glaciaire depuis l'Aiguille du Midi",
+      description: "Grande classique glaciaire reliant l'Aiguille du Midi au sommet du Mont Blanc via le Mont Blanc du Tacul (4248m) et le Mont Maudit (4465m). Itinéraire entièrement sur glace et neige, plus engagé que la voie normale.",
+      c2cUrl: "https://www.camptocamp.org/routes/53788/fr/mont-blanc-traversee-des-3-monts",
+      c2cId: "53788",
       track: [
-        { lon: 6.8873, lat: 45.8788, altM: 3842 }, // Aiguille du Midi (départ téléphérique)
-        { lon: 6.8850, lat: 45.8700, altM: 3850 }, // Col du Midi
-        { lon: 6.8820, lat: 45.8620, altM: 4248 }, // Mont Blanc du Tacul
-        { lon: 6.8760, lat: 45.8540, altM: 4465 }, // Col Maudit
-        { lon: 6.8710, lat: 45.8490, altM: 4465 }, // Mont Maudit
-        { lon: 6.8680, lat: 45.8420, altM: 4630 }, // Col de la Brenva
-        { lon: 6.8651, lat: 45.8327, altM: 4808 }, // Sommet Mont Blanc
+        { lon: 6.88825, lat: 45.87894, altM: 3729 }, // Aiguille du Midi
+        { lon: 6.87600, lat: 45.86200, altM: 4248 }, // Mont Blanc du Tacul
+        { lon: 6.87034, lat: 45.85829, altM: 4465 }, // Mont Maudit
+        { lon: 6.86486, lat: 45.83270, altM: 4814 }, // Sommet Mont Blanc
       ],
     },
   ],
@@ -596,38 +586,60 @@ export const CLIMBING_ROUTES: Record<string, ClimbingRoute[]> = {
   // ==========================================================================
   jorasses: [
     {
-      id: "jorasses-walker",
-      name: "Éperon Walker",
+      id: "jorasses-normale",
+      name: "Voie normale — Pt Walker (face SW)",
       activity: "alpinisme",
-      grade: "ED",
-      gradeText: "face nord 1200m — rocher + glace, extrêmement engagé",
-      description: "Un des trois grands problèmes nord des Alpes, ouvert en 1938 par Cassin, Esposito et Tizzoni. Itinéraire de référence de l'alpinisme mondial sur la face nord des Jorasses.",
-      c2cUrl: "https://www.camptocamp.org/routes/54265/fr/grandes-jorasses-eperon-walker",
-      c2cId: "54265",
+      grade: "PD",
+      gradeText: "face SW côté italien — neige et glace modérés",
+      description: "Voie normale de la Pointe Walker des Grandes Jorasses par le versant SW depuis le refuge Boccalatte. Itinéraire classique sur arête neigeuse, bien moins engagé que la face nord.",
+      c2cUrl: "https://www.camptocamp.org/routes/53890/fr/grandes-jorasses-pointe-walker-face-sw-voie-normale-",
+      c2cId: "53890",
       track: [
-        { lon: 7.0350, lat: 45.8820, altM: 2000 }, // Refuge Leschaux
-        { lon: 7.0430, lat: 45.8870, altM: 2600 }, // Pied de la face nord
-        { lon: 7.0480, lat: 45.8910, altM: 3100 }, // Tiers inférieur éperon
-        { lon: 7.0530, lat: 45.8945, altM: 3500 }, // Mi-voie — éperon central
-        { lon: 7.0565, lat: 45.8972, altM: 3900 }, // Haut de l'éperon
-        { lon: 7.0596, lat: 45.8993, altM: 4208 }, // Sommet Pt Walker
+        { lon: 6.98374, lat: 45.84387, altM: 2040 }, // Refuge Boccalatte (côté italien)
+        { lon: 6.98500, lat: 45.85200, altM: 3200 }, // Glacier SW
+        { lon: 6.98400, lat: 45.85900, altM: 3800 }, // Arête sommitale
+        { lon: 6.98276, lat: 45.86574, altM: 4208 }, // Pointe Walker
       ],
     },
     {
-      id: "jorasses-normale",
-      name: "Voie normale — Pt Whymper",
+      id: "espolon-walker",
+      name: "Éperon Walker",
       activity: "alpinisme",
-      grade: "PD",
-      gradeText: "arête W côté italien — neige et glace modérés",
-      description: "Voie normale des Grandes Jorasses par le versant italien depuis le refuge Boccalatte. Itinéraire classique sur arête neigeuse, bien moins engagé que la face nord.",
-      c2cUrl: "https://www.camptocamp.org/routes/54263/fr/grandes-jorasses-voie-normale-pointe-whymper",
-      c2cId: "54263",
+      grade: "ED-",
+      gradeText: "voie mythique des années 1930, itinéraire classique face nord",
+      description: "L'Éperon Walker est l'une des voies mythiques des années 1930. L'itinéraire est devenu une classique, parcourue de nombreuses fois en été.",
+      c2cUrl: "https://www.camptocamp.org/routes/55210",
+      c2cId: "55210",
       track: [
-        { lon: 7.0620, lat: 45.8850, altM: 2800 }, // Refuge Boccalatte (côté italien)
-        { lon: 7.0640, lat: 45.8890, altM: 3300 }, // Glacier de Whymper
-        { lon: 7.0620, lat: 45.8940, altM: 3750 }, // Col des Grandes Jorasses
-        { lon: 7.0600, lat: 45.8960, altM: 3970 }, // Pointe Marguerite
-        { lon: 7.0585, lat: 45.8975, altM: 4184 }, // Pointe Whymper
+        { lon: 6.92181, lat: 45.92681, altM: 1790 }, // Départ Chamonix
+        { lon: 6.97000, lat: 45.87000, altM: 3000 }, // Pied face nord
+        { lon: 6.97518, lat: 45.82541, altM: 4058 }, // Pointe Walker
+      ],
+    },
+    {
+      id: "le-linceul",
+      name: "Le Linceul",
+      activity: "alpinisme",
+      grade: "TD-",
+      gradeText: "itinéraire mythique, rarement en très bonnes conditions",
+      description: "Itinéraire mythique et rarement en très bonnes conditions.",
+      c2cUrl: "https://www.camptocamp.org/routes/57995",
+      c2cId: "57995",
+      track: [{ lon: 6.989, lat: 45.868, altM: 3101 }, { lon: 6.989, lat: 45.868, altM: 4193 }],
+    },
+    {
+      id: "aretes-de-rochefort-en-ar",
+      name: "Traversée Rochefort — Grandes Jorasses",
+      activity: "alpinisme",
+      grade: "AD+",
+      gradeText: "arête neigeuse aérienne, traversée Rochefort → Jorasses",
+      description: "Grande traversée glaciaire et aérienne reliant le Dôme de Rochefort aux Grandes Jorasses par l'arête de Rochefort. Itinéraire d'une beauté rare avec vue plongeante sur la Vallée Blanche et les glaciers italiens.",
+      c2cUrl: "https://www.camptocamp.org/outings/1802628/fr/traversee-rochefort-grandes-jorasses",
+      c2cId: "1802628",
+      track: [
+        { lon: 6.93430, lat: 45.84741, altM: 3281 }, // Départ Rochefort
+        { lon: 6.96000, lat: 45.86200, altM: 4202 }, // Point haut
+        { lon: 6.98493, lat: 45.83228, altM: 1608 }, // Arrivée Jorasses
       ],
     },
   ],
@@ -637,21 +649,94 @@ export const CLIMBING_ROUTES: Record<string, ClimbingRoute[]> = {
   // ==========================================================================
   tacul: [
     {
-      id: "tacul-gervasutti",
-      name: "Pilier Gervasutti",
-      activity: "alpinisme",
-      grade: "TD+",
-      gradeText: "pilier central, rocher et glace, 6a obligatoire",
-      description: "Grand pilier de rocher et glace sur le flanc est du Mont Blanc du Tacul, ouvert par Giusto Gervasutti en 1944. Itinéraire technique et engagé.",
-      c2cUrl: "https://www.camptocamp.org/routes/54208/fr/mont-blanc-du-tacul-pilier-gervasutti",
-      c2cId: "54208",
+      id: "couloir-gervasutti",
+      name: "Couloir Gervasutti",
+      activity: "ski",
+      grade: "D-",
+      gradeText: "grand couloir visible depuis la Vallée Blanche, délaissé au profit du Jager",
+      description: "Le grand couloir évident et bien visible depuis le début de la Vallée Blanche. Autrefois classique, il est actuellement délaissé au profit de son voisin, le Jager.",
+      c2cUrl: "https://www.camptocamp.org/outings/528540/it/mont-blanc-du-tacul-couloir-gervasutti",
+      c2cId: "528540",
       track: [
-        { lon: 6.8873, lat: 45.8788, altM: 3842 }, // Aiguille du Midi
-        { lon: 6.8850, lat: 45.8710, altM: 3850 }, // Col du Midi
-        { lon: 6.8830, lat: 45.8650, altM: 3900 }, // Pied du pilier est
-        { lon: 6.8840, lat: 45.8630, altM: 4050 }, // Mi-pilier
-        { lon: 6.8825, lat: 45.8622, altM: 4200 }, // Sommet du pilier
-        { lon: 6.8820, lat: 45.8620, altM: 4248 }, // Sommet Tacul
+        { lon: 6.88800, lat: 45.87200, altM: 3719 }, // Départ Vallée Blanche
+        { lon: 6.88500, lat: 45.86500, altM: 3900 }, // Pied du couloir
+        { lon: 6.88300, lat: 45.86200, altM: 4221 }, // Sommet Tacul
+      ],
+    },
+    {
+      id: "supercouloir",
+      name: "Supercouloir",
+      activity: "alpinisme",
+      grade: "ED-",
+      gradeText: "couloir très long entre pilier Gervasutti et pilier des Trois Pointes",
+      description: "L'une des plus belles courses de ce type dans le massif du Mont Blanc. Sépare le pilier Gervasutti (à droite) du pilier des Trois Pointes (à gauche).",
+      c2cUrl: "https://www.camptocamp.org/outings/1401764/fr/mont-blanc-du-tacul-supercouloir",
+      c2cId: "1401764",
+      track: [{ lon: 6.887, lat: 45.858, altM: 3483 }, { lon: 6.887, lat: 45.858, altM: 4156 }],
+    },
+    {
+      id: "contamine-negri",
+      name: "Contamine – Négri",
+      activity: "ski",
+      grade: "AD+",
+      gradeText: "triangle du Tacul, plus facile des voies Contamine, sous grosse barre de séracs",
+      description: "La plus facile des voies Contamine du Triangle, mais itinéraire peu recommandé : on est sous une grosse barre de séracs sur tout l'itinéraire.",
+      c2cUrl: "https://www.camptocamp.org/outings/1534902/fr/mont-blanc-du-tacul-solo-via-contamine-negri",
+      c2cId: "1534902",
+      track: [
+        { lon: 6.88813, lat: 45.87890, altM: 3813 }, // Départ Vallée Blanche
+        { lon: 6.88500, lat: 45.86500, altM: 4000 }, // Triangle du Tacul
+        { lon: 6.88200, lat: 45.86200, altM: 4285 }, // Sommet Tacul
+      ],
+    },
+    {
+      id: "arete-du-diable",
+      name: "Arête du Diable",
+      activity: "alpinisme",
+      grade: "D+",
+      gradeText: "depuis Col du Diable, Corne, Chaubert, Médiane, Carmen, Isolée",
+      description: "Course consistant à monter au Mont Blanc du Tacul depuis le Col du Diable, en passant par la Corne du Diable, la Pointe Chaubert, la Pointe Médiane, la Pointe Carmen et l'Isolée.",
+      c2cUrl: "https://www.camptocamp.org/routes/54098",
+      c2cId: "54098",
+      track: [{ lon: 6.888, lat: 45.857, altM: 3392 }, { lon: 6.888, lat: 45.857, altM: 4221 }],
+    },
+    {
+      id: "contamine-grisolle",
+      name: "Contamine – Grisolle",
+      activity: "alpinisme",
+      grade: "AD",
+      gradeText: "triangle du Tacul, depuis Col du Midi et refuge des Cosmiques",
+      description: "Descendre de l'Aiguille du Midi et rejoindre le Col du Midi au pied du refuge des Cosmiques, puis se diriger au SSE pour rejoindre le Triangle du Tacul.",
+      c2cUrl: "https://www.camptocamp.org/routes/54062",
+      c2cId: "54062",
+      track: [{ lon: 6.887, lat: 45.860, altM: 3518 }, { lon: 6.887, lat: 45.860, altM: 4085 }],
+    },
+    {
+      id: "goulotte-chere",
+      name: "Goulotte Chéré",
+      activity: "alpinisme",
+      grade: "D",
+      gradeText: "depuis téléphérique Aiguille du Midi, accès facile",
+      description: "Le Mont Blanc du Tacul est facilement accessible depuis le téléphérique de l'Aiguille du Midi, ce qui en fait une course très fréquentée.",
+      c2cUrl: "https://www.camptocamp.org/outings/1539989/fr/triangle-du-tacul-goulotte-chere",
+      c2cId: "1539989",
+      track: [
+        { lon: 6.88800, lat: 45.86800, altM: 3628 }, // Pied de la goulotte
+        { lon: 6.88600, lat: 45.86400, altM: 3810 }, // Sortie goulotte
+      ],
+    },
+    {
+      id: "lifting-du-roi",
+      name: "Lifting du Roi",
+      activity: "escalade",
+      grade: "D+",
+      gradeText: "face SE du Roi du Siam, accessible du printemps à l'automne",
+      description: "La voie est tracée sur la face SE du Roi du Siam, ce qui la rend praticable du printemps à l'automne.",
+      c2cUrl: "https://www.camptocamp.org/outings/1811456/fr/roi-de-siam-lifting-du-roi",
+      c2cId: "1811456",
+      track: [
+        { lon: 6.90200, lat: 45.85400, altM: 3372 }, // Pied de la voie
+        { lon: 6.90200, lat: 45.85400, altM: 3589 }, // Sommet Roi du Siam
       ],
     },
   ],
@@ -661,23 +746,45 @@ export const CLIMBING_ROUTES: Record<string, ClimbingRoute[]> = {
   // ==========================================================================
   drus: [
     {
-      id: "drus-bonatti",
-      name: "Pilier Bonatti",
-      activity: "alpinisme",
-      grade: "ED",
-      gradeText: "solitaire 1955, rocher exceptionnel, 6a — 1200m de D+",
-      description: "L'une des ascensions les plus légendaires de l'histoire de l'alpinisme. Walter Bonatti a gravi seul ce pilier rocheux en 6 jours en 1955, en tête. Chef-d'œuvre d'engagement et de technique.",
-      c2cUrl: "https://www.camptocamp.org/routes/182620/fr/petit-dru-pilier-sw-bonatti",
-      c2cId: "182620",
+      id: "pilier-s-voie-contamine",
+      name: "Grand Dru — Pilier S Voie Contamine",
+      activity: "escalade",
+      grade: "TD+",
+      gradeText: "depuis refuge de la Charpoua, dalles IV en diagonale",
+      description: "Du refuge de la Charpoua, gagner la large vire à la base du pilier S. Dalles de IV en diagonale vers la gauche jusqu'à la base du premier ressaut.",
+      c2cUrl: "https://www.camptocamp.org/outings/1143835/fr/grand-dru-pilier-s-voie-contamine-video-",
+      c2cId: "1143835",
       track: [
-        { lon: 6.9450, lat: 45.9200, altM: 2000 }, // Montenvers / Mer de Glace
-        { lon: 6.9500, lat: 45.9250, altM: 2600 }, // Pied de la moraine Drus
-        { lon: 6.9540, lat: 45.9280, altM: 3000 }, // Pied du pilier SW
-        { lon: 6.9558, lat: 45.9295, altM: 3300 }, // Tiers bas du pilier
-        { lon: 6.9568, lat: 45.9305, altM: 3550 }, // Mi-pilier
-        { lon: 6.9578, lat: 45.9310, altM: 3700 }, // Haut du pilier
-        { lon: 6.9580, lat: 45.9310, altM: 3754 }, // Sommet Petit Dru
+        { lon: 6.92096, lat: 45.92787, altM: 1913 }, // Départ Montenvers
+        { lon: 6.95700, lat: 45.93300, altM: 2833 }, // Refuge de la Charpoua
+        { lon: 6.95700, lat: 45.93300, altM: 3619 }, // Sommet Grand Dru
       ],
+    },
+    {
+      id: "flammes-de-pierre-drus",
+      name: "Arête des Flammes de Pierre + Traversée des Drus",
+      activity: "alpinisme",
+      grade: "D+",
+      gradeText: "arête des Flammes de Pierre puis traversée des Drus",
+      description: "Enchaînement de l'arête des Flammes de Pierre et de la traversée des Drus, itinéraire aérien et varié sur l'un des massifs rocheux les plus impressionnants du Mont-Blanc.",
+      c2cUrl: "https://www.camptocamp.org/outings/1784894/fr/arete-des-flammes-de-pierre-traversee-des-drus",
+      c2cId: "1784894",
+      track: [
+        { lon: 6.95800, lat: 45.93300, altM: 2806 }, // Départ
+        { lon: 6.95800, lat: 45.93100, altM: 3748 }, // Sommet Drus
+        { lon: 6.95800, lat: 45.93300, altM: 1721 }, // Arrivée
+      ],
+    },
+    {
+      id: "traversee-des-drus",
+      name: "Traversée des Drus",
+      activity: "alpinisme",
+      grade: "D",
+      gradeText: "classique incontournable, efficience et expérience requises pour la Vierge",
+      description: "Classique incontournable qui demande efficience et expérience pour gagner sereinement la Vierge.",
+      c2cUrl: "https://www.camptocamp.org/outings/1135533/fr/traversee-des-drus-video-",
+      c2cId: "1135533",
+      track: [{ lon: 6.956, lat: 45.933, altM: 2830 }, { lon: 6.956, lat: 45.933, altM: 3690 }],
     },
   ],
 
@@ -686,21 +793,55 @@ export const CLIMBING_ROUTES: Record<string, ClimbingRoute[]> = {
   // ==========================================================================
   midi: [
     {
-      id: "midi-cosmiques",
+      id: "midi-rebuffat-baquet-1",
+      name: "Face S — Voie Rébuffat-Baquet",
+      activity: "escalade",
+      grade: "D",
+      gradeText: "face sud, granite d'exception, vue plongeante sur Chamonix",
+      description: "Grande classique de la face sud de l'Aiguille du Midi, ouverte par Gaston Rébuffat et Maurice Baquet. Escalade sur granite d'exception avec vue plongeante sur Chamonix.",
+      c2cUrl: "https://www.camptocamp.org/outings/1792938/fr/aiguille-du-midi-face-s-voie-rebuffat-baquet",
+      c2cId: "1792938",
+      track: [{ lon: 6.887, lat: 45.879, altM: 3617 }, { lon: 6.887, lat: 45.879, altM: 3797 }],
+    },
+    {
+      id: "aresta-de-cosmiques-1",
       name: "Arête des Cosmiques",
       activity: "alpinisme",
       grade: "AD",
       gradeText: "arête mixte classique, 200m de D+, technique et exposée",
       description: "Arête emblématique de l'Aiguille du Midi, accessible depuis le téléphérique. Grande classique pour les cordées souhaitant s'initier à l'alpinisme de haute montagne sur un itinéraire varié.",
-      c2cUrl: "https://www.camptocamp.org/routes/54148/fr/aiguille-du-midi-arete-des-cosmiques",
-      c2cId: "54148",
+      c2cUrl: "https://www.camptocamp.org/outings/1879804/fr/4eme-arete-des-cosmiques",
+      c2cId: "1879804",
+      track: [{ lon: 6.887, lat: 45.878, altM: 3547 }, { lon: 6.887, lat: 45.878, altM: 3784 }],
+    },
+    {
+      id: "eperon-frendo",
+      name: "Éperon Frendo",
+      activity: "alpinisme",
+      grade: "D",
+      gradeText: "éperon nord, 1000m de D+, mixte classique",
+      description: "L'Éperon Frendo est une grande classique de l'alpinisme sur la face nord de l'Aiguille du Plan. Itinéraire mixte varié et engagé, accessible depuis l'Aiguille du Midi.",
+      c2cUrl: "https://www.camptocamp.org/outings/1782678/fr/aiguille-du-midi-eperon-frendo",
+      c2cId: "1782678",
+      track: [{ lon: 6.864, lat: 45.906, altM: 2347 }, { lon: 6.864, lat: 45.879, altM: 3770 }],
+    },
+    {
+      id: "mallory-porter",
+      name: "Mallory – Porter rectifiée",
+      activity: "alpinisme",
+      grade: "TD",
+      gradeText: "éperon N de l'Aiguille du Midi, rocher+mixte, 1000m D+",
+      description: "Grande classique du massif, l'éperon Mallory-Porter gravit la face nord de l'Aiguille du Midi depuis la Mer de Glace. Itinéraire varié sur granit et mixte, avec une exposition soutenue.",
+      c2cUrl: "https://www.camptocamp.org/routes/54000/fr/aiguille-du-midi-eperon-mallory-porter",
+      c2cId: "54000",
+      // Trace GPX auto-générée : public/routes/mallory-porter.gpx (fetch-route 54000 mallory-porter)
       track: [
-        { lon: 6.8873, lat: 45.8788, altM: 3842 }, // Sommet téléphérique
-        { lon: 6.8855, lat: 45.8775, altM: 3800 }, // Départ arête W
-        { lon: 6.8840, lat: 45.8760, altM: 3750 }, // Première gendarme
-        { lon: 6.8820, lat: 45.8745, altM: 3720 }, // Pas de la Goulotte
-        { lon: 6.8800, lat: 45.8730, altM: 3700 }, // Milieu de l'arête
-        { lon: 6.8780, lat: 45.8715, altM: 3690 }, // Refuge des Cosmiques
+        { lon: 6.8873, lat: 45.8930, altM: 2317 }, // Plan de l'Aiguille
+        { lon: 6.8870, lat: 45.8890, altM: 2700 }, // Approche pied de l'éperon
+        { lon: 6.8871, lat: 45.8860, altM: 3100 }, // Bas de l'éperon N
+        { lon: 6.8872, lat: 45.8830, altM: 3400 }, // Mi-éperon
+        { lon: 6.8873, lat: 45.8810, altM: 3650 }, // Haut de l'éperon
+        { lon: 6.8873, lat: 45.8788, altM: 3842 }, // Sommet Aiguille du Midi
       ],
     },
   ],
@@ -1138,3 +1279,56 @@ export const CLIMBING_ROUTES: Record<string, ClimbingRoute[]> = {
     },
   ],
 };
+
+// ---------------------------------------------------------------------------
+// Sommets du massif du Mont-Blanc
+// ---------------------------------------------------------------------------
+export const MONT_BLANC_SUMMIT_IDS = new Set<string>([
+  "tour", "chardonnet", "droites", "courtes", "moine", "plan",
+  "maudit", "bionnassay", "domes-miage", "geant", "rochefort",
+  "tour-ronde", "talefre", "grepon", "chamonix-needles", "verte",
+  "mont-blanc", "jorasses", "tacul", "drus", "midi",
+]);
+
+// ---------------------------------------------------------------------------
+// Voies disposant d'un fichier GPX local (tracé GPS réel)
+// ---------------------------------------------------------------------------
+export const GPX_ROUTE_IDS = new Set<string>([
+  // Tour
+  "sommet-s-par-le-col-superieur-du-tour", "arete-de-la-table", "couloir-de-la-table",
+  // Chardonnet
+  "chardonnet-forbes", "chardonnet-normale", "eperon-migot",
+  // Droites
+  "droites-eperon-oriental", "couloir-lagarde",
+  // Courtes
+  "courtes-voie-normale", "courtes-voie-des-suisses", "courtes-voie-autrichiens",
+  // Moine
+  "moine-arete-s", "arete-s-classique",
+  // Plan
+  "traversee-midi-plan", "arete-ryan",
+  // Maudit
+  "maudit-kuffner",
+  // Bionnassay
+  "arete-s-bionnassay",
+  // Dômes de Miage
+  "domes-miage-traversee",
+  // Géant
+  "sw-face-by-the-burgener-slabs",
+  // Rochefort
+  "aretes-de-rochefort-en-ar",
+  // Grépon
+  "grepon-mer-de-glace", "grepon-charmoz-grepon",
+  // Verte
+  "verte-whymper", "greben-jardin", "greben-moine", "couloir-couturier",
+  // Mont-Blanc
+  "traversee-3-monts",
+  // Jorasses
+  "espolon-walker", "le-linceul",
+  // Tacul
+  "couloir-gervasutti", "supercouloir", "contamine-negri",
+  "arete-du-diable", "contamine-grisolle", "goulotte-chere", "lifting-du-roi",
+  // Drus
+  "pilier-s-voie-contamine", "flammes-de-pierre-drus", "traversee-des-drus",
+  // Midi
+  "midi-rebuffat-baquet-1", "aresta-de-cosmiques-1", "eperon-frendo", "mallory-porter",
+]);
