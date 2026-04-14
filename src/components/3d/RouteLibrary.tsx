@@ -4,15 +4,22 @@
 // RouteLibrary — panneau DOM de sélection des voies d'alpinisme
 // =============================================================================
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, createContext, useContext } from "react";
 import {
   CLIMBING_ROUTES,
   gradeToColor,
+  getRoutePaletteColor,
   MONT_BLANC_SUMMIT_IDS,
   GPX_ROUTE_IDS,
 } from "@/data/climbingRoutes";
 import { useRouteStore } from "@/store/route-store";
 import type { ClimbingRoute, RouteGrade } from "@/types/routes";
+
+// ---------------------------------------------------------------------------
+// Contexte thème (dark = panneau flottant, light = intégré dans le panel)
+// ---------------------------------------------------------------------------
+
+const EmbeddedCtx = createContext(false);
 
 // ---------------------------------------------------------------------------
 // Familles de difficulté
@@ -90,11 +97,16 @@ const SUMMIT_NAMES: Record<string, string> = {
 function RouteRow({
   route,
   filterFamilies,
+  paletteColor,
+  summitId,
 }: {
   route: ClimbingRoute;
   filterFamilies: Set<GradeFamily>;
+  paletteColor: string;
+  summitId: string;
 }) {
   const { visibleRoutes, toggleRoute } = useRouteStore();
+  const embedded = useContext(EmbeddedCtx);
 
   if (
     filterFamilies.size > 0 &&
@@ -104,7 +116,7 @@ function RouteRow({
   }
 
   const visible = visibleRoutes.some((r) => r.id === route.id);
-  const color = route.color ?? gradeToColor(route.grade);
+  const color = paletteColor;
 
   return (
     <div
@@ -113,7 +125,7 @@ function RouteRow({
         alignItems: "flex-start",
         gap: 8,
         padding: "5px 0",
-        borderBottom: "1px solid rgba(255,255,255,0.05)",
+        borderBottom: embedded ? "1px solid rgba(0,0,0,0.05)" : "1px solid rgba(255,255,255,0.05)",
       }}
     >
       {/* Badge cotation */}
@@ -139,7 +151,7 @@ function RouteRow({
           style={{
             fontSize: 11,
             fontWeight: 600,
-            color: visible ? "#f1f5f9" : "#94a3b8",
+            color: embedded ? (visible ? "#1e293b" : "#64748b") : (visible ? "#f1f5f9" : "#94a3b8"),
             lineHeight: 1.3,
             overflow: "hidden",
             textOverflow: "ellipsis",
@@ -152,7 +164,7 @@ function RouteRow({
           <div
             style={{
               fontSize: 9,
-              color: "#475569",
+              color: embedded ? "#94a3b8" : "#475569",
               marginTop: 1,
               lineHeight: 1.2,
               overflow: "hidden",
@@ -167,7 +179,6 @@ function RouteRow({
 
       {/* Bouton toggle */}
       <button
-        onClick={() => toggleRoute(route)}
         style={{
           flexShrink: 0,
           width: 22,
@@ -175,7 +186,7 @@ function RouteRow({
           borderRadius: 6,
           border: visible
             ? `1.5px solid ${color}`
-            : "1.5px solid rgba(255,255,255,0.12)",
+            : embedded ? "1.5px solid rgba(0,0,0,0.12)" : "1.5px solid rgba(255,255,255,0.12)",
           background: visible ? color : "transparent",
           color: visible ? "#fff" : "#64748b",
           cursor: "pointer",
@@ -187,6 +198,7 @@ function RouteRow({
           transition: "all 0.15s",
         }}
         title={visible ? "Masquer la voie" : "Afficher la voie"}
+        onClick={() => toggleRoute({ ...route, color: paletteColor })}
       >
         {visible ? "✓" : "○"}
       </button>
@@ -212,6 +224,7 @@ function SummitGroup({
   const routes = allRoutes.filter((r) => GPX_ROUTE_IDS.has(r.id));
   const [open, setOpen] = useState(defaultOpen);
   const { visibleRoutes } = useRouteStore();
+  const embedded = useContext(EmbeddedCtx);
 
   const matchingRoutes = routes.filter(
     (r) =>
@@ -232,7 +245,7 @@ function SummitGroup({
           width: "100%",
           background: "none",
           border: "none",
-          color: "#94a3b8",
+          color: embedded ? "#64748b" : "#94a3b8",
           cursor: "pointer",
           display: "flex",
           alignItems: "center",
@@ -275,7 +288,13 @@ function SummitGroup({
       {open && (
         <div style={{ paddingLeft: 4 }}>
           {routes.map((r) => (
-            <RouteRow key={r.id} route={r} filterFamilies={filterFamilies} />
+            <RouteRow
+              key={r.id}
+              route={r}
+              filterFamilies={filterFamilies}
+              summitId={summitId}
+              paletteColor={getRoutePaletteColor(summitId, r.id)}
+            />
           ))}
         </div>
       )}
@@ -290,11 +309,15 @@ function SummitGroup({
 interface RouteLibraryProps {
   className?: string;
   selectedSummitId?: string | null;
+  onHide?: () => void;
+  embedded?: boolean;
 }
 
 export default function RouteLibrary({
   className,
   selectedSummitId,
+  onHide,
+  embedded = false,
 }: RouteLibraryProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [activeFilters, setActiveFilters] = useState<Set<GradeFamily>>(
@@ -343,9 +366,17 @@ export default function RouteLibrary({
   const hasOthers = otherIds.length > 0;
 
   return (
+    <EmbeddedCtx.Provider value={embedded}>
     <div
       className={className}
-      style={{
+      style={embedded ? {
+        padding: "8px 12px",
+        maxHeight: 300,
+        overflowY: "auto",
+        fontFamily: "system-ui, sans-serif",
+        color: "#334155",
+        userSelect: "none",
+      } : {
         background: "rgba(15,23,42,0.90)",
         backdropFilter: "blur(10px)",
         borderRadius: 16,
@@ -359,8 +390,8 @@ export default function RouteLibrary({
         userSelect: "none",
       }}
     >
-      {/* En-tête */}
-      <div
+      {/* En-tête — masqué en mode embarqué */}
+      {!embedded && <div
         style={{
           display: "flex",
           alignItems: "center",
@@ -391,23 +422,42 @@ export default function RouteLibrary({
             </span>
           )}
         </div>
-        <button
-          onClick={() => setCollapsed((v) => !v)}
-          style={{
-            background: "none",
-            border: "none",
-            color: "#64748b",
-            cursor: "pointer",
-            fontSize: 14,
-            lineHeight: 1,
-            padding: 0,
-          }}
-        >
-          {collapsed ? "▾" : "▴"}
-        </button>
-      </div>
+        <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+          <button
+            onClick={() => setCollapsed((v) => !v)}
+            style={{
+              background: "none",
+              border: "none",
+              color: "#64748b",
+              cursor: "pointer",
+              fontSize: 14,
+              lineHeight: 1,
+              padding: 0,
+            }}
+          >
+            {collapsed ? "▾" : "▴"}
+          </button>
+          {onHide && (
+            <button
+              onClick={onHide}
+              style={{
+                background: "none",
+                border: "none",
+                color: "#64748b",
+                cursor: "pointer",
+                fontSize: 14,
+                lineHeight: 1,
+                padding: 0,
+              }}
+              title="Fermer"
+            >
+              ✕
+            </button>
+          )}
+        </div>
+      </div>}
 
-      {!collapsed && (
+      {(!collapsed || embedded) && (
         <>
           {/* Filtres par famille de difficulté */}
           <div
@@ -417,7 +467,7 @@ export default function RouteLibrary({
               gap: 4,
               marginBottom: 10,
               paddingBottom: 10,
-              borderBottom: "1px solid rgba(255,255,255,0.06)",
+              borderBottom: embedded ? "1px solid rgba(0,0,0,0.06)" : "1px solid rgba(255,255,255,0.06)",
             }}
           >
             {FAMILIES.map((f) => {
@@ -431,9 +481,7 @@ export default function RouteLibrary({
                     fontWeight: 700,
                     padding: "2px 7px",
                     borderRadius: 5,
-                    border: `1px solid ${
-                      active ? FAMILY_COLORS[f] : "rgba(255,255,255,0.1)"
-                    }`,
+                    border: `1px solid ${active ? FAMILY_COLORS[f] : (embedded ? "rgba(0,0,0,0.1)" : "rgba(255,255,255,0.1)")}`,
                     background: active ? FAMILY_COLORS[f] : "transparent",
                     color: active ? "#fff" : "#64748b",
                     cursor: "pointer",
@@ -451,7 +499,7 @@ export default function RouteLibrary({
                   fontSize: 9,
                   padding: "2px 6px",
                   borderRadius: 5,
-                  border: "1px solid rgba(255,255,255,0.08)",
+                  border: embedded ? "1px solid rgba(0,0,0,0.08)" : "1px solid rgba(255,255,255,0.08)",
                   background: "transparent",
                   color: "#475569",
                   cursor: "pointer",
@@ -477,7 +525,7 @@ export default function RouteLibrary({
             <>
               <div
                 style={{
-                  borderTop: "1px solid rgba(255,255,255,0.06)",
+                  borderTop: embedded ? "1px solid rgba(0,0,0,0.06)" : "1px solid rgba(255,255,255,0.06)",
                   paddingTop: 8,
                   marginTop: 4,
                   marginBottom: 8,
@@ -505,7 +553,7 @@ export default function RouteLibrary({
           {hasOthers && !showAllSummits && (
             <div
               style={{
-                borderTop: "1px solid rgba(255,255,255,0.06)",
+                borderTop: embedded ? "1px solid rgba(0,0,0,0.06)" : "1px solid rgba(255,255,255,0.06)",
                 paddingTop: 8,
                 marginTop: 4,
               }}
@@ -515,7 +563,7 @@ export default function RouteLibrary({
                 style={{
                   width: "100%",
                   background: "none",
-                  border: "1px solid rgba(255,255,255,0.1)",
+                  border: embedded ? "1px solid rgba(0,0,0,0.1)" : "1px solid rgba(255,255,255,0.1)",
                   borderRadius: 6,
                   color: "#60a5fa",
                   fontSize: 10,
@@ -543,7 +591,7 @@ export default function RouteLibrary({
                 style={{
                   width: "100%",
                   background: "none",
-                  border: "1px solid rgba(255,255,255,0.08)",
+                  border: embedded ? "1px solid rgba(0,0,0,0.08)" : "1px solid rgba(255,255,255,0.08)",
                   borderRadius: 6,
                   color: "#475569",
                   fontSize: 10,
@@ -561,7 +609,7 @@ export default function RouteLibrary({
           {visibleRoutes.length > 0 && (
             <div
               style={{
-                borderTop: "1px solid rgba(255,255,255,0.06)",
+                borderTop: embedded ? "1px solid rgba(0,0,0,0.06)" : "1px solid rgba(255,255,255,0.06)",
                 paddingTop: 8,
                 marginTop: 4,
                 display: "flex",
@@ -572,7 +620,7 @@ export default function RouteLibrary({
                 onClick={clearRoutes}
                 style={{
                   background: "none",
-                  border: "1px solid rgba(255,255,255,0.1)",
+                  border: embedded ? "1px solid rgba(0,0,0,0.1)" : "1px solid rgba(255,255,255,0.1)",
                   borderRadius: 6,
                   color: "#64748b",
                   fontSize: 9,
@@ -587,5 +635,6 @@ export default function RouteLibrary({
         </>
       )}
     </div>
+    </EmbeddedCtx.Provider>
   );
 }

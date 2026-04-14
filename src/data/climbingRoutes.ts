@@ -17,6 +17,40 @@ export function gradeToColor(grade: string): string {
   return "#3b82f6"; // F, PD et dérivés
 }
 
+// Palette de couleurs distinctes pour éviter les doublons au sein d'un même sommet
+const ROUTE_PALETTE = [
+  "#3b82f6", // bleu
+  "#ef4444", // rouge
+  "#22c55e", // vert
+  "#f97316", // orange
+  "#a855f7", // violet
+  "#06b6d4", // cyan
+  "#eab308", // jaune
+  "#ec4899", // rose
+  "#14b8a6", // teal
+  "#f59e0b", // ambre
+  "#6366f1", // indigo
+  "#84cc16", // lime
+];
+
+/**
+ * Retourne une couleur unique pour chaque voie au sein d'un sommet.
+ * Utilise l'index de la voie dans la liste filtrée (GPX uniquement).
+ */
+export function getRoutePaletteColor(summitId: string, routeId: string): string {
+  const routes = (CLIMBING_ROUTES[summitId] ?? []).filter((r) =>
+    GPX_ROUTE_IDS.has(r.id)
+  );
+  const index = routes.findIndex((r) => r.id === routeId);
+  if (index === -1) {
+    // Voie pas dans la liste filtrée — fallback palette via position globale
+    const allRoutes = CLIMBING_ROUTES[summitId] ?? [];
+    const i = allRoutes.findIndex((r) => r.id === routeId);
+    return ROUTE_PALETTE[Math.max(0, i) % ROUTE_PALETTE.length];
+  }
+  return ROUTE_PALETTE[index % ROUTE_PALETTE.length];
+}
+
 // ---------------------------------------------------------------------------
 // Voies classiques — keyed par summit ID (correspondant au MOUNTAIN_TREE)
 // ---------------------------------------------------------------------------

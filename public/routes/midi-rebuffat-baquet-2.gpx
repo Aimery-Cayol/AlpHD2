@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="AlpHD" xmlns="http://www.topografix.com/GPX/1/1">
+  <trk>
+    <name>Aiguille du Midi — Face S Voie Rébuffat-Baquet #2</name>
+    <trkseg>
+      <trkpt lat="45.872373" lon="6.885852"><ele>3769.5</ele></trkpt>
+      <trkpt lat="45.872190" lon="6.885808"><ele>3767.5</ele></trkpt>
+      <trkpt lat="45.872423" lon="6.885925"><ele>3766.5</ele></trkpt>
+      <trkpt lat="45.873105" lon="6.885845"><ele>3765.5</ele></trkpt>
+      <trkpt lat="45.873520" lon="6.885927"><ele>3754.4</ele></trkpt>
+      <trkpt lat="45.874222" lon="6.886867"><ele>3704.4</ele></trkpt>
+      <trkpt lat="45.874357" lon="6.887332"><ele>3690.4</ele></trkpt>
+      <trkpt lat="45.874653" lon="6.887795"><ele>3681.4</ele></trkpt>
+      <trkpt lat="45.875165" lon="6.888142"><ele>3682.5</ele></trkpt>
+      <trkpt lat="45.875370" lon="6.888392"><ele>3687.5</ele></trkpt>
+      <trkpt lat="45.877325" lon="6.889948"><ele>3659.5</ele></trkpt>
+      <trkpt lat="45.877617" lon="6.889732"><ele>3662.5</ele></trkpt>
+      <trkpt lat="45.877768" lon="6.889497"><ele>3668.5</ele></trkpt>
+      <trkpt lat="45.877877" lon="6.889283"><ele>3670.4</ele></trkpt>
+      <trkpt lat="45.878113" lon="6.889117"><ele>3686.4</ele></trkpt>
+      <trkpt lat="45.878050" lon="6.889430"><ele>3721.5</ele></trkpt>
+      <trkpt lat="45.878067" lon="6.889153"><ele>3712.5</ele></trkpt>
+      <trkpt lat="45.878052" lon="6.888868"><ele>3712.5</ele></trkpt>
+      <trkpt lat="45.877880" lon="6.888945"><ele>3700.5</ele></trkpt>
+      <trkpt lat="45.878160" lon="6.888532"><ele>3784.4</ele></trkpt>
+      <trkpt lat="45.877938" lon="6.888668"><ele>3794.5</ele></trkpt>
+      <trkpt lat="45.877503" lon="6.888772"><ele>3826.5</ele></trkpt>
+      <trkpt lat="45.877748" lon="6.888758"><ele>3827.4</ele></trkpt>
+      <trkpt lat="45.877927" lon="6.888648"><ele>3802.4</ele></trkpt>
+      <trkpt lat="45.877760" lon="6.888545"><ele>3833.5</ele></trkpt>
+      <trkpt lat="45.878085" lon="6.888377"><ele>3842.5</ele></trkpt>
+      <trkpt lat="45.877810" lon="6.888662"><ele>3844.5</ele></trkpt>
+      <trkpt lat="45.877658" lon="6.888485"><ele>3836.4</ele></trkpt>
+      <trkpt lat="45.877855" lon="6.888548"><ele>3828.5</ele></trkpt>
+      <trkpt lat="45.878347" lon="6.888233"><ele>3826.5</ele></trkpt>
+      <trkpt lat="45.878435" lon="6.887878"><ele>3826.5</ele></trkpt>
+      <trkpt lat="45.877975" lon="6.888513"><ele>3825.4</ele></trkpt>
+      <trkpt lat="45.878157" lon="6.888503"><ele>3807.5</ele></trkpt>
+      <trkpt lat="45.877958" lon="6.888418"><ele>3797.5</ele></trkpt>
+      <trkpt lat="45.878170" lon="6.888508"><ele>3897.5</ele></trkpt>
+    </trkseg>
+  </trk>
+</gpx>

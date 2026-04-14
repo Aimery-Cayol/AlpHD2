@@ -23,7 +23,6 @@ export default function Compass3D() {
         // La flèche dépasse vers le haut depuis le centre de la rose
         // flèche : ~28px au-dessus du centre → total height = CENTER + 28
         height: CENTER + 28 + SIZE,
-        position: "relative",
       }}
     >
       {/* ------------------------------------------------------------------ */}

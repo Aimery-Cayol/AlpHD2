@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="AlpHD" xmlns="http://www.topografix.com/GPX/1/1">
+  <trk>
+    <name>Arête des Cosmiques #4</name>
+    <trkseg>
+      <trkpt lat="45.873217" lon="6.885613"><ele>3608.2</ele></trkpt>
+      <trkpt lat="45.873603" lon="6.885742"><ele>3592.8</ele></trkpt>
+      <trkpt lat="45.873967" lon="6.886098"><ele>3572.8</ele></trkpt>
+      <trkpt lat="45.874278" lon="6.886803"><ele>3555.0</ele></trkpt>
+      <trkpt lat="45.874522" lon="6.887027"><ele>3549.0</ele></trkpt>
+      <trkpt lat="45.874207" lon="6.887602"><ele>3537.0</ele></trkpt>
+      <trkpt lat="45.873998" lon="6.887730"><ele>3534.4</ele></trkpt>
+      <trkpt lat="45.873787" lon="6.887947"><ele>3529.2</ele></trkpt>
+      <trkpt lat="45.872675" lon="6.887393"><ele>3530.2</ele></trkpt>
+      <trkpt lat="45.872115" lon="6.887472"><ele>3524.4</ele></trkpt>
+      <trkpt lat="45.869620" lon="6.887487"><ele>3521.0</ele></trkpt>
+      <trkpt lat="45.868962" lon="6.887003"><ele>3518.4</ele></trkpt>
+      <trkpt lat="45.867700" lon="6.886242"><ele>3524.6</ele></trkpt>
+      <trkpt lat="45.867240" lon="6.885870"><ele>3525.6</ele></trkpt>
+      <trkpt lat="45.866471" lon="6.885503"><ele>3535.2</ele></trkpt>
+      <trkpt lat="45.866149" lon="6.885124"><ele>3546.6</ele></trkpt>
+      <trkpt lat="45.865827" lon="6.884483"><ele>3561.2</ele></trkpt>
+      <trkpt lat="45.865612" lon="6.884342"><ele>3570.4</ele></trkpt>
+      <trkpt lat="45.864733" lon="6.885117"><ele>3606.0</ele></trkpt>
+      <trkpt lat="45.865468" lon="6.884432"><ele>3582.8</ele></trkpt>
+      <trkpt lat="45.865718" lon="6.884342"><ele>3570.2</ele></trkpt>
+      <trkpt lat="45.866365" lon="6.885467"><ele>3542.0</ele></trkpt>
+      <trkpt lat="45.867230" lon="6.885872"><ele>3530.8</ele></trkpt>
+      <trkpt lat="45.867983" lon="6.886435"><ele>3525.6</ele></trkpt>
+      <trkpt lat="45.868995" lon="6.887020"><ele>3521.8</ele></trkpt>
+      <trkpt lat="45.869665" lon="6.887522"><ele>3523.0</ele></trkpt>
+      <trkpt lat="45.871225" lon="6.887492"><ele>3523.4</ele></trkpt>
+      <trkpt lat="45.871473" lon="6.887208"><ele>3526.8</ele></trkpt>
+      <trkpt lat="45.872145" lon="6.887468"><ele>3527.8</ele></trkpt>
+      <trkpt lat="45.872805" lon="6.887463"><ele>3531.2</ele></trkpt>
+      <trkpt lat="45.873252" lon="6.887648"><ele>3528.8</ele></trkpt>
+      <trkpt lat="45.873768" lon="6.887423"><ele>3537.2</ele></trkpt>
+      <trkpt lat="45.874222" lon="6.886957"><ele>3553.0</ele></trkpt>
+      <trkpt lat="45.874242" lon="6.886687"><ele>3556.4</ele></trkpt>
+      <trkpt lat="45.874190" lon="6.886265"><ele>3564.4</ele></trkpt>
+      <trkpt lat="45.874308" lon="6.885613"><ele>3571.2</ele></trkpt>
+      <trkpt lat="45.874963" lon="6.885202"><ele>3589.8</ele></trkpt>
+      <trkpt lat="45.875067" lon="6.884983"><ele>3599.6</ele></trkpt>
+      <trkpt lat="45.875747" lon="6.885875"><ele>3678.2</ele></trkpt>
+      <trkpt lat="45.875832" lon="6.886132"><ele>3692.0</ele></trkpt>
+      <trkpt lat="45.876063" lon="6.886182"><ele>3709.2</ele></trkpt>
+      <trkpt lat="45.876412" lon="6.886565"><ele>3713.4</ele></trkpt>
+      <trkpt lat="45.876668" lon="6.886542"><ele>3707.4</ele></trkpt>
+      <trkpt lat="45.876907" lon="6.886367"><ele>3725.2</ele></trkpt>
+      <trkpt lat="45.877125" lon="6.886687"><ele>3721.6</ele></trkpt>
+      <trkpt lat="45.877437" lon="6.886720"><ele>3733.0</ele></trkpt>
+      <trkpt lat="45.877615" lon="6.886885"><ele>3750.6</ele></trkpt>
+      <trkpt lat="45.877888" lon="6.886868"><ele>3763.0</ele></trkpt>
+      <trkpt lat="45.878010" lon="6.887058"><ele>3785.8</ele></trkpt>
+    </trkseg>
+  </trk>
+</gpx>

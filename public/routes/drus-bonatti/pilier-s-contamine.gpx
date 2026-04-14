@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="AlpHD" xmlns="http://www.topografix.com/GPX/1/1">
+  <trk>
+    <name>Grand Dru — Pilier S Voie Contamine</name>
+    <trkseg>
+      <trkpt lat="45.924632" lon="6.955233"><ele>2820.0</ele></trkpt>
+      <trkpt lat="45.924408" lon="6.955491"><ele>2830.0</ele></trkpt>
+      <trkpt lat="45.925356" lon="6.956467"><ele>2870.0</ele></trkpt>
+      <trkpt lat="45.925530" lon="6.957140"><ele>2890.0</ele></trkpt>
+      <trkpt lat="45.924494" lon="6.955549"><ele>2830.0</ele></trkpt>
+      <trkpt lat="45.924762" lon="6.956552"><ele>2860.0</ele></trkpt>
+      <trkpt lat="45.924787" lon="6.957000"><ele>2860.0</ele></trkpt>
+      <trkpt lat="45.925001" lon="6.957466"><ele>2890.0</ele></trkpt>
+      <trkpt lat="45.925277" lon="6.957419"><ele>2890.0</ele></trkpt>
+      <trkpt lat="45.925566" lon="6.957618"><ele>2910.0</ele></trkpt>
+      <trkpt lat="45.925455" lon="6.958134"><ele>2930.0</ele></trkpt>
+      <trkpt lat="45.925775" lon="6.957935"><ele>2930.0</ele></trkpt>
+      <trkpt lat="45.925977" lon="6.958277"><ele>2960.0</ele></trkpt>
+      <trkpt lat="45.927114" lon="6.959343"><ele>3020.0</ele></trkpt>
+      <trkpt lat="45.927593" lon="6.959200"><ele>3020.0</ele></trkpt>
+      <trkpt lat="45.927899" lon="6.958689"><ele>3010.0</ele></trkpt>
+      <trkpt lat="45.928226" lon="6.959018"><ele>3030.0</ele></trkpt>
+      <trkpt lat="45.928275" lon="6.958521"><ele>3020.0</ele></trkpt>
+      <trkpt lat="45.928419" lon="6.958104"><ele>3010.0</ele></trkpt>
+      <trkpt lat="45.929195" lon="6.957964"><ele>3060.0</ele></trkpt>
+      <trkpt lat="45.928947" lon="6.956542"><ele>3070.0</ele></trkpt>
+      <trkpt lat="45.928708" lon="6.956221"><ele>3050.0</ele></trkpt>
+      <trkpt lat="45.928642" lon="6.955826"><ele>3030.0</ele></trkpt>
+      <trkpt lat="45.928923" lon="6.955541"><ele>3060.0</ele></trkpt>
+      <trkpt lat="45.929181" lon="6.955427"><ele>3100.0</ele></trkpt>
+      <trkpt lat="45.929421" lon="6.955644"><ele>3150.0</ele></trkpt>
+      <trkpt lat="45.929284" lon="6.955988"><ele>3150.0</ele></trkpt>
+      <trkpt lat="45.929543" lon="6.955871"><ele>3190.0</ele></trkpt>
+      <trkpt lat="45.929519" lon="6.955394"><ele>3150.0</ele></trkpt>
+      <trkpt lat="45.929509" lon="6.955896"><ele>3190.0</ele></trkpt>
+      <trkpt lat="45.929842" lon="6.954503"><ele>3150.0</ele></trkpt>
+      <trkpt lat="45.929513" lon="6.955249"><ele>3130.0</ele></trkpt>
+      <trkpt lat="45.929392" lon="6.955683"><ele>3150.0</ele></trkpt>
+      <trkpt lat="45.929621" lon="6.955895"><ele>3210.0</ele></trkpt>
+      <trkpt lat="45.929379" lon="6.955513"><ele>3130.0</ele></trkpt>
+      <trkpt lat="45.929828" lon="6.955888"><ele>3250.0</ele></trkpt>
+      <trkpt lat="45.929543" lon="6.956090"><ele>3210.0</ele></trkpt>
+      <trkpt lat="45.929232" lon="6.956011"><ele>3140.0</ele></trkpt>
+      <trkpt lat="45.929831" lon="6.955824"><ele>3240.0</ele></trkpt>
+      <trkpt lat="45.930742" lon="6.955962"><ele>3400.0</ele></trkpt>
+      <trkpt lat="45.930695" lon="6.955566"><ele>3380.0</ele></trkpt>
+      <trkpt lat="45.930929" lon="6.955881"><ele>3440.0</ele></trkpt>
+      <trkpt lat="45.931220" lon="6.955977"><ele>3470.0</ele></trkpt>
+      <trkpt lat="45.931094" lon="6.955571"><ele>3460.0</ele></trkpt>
+      <trkpt lat="45.931071" lon="6.955978"><ele>3450.0</ele></trkpt>
+      <trkpt lat="45.931353" lon="6.955878"><ele>3490.0</ele></trkpt>
+      <trkpt lat="45.931672" lon="6.955959"><ele>3520.0</ele></trkpt>
+      <trkpt lat="45.932027" lon="6.955947"><ele>3580.0</ele></trkpt>
+      <trkpt lat="45.932062" lon="6.956350"><ele>3580.0</ele></trkpt>
+      <trkpt lat="45.932007" lon="6.956772"><ele>3540.0</ele></trkpt>
+      <trkpt lat="45.932318" lon="6.956790"><ele>3640.0</ele></trkpt>
+      <trkpt lat="45.932019" lon="6.956924"><ele>3530.0</ele></trkpt>
+      <trkpt lat="45.932332" lon="6.956885"><ele>3630.0</ele></trkpt>
+      <trkpt lat="45.932543" lon="6.957218"><ele>3620.0</ele></trkpt>
+      <trkpt lat="45.932844" lon="6.957042"><ele>3620.0</ele></trkpt>
+      <trkpt lat="45.932634" lon="6.957498"><ele>3590.0</ele></trkpt>
+      <trkpt lat="45.932664" lon="6.957084"><ele>3650.0</ele></trkpt>
+    </trkseg>
+  </trk>
+</gpx>

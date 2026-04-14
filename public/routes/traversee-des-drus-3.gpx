@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="AlpHD" xmlns="http://www.topografix.com/GPX/1/1">
+  <trk>
+    <name>Traversée des Drus #3</name>
+    <trkseg>
+      <trkpt lat="45.924176" lon="6.955268"><ele>2618.3</ele></trkpt>
+      <trkpt lat="45.924633" lon="6.956095"><ele>2869.7</ele></trkpt>
+      <trkpt lat="45.925468" lon="6.956732"><ele>2904.8</ele></trkpt>
+      <trkpt lat="45.926495" lon="6.958509"><ele>2974.0</ele></trkpt>
+      <trkpt lat="45.926759" lon="6.958814"><ele>2991.8</ele></trkpt>
+      <trkpt lat="45.926883" lon="6.960724"><ele>3079.7</ele></trkpt>
+      <trkpt lat="45.927485" lon="6.961050"><ele>3106.2</ele></trkpt>
+      <trkpt lat="45.927983" lon="6.960918"><ele>3109.5</ele></trkpt>
+      <trkpt lat="45.928461" lon="6.960685"><ele>3106.2</ele></trkpt>
+      <trkpt lat="45.928914" lon="6.960675"><ele>3119.6</ele></trkpt>
+      <trkpt lat="45.929149" lon="6.960100"><ele>3105.2</ele></trkpt>
+      <trkpt lat="45.929360" lon="6.959283"><ele>3092.7</ele></trkpt>
+      <trkpt lat="45.929224" lon="6.958516"><ele>3067.7</ele></trkpt>
+      <trkpt lat="45.929294" lon="6.954879"><ele>3136.0</ele></trkpt>
+      <trkpt lat="45.929642" lon="6.953852"><ele>3173.9</ele></trkpt>
+      <trkpt lat="45.930013" lon="6.953094"><ele>3220.6</ele></trkpt>
+      <trkpt lat="45.930294" lon="6.952660"><ele>3267.2</ele></trkpt>
+      <trkpt lat="45.931029" lon="6.954762"><ele>3471.9</ele></trkpt>
+      <trkpt lat="45.931962" lon="6.954409"><ele>3523.4</ele></trkpt>
+      <trkpt lat="45.932491" lon="6.954652"><ele>3603.6</ele></trkpt>
+      <trkpt lat="45.932811" lon="6.954996"><ele>3605.1</ele></trkpt>
+      <trkpt lat="45.932403" lon="6.954531"><ele>3615.2</ele></trkpt>
+      <trkpt lat="45.932485" lon="6.954800"><ele>3659.4</ele></trkpt>
+      <trkpt lat="45.932682" lon="6.954764"><ele>3722.8</ele></trkpt>
+      <trkpt lat="45.932997" lon="6.956300"><ele>3752.2</ele></trkpt>
+      <trkpt lat="45.932459" lon="6.956842"><ele>3711.3</ele></trkpt>
+      <trkpt lat="45.932421" lon="6.958554"><ele>3471.9</ele></trkpt>
+      <trkpt lat="45.930252" lon="6.960274"><ele>3187.4</ele></trkpt>
+      <trkpt lat="45.929473" lon="6.960740"><ele>3139.8</ele></trkpt>
+      <trkpt lat="45.928789" lon="6.961277"><ele>3136.4</ele></trkpt>
+      <trkpt lat="45.927842" lon="6.961477"><ele>3109.5</ele></trkpt>
+      <trkpt lat="45.927099" lon="6.961850"><ele>3106.6</ele></trkpt>
+      <trkpt lat="45.926404" lon="6.958766"><ele>2960.0</ele></trkpt>
+      <trkpt lat="45.926178" lon="6.958163"><ele>2929.8</ele></trkpt>
+      <trkpt lat="45.925344" lon="6.956466"><ele>2896.1</ele></trkpt>
+      <trkpt lat="45.925075" lon="6.956411"><ele>2887.0</ele></trkpt>
+      <trkpt lat="45.924440" lon="6.955855"><ele>2858.6</ele></trkpt>
+      <trkpt lat="45.924303" lon="6.955418"><ele>2845.6</ele></trkpt>
+    </trkseg>
+  </trk>
+</gpx>

@@ -465,6 +465,7 @@ function HomePageContent() {
   const [showRouteLibrary, setShowRouteLibrary] = useState(false);
   const [showAvalanchePentes, setShowAvalanchePentes] = useState(false);
   const [showParams, setShowParams] = useState(false);
+  const [toolsPanelOpen, setToolsPanelOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
 
@@ -1245,131 +1246,184 @@ function HomePageContent() {
                 </div>
               )}
 
-              {/* ─── Panneau unifié "Outils et paramètres" ─── */}
-              <div className="absolute right-3 top-1/2 -translate-y-1/2 z-[150] flex flex-col bg-white/92 backdrop-blur-md border border-slate-200/80 rounded-2xl shadow-xl overflow-hidden" style={{ maxHeight: "calc(100% - 140px)" }}>
-                {/* En-tête */}
-                <div className="px-3 py-2 bg-slate-50/70 border-b border-slate-100 flex items-center gap-2 flex-shrink-0">
-                  <span className="text-[9px] font-black uppercase tracking-[0.18em] text-slate-400">Outils &amp; Paramètres</span>
-                </div>
-
-                {/* Corps — scrollable si beaucoup d'entrées */}
-                <div className="flex flex-col overflow-y-auto divide-y divide-slate-50">
-
-                  {/* Mesure */}
-                  <button
-                    onClick={() => setMeasurementEnabled(!measurementEnabled)}
-                    className={`flex items-center gap-2.5 px-3 py-2.5 w-full text-left transition-colors ${measurementEnabled ? "bg-blue-50 text-blue-700" : "text-slate-600 hover:bg-slate-50"}`}
-                  >
-                    <Ruler className="h-4 w-4 flex-shrink-0" />
-                    <span className="text-[11px] font-semibold whitespace-nowrap">Mesure</span>
-                  </button>
-
-                  {/* Lieux */}
-                  <button
-                    onClick={() => { setPoiEnabled(!poiEnabled); if (poiEnabled) setPoiPlacing(false); }}
-                    className={`flex items-center gap-2.5 px-3 py-2.5 w-full text-left transition-colors ${poiEnabled ? "bg-orange-50 text-orange-700" : "text-slate-600 hover:bg-slate-50"}`}
-                  >
-                    <MapPin className="h-4 w-4 flex-shrink-0" />
-                    <span className="text-[11px] font-semibold whitespace-nowrap">Lieux</span>
-                  </button>
-
-                  {/* + Ajouter un lieu (sous-entrée) */}
-                  {poiEnabled && (
+              {/* ─── Outils & Paramètres — masqués pendant le chargement ─── */}
+              {pendingLoads === 0 && (
+                <>
+                  {/* Bouton toggle fermé */}
+                  {!toolsPanelOpen && (
                     <button
-                      onClick={() => setPoiPlacing(!poiPlacing)}
-                      className={`flex items-center gap-2 pl-8 pr-3 py-1.5 w-full text-left transition-colors ${poiPlacing ? "bg-orange-100 text-orange-700" : "text-orange-500 hover:bg-orange-50"}`}
+                      onClick={() => setToolsPanelOpen(true)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 z-[150] w-10 h-10 bg-white/92 backdrop-blur-md border border-slate-200/80 rounded-2xl shadow-xl flex items-center justify-center text-slate-500 hover:text-slate-700 hover:bg-white transition-colors"
+                      title="Outils & Paramètres"
                     >
-                      <span className="text-[10px] font-bold whitespace-nowrap">{poiPlacing ? "✕  Annuler" : "+  Ajouter"}</span>
+                      <SlidersHorizontal className="h-4 w-4" />
                     </button>
                   )}
 
-                  {/* Voies d'alpinisme */}
-                  <button
-                    onClick={() => setShowRouteLibrary(!showRouteLibrary)}
-                    className={`flex items-center gap-2.5 px-3 py-2.5 w-full text-left transition-colors ${showRouteLibrary ? "bg-orange-50 text-orange-700" : visibleRoutes.length > 0 ? "bg-orange-50/50 text-orange-600" : "text-slate-600 hover:bg-slate-50"}`}
-                  >
-                    <Mountain className="h-4 w-4 flex-shrink-0" />
-                    <span className="text-[11px] font-semibold whitespace-nowrap">Voies</span>
-                    {visibleRoutes.length > 0 && (
-                      <span className="ml-auto w-4 h-4 bg-orange-500 text-white text-[8px] font-black rounded-full flex items-center justify-center leading-none flex-shrink-0">
-                        {visibleRoutes.length}
-                      </span>
-                    )}
-                  </button>
+                  {/* Panneau ouvert */}
+                  {toolsPanelOpen && (
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 z-[150] flex flex-col bg-white/92 backdrop-blur-md border border-slate-200/80 rounded-2xl shadow-xl overflow-hidden" style={{ maxHeight: "calc(100% - 140px)" }}>
+                      {/* En-tête */}
+                      <div className="px-3 py-2 bg-slate-50/70 border-b border-slate-100 flex items-center gap-2 flex-shrink-0">
+                        <span className="text-[9px] font-black uppercase tracking-[0.18em] text-slate-400 flex-1">Outils &amp; Paramètres</span>
+                        <button
+                          onClick={() => setToolsPanelOpen(false)}
+                          className="text-slate-300 hover:text-slate-500 transition-colors leading-none"
+                          title="Fermer"
+                        >
+                          <span className="text-[14px] font-light">✕</span>
+                        </button>
+                      </div>
 
-                  {/* Couches de données */}
-                  <button
-                    onClick={() => setShowDataLayers(!showDataLayers)}
-                    className={`flex items-center gap-2.5 px-3 py-2.5 w-full text-left transition-colors ${showDataLayers ? "bg-violet-50 text-violet-700" : "text-slate-600 hover:bg-slate-50"}`}
-                  >
-                    <Layers className="h-4 w-4 flex-shrink-0" />
-                    <span className="text-[11px] font-semibold whitespace-nowrap">Couches</span>
-                  </button>
+                      {/* Corps — scrollable si beaucoup d'entrées */}
+                      <div className="flex flex-col overflow-y-auto divide-y divide-slate-50">
 
-                  {/* Info sommet (conditionnel) */}
-                  {selectedRouteInfo && !measurementEnabled && (
-                    <button
-                      onClick={() => { const s = !showSummitInfo; setShowSummitInfo(s); if (s) setShowDetails(true); }}
-                      className={`flex items-center gap-2.5 px-3 py-2.5 w-full text-left transition-colors ${showSummitInfo ? "bg-orange-50 text-orange-700" : "text-slate-600 hover:bg-slate-50"}`}
-                    >
-                      <Info className="h-4 w-4 flex-shrink-0" />
-                      <span className="text-[11px] font-semibold whitespace-nowrap">Info sommet</span>
-                    </button>
+                        {/* Mesure */}
+                        <button
+                          onClick={() => setMeasurementEnabled(!measurementEnabled)}
+                          className={`flex items-center gap-2.5 px-3 py-2.5 w-full text-left transition-colors ${measurementEnabled ? "bg-blue-50 text-blue-700" : "text-slate-600 hover:bg-slate-50"}`}
+                        >
+                          <Ruler className="h-4 w-4 flex-shrink-0" />
+                          <span className="text-[11px] font-semibold whitespace-nowrap">Mesure</span>
+                        </button>
+
+                        {/* Lieux */}
+                        <button
+                          onClick={() => { setPoiEnabled(!poiEnabled); if (poiEnabled) setPoiPlacing(false); }}
+                          className={`flex items-center gap-2.5 px-3 py-2.5 w-full text-left transition-colors ${poiEnabled ? "bg-orange-50 text-orange-700" : "text-slate-600 hover:bg-slate-50"}`}
+                        >
+                          <MapPin className="h-4 w-4 flex-shrink-0" />
+                          <span className="text-[11px] font-semibold whitespace-nowrap">Lieux</span>
+                        </button>
+
+                        {/* + Ajouter un lieu (sous-entrée) */}
+                        {poiEnabled && (
+                          <button
+                            onClick={() => setPoiPlacing(!poiPlacing)}
+                            className={`flex items-center gap-2 pl-8 pr-3 py-1.5 w-full text-left transition-colors ${poiPlacing ? "bg-orange-100 text-orange-700" : "text-orange-500 hover:bg-orange-50"}`}
+                          >
+                            <span className="text-[10px] font-bold whitespace-nowrap">{poiPlacing ? "✕  Annuler" : "+  Ajouter"}</span>
+                          </button>
+                        )}
+
+                        {/* Voies d'alpinisme */}
+                        <button
+                          onClick={() => setShowRouteLibrary(!showRouteLibrary)}
+                          className={`flex items-center gap-2.5 px-3 py-2.5 w-full text-left transition-colors ${showRouteLibrary ? "bg-orange-50 text-orange-700" : visibleRoutes.length > 0 ? "bg-orange-50/50 text-orange-600" : "text-slate-600 hover:bg-slate-50"}`}
+                        >
+                          <Mountain className="h-4 w-4 flex-shrink-0" />
+                          <span className="text-[11px] font-semibold whitespace-nowrap">Voies</span>
+                          <span className="ml-auto text-[9px] text-slate-400">{showRouteLibrary ? "▴" : "▾"}</span>
+                          {visibleRoutes.length > 0 && (
+                            <span className="w-4 h-4 bg-orange-500 text-white text-[8px] font-black rounded-full flex items-center justify-center leading-none flex-shrink-0">
+                              {visibleRoutes.length}
+                            </span>
+                          )}
+                        </button>
+
+                        {/* Voies — liste embarquée */}
+                        {showRouteLibrary && (
+                          <div className="border-t border-slate-100 bg-slate-50/40">
+                            <RouteLibrary
+                              embedded
+                              selectedSummitId={selectedSummitId}
+                            />
+                          </div>
+                        )}
+
+                        {/* Couches de données */}
+                        <button
+                          onClick={() => setShowDataLayers(!showDataLayers)}
+                          className={`flex items-center gap-2.5 px-3 py-2.5 w-full text-left transition-colors ${showDataLayers ? "bg-violet-50 text-violet-700" : "text-slate-600 hover:bg-slate-50"}`}
+                        >
+                          <Layers className="h-4 w-4 flex-shrink-0" />
+                          <span className="text-[11px] font-semibold whitespace-nowrap">Couches</span>
+                        </button>
+
+                        {/* Info sommet (conditionnel) */}
+                        {selectedRouteInfo && !measurementEnabled && (
+                          <button
+                            onClick={() => { const s = !showSummitInfo; setShowSummitInfo(s); if (s) setShowDetails(true); }}
+                            className={`flex items-center gap-2.5 px-3 py-2.5 w-full text-left transition-colors ${showSummitInfo ? "bg-orange-50 text-orange-700" : "text-slate-600 hover:bg-slate-50"}`}
+                          >
+                            <Info className="h-4 w-4 flex-shrink-0" />
+                            <span className="text-[11px] font-semibold whitespace-nowrap">Info sommet</span>
+                          </button>
+                        )}
+
+                        {/* Info dalles (conditionnel) */}
+                        {selectedTiles.length > 0 && !selectedRouteInfo && !measurementEnabled && (
+                          <button
+                            onClick={() => { const s = !showTileInfo; setShowTileInfo(s); if (s) setShowDetails(true); }}
+                            className={`flex items-center gap-2.5 px-3 py-2.5 w-full text-left transition-colors ${showTileInfo ? "bg-green-50 text-green-700" : "text-slate-600 hover:bg-slate-50"}`}
+                          >
+                            <Info className="h-4 w-4 flex-shrink-0" />
+                            <span className="text-[11px] font-semibold whitespace-nowrap">Info dalles</span>
+                          </button>
+                        )}
+
+                        {/* Pentes avalancheuses */}
+                        <button
+                          onClick={() => setShowAvalanchePentes(!showAvalanchePentes)}
+                          className={`flex items-center gap-2.5 px-3 py-2.5 w-full text-left transition-colors ${showAvalanchePentes ? "bg-red-50 text-red-700" : "text-slate-600 hover:bg-slate-50"}`}
+                        >
+                          <TbMountain className="h-4 w-4 flex-shrink-0" />
+                          <span className="text-[11px] font-semibold whitespace-nowrap">Avalanche</span>
+                          <span className="ml-auto text-[9px] text-slate-400">{showAvalanchePentes ? "▴" : "▾"}</span>
+                        </button>
+
+                        {/* Explication pentes avalancheuses */}
+                        {showAvalanchePentes && (
+                          <div className="border-t border-red-100 bg-red-50/40 px-3 py-2.5 flex flex-col gap-1.5">
+                            <p className="text-[10px] text-red-700/80 leading-[1.5]">
+                              Colore le terrain selon la pente&nbsp;:
+                            </p>
+                            <div className="flex flex-col gap-1">
+                              <div className="flex items-center gap-2">
+                                <span className="w-2.5 h-2.5 rounded-sm flex-shrink-0" style={{ background: "#facc15" }} />
+                                <span className="text-[9px] text-slate-500">30–35° — risque modéré</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="w-2.5 h-2.5 rounded-sm flex-shrink-0" style={{ background: "#f97316" }} />
+                                <span className="text-[9px] text-slate-500">35–45° — risque élevé</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="w-2.5 h-2.5 rounded-sm flex-shrink-0" style={{ background: "#ef4444" }} />
+                                <span className="text-[9px] text-slate-500">&gt;45° — risque très élevé</span>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Séparateur */}
+                        <div className="h-px bg-slate-100 flex-shrink-0" />
+
+                        {/* Paramètres (ouvre le panneau Leva) */}
+                        <button
+                          onClick={() => {
+                            setShowParams((s) => !s);
+                            window.dispatchEvent(new CustomEvent("alphd:toggle-params"));
+                          }}
+                          className={`flex items-center gap-2.5 px-3 py-2.5 w-full text-left transition-colors ${showParams ? "bg-slate-100 text-slate-800" : "text-slate-500 hover:bg-slate-50"}`}
+                        >
+                          <SlidersHorizontal className="h-4 w-4 flex-shrink-0" />
+                          <span className="text-[11px] font-semibold whitespace-nowrap">Paramètres</span>
+                        </button>
+                      </div>
+                    </div>
                   )}
 
-                  {/* Info dalles (conditionnel) */}
-                  {selectedTiles.length > 0 && !selectedRouteInfo && !measurementEnabled && (
-                    <button
-                      onClick={() => { const s = !showTileInfo; setShowTileInfo(s); if (s) setShowDetails(true); }}
-                      className={`flex items-center gap-2.5 px-3 py-2.5 w-full text-left transition-colors ${showTileInfo ? "bg-green-50 text-green-700" : "text-slate-600 hover:bg-slate-50"}`}
-                    >
-                      <Info className="h-4 w-4 flex-shrink-0" />
-                      <span className="text-[11px] font-semibold whitespace-nowrap">Info dalles</span>
-                    </button>
+                  {/* Panneau couches de données temps réel */}
+                  {showDataLayers && (
+                    <DataLayersPanel className="absolute top-4 right-[180px] z-[150]" onHide={() => setShowDataLayers(false)} />
                   )}
 
-                  {/* Pentes avalancheuses */}
-                  <button
-                    onClick={() => setShowAvalanchePentes(!showAvalanchePentes)}
-                    className={`flex items-center gap-2.5 px-3 py-2.5 w-full text-left transition-colors ${showAvalanchePentes ? "bg-red-50 text-red-700" : "text-slate-600 hover:bg-slate-50"}`}
-                  >
-                    <TbMountain className="h-4 w-4 flex-shrink-0" />
-                    <span className="text-[11px] font-semibold whitespace-nowrap">Avalanche</span>
-                  </button>
 
-                  {/* Séparateur */}
-                  <div className="h-px bg-slate-100 flex-shrink-0" />
 
-                  {/* Paramètres (ouvre le panneau Leva) */}
-                  <button
-                    onClick={() => {
-                      setShowParams((s) => !s);
-                      window.dispatchEvent(new CustomEvent("alphd:toggle-params"));
-                    }}
-                    className={`flex items-center gap-2.5 px-3 py-2.5 w-full text-left transition-colors ${showParams ? "bg-slate-100 text-slate-800" : "text-slate-500 hover:bg-slate-50"}`}
-                  >
-                    <SlidersHorizontal className="h-4 w-4 flex-shrink-0" />
-                    <span className="text-[11px] font-semibold whitespace-nowrap">Paramètres</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Panneau couches de données temps réel */}
-              {showDataLayers && (
-                <DataLayersPanel className="absolute top-4 right-[180px] z-[150]" onHide={() => setShowDataLayers(false)} />
+                  {/* Boussole 3D */}
+                  <Compass3D />
+                </>
               )}
-
-              {/* Panneau bibliothèque de voies */}
-              {showRouteLibrary && (
-                <RouteLibrary
-                  className={`absolute top-4 z-[150] ${showDataLayers ? "right-[424px]" : "right-[180px]"}`}
-                  selectedSummitId={selectedSummitId}
-                  onHide={() => setShowRouteLibrary(false)}
-                />
-              )}
-
-              {/* Boussole 3D */}
-              <Compass3D />
             </>
           ) : (
             <div className="w-full h-full flex flex-col items-center justify-center p-4 sm:p-8 lg:p-12 animate-in fade-in duration-700">

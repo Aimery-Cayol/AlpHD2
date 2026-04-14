@@ -392,10 +392,11 @@ export default function MyLevaUI({
         <style>{`
         .leva-c-kWgxhW {
           position: absolute !important;
-          top: 5px !important;
-          left: 5px !important;
-          right: auto !important;
-          max-height: calc(70vh - 5px) !important;
+          top: 50% !important;
+          left: auto !important;
+          right: 185px !important;
+          transform: translateY(-50%) !important;
+          max-height: 70vh !important;
           overflow-y: auto !important;
           backdrop-filter: blur(10px);
           z-index: 160 !important;

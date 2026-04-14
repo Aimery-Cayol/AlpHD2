@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="AlpHD-batch" xmlns="http://www.topografix.com/GPX/1/1">
+  <trk>
+    <name>Aresta de Cosmiques</name>
+    <trkseg>
+      <trkpt lat="45.8789984" lon="6.8880438"><ele>3678.6</ele></trkpt>
+      <trkpt lat="45.8790930" lon="6.8883790"><ele>3680.7</ele></trkpt>
+      <trkpt lat="45.8792573" lon="6.8886098"><ele>3680.7</ele></trkpt>
+      <trkpt lat="45.8794497" lon="6.8888921"><ele>3680.1</ele></trkpt>
+      <trkpt lat="45.8795605" lon="6.8890756"><ele>3680.2</ele></trkpt>
+      <trkpt lat="45.8797335" lon="6.8893630"><ele>3692.6</ele></trkpt>
+      <trkpt lat="45.8798191" lon="6.8894837"><ele>3686.4</ele></trkpt>
+      <trkpt lat="45.8799974" lon="6.8897389"><ele>3679.4</ele></trkpt>
+      <trkpt lat="45.8799940" lon="6.8897767"><ele>3673.2</ele></trkpt>
+      <trkpt lat="45.8799826" lon="6.8901646"><ele>3666.2</ele></trkpt>
+      <trkpt lat="45.8799038" lon="6.8902884"><ele>3662.0</ele></trkpt>
+      <trkpt lat="45.8797465" lon="6.8905902"><ele>3661.2</ele></trkpt>
+      <trkpt lat="45.8795656" lon="6.8908683"><ele>3662.0</ele></trkpt>
+      <trkpt lat="45.8793739" lon="6.8911289"><ele>3663.8</ele></trkpt>
+      <trkpt lat="45.8522599" lon="6.8906064"><ele>3669.8</ele></trkpt>
+      <trkpt lat="45.8524873" lon="6.8908149"><ele>3682.7</ele></trkpt>
+      <trkpt lat="45.8524790" lon="6.8911276"><ele>3702.5</ele></trkpt>
+      <trkpt lat="45.8524688" lon="6.8915147"><ele>3728.5</ele></trkpt>
+      <trkpt lat="45.8525556" lon="6.8917232"><ele>3761.5</ele></trkpt>
+      <trkpt lat="45.8526941" lon="6.8920556"><ele>3797.9</ele></trkpt>
+      <trkpt lat="45.8528326" lon="6.8923881"><ele>3835.8</ele></trkpt>
+      <trkpt lat="45.8529710" lon="6.8927206"><ele>3872.7</ele></trkpt>
+      <trkpt lat="45.8531095" lon="6.8930530"><ele>3908.7</ele></trkpt>
+      <trkpt lat="45.8532479" lon="6.8933855"><ele>3941.7</ele></trkpt>
+      <trkpt lat="45.8534505" lon="6.8936148"><ele>3970.8</ele></trkpt>
+      <trkpt lat="45.8535574" lon="6.8936439"><ele>3994.3</ele></trkpt>
+      <trkpt lat="45.8538225" lon="6.8937160"><ele>4012.2</ele></trkpt>
+      <trkpt lat="45.8540876" lon="6.8937882"><ele>4024.5</ele></trkpt>
+      <trkpt lat="45.8541733" lon="6.8934541"><ele>4031.2</ele></trkpt>
+      <trkpt lat="45.8542249" lon="6.8933265"><ele>4034.5</ele></trkpt>
+      <trkpt lat="45.8543605" lon="6.8929916"><ele>4038.1</ele></trkpt>
+      <trkpt lat="45.8544960" lon="6.8926567"><ele>4041.7</ele></trkpt>
+      <trkpt lat="45.8544006" lon="6.8928274"><ele>4045.4</ele></trkpt>
+      <trkpt lat="45.8544389" lon="6.8925947"><ele>4049.1</ele></trkpt>
+      <trkpt lat="45.8545009" lon="6.8922177"><ele>4055.4</ele></trkpt>
+      <trkpt lat="45.8545629" lon="6.8918407"><ele>4062.3</ele></trkpt>
+      <trkpt lat="45.8546250" lon="6.8914637"><ele>4070.8</ele></trkpt>
+      <trkpt lat="45.8546948" lon="6.8912146"><ele>4081.0</ele></trkpt>
+      <trkpt lat="45.8547955" lon="6.8908552"><ele>4092.5</ele></trkpt>
+      <trkpt lat="45.8548520" lon="6.8907775"><ele>4105.1</ele></trkpt>
+      <trkpt lat="45.8550468" lon="6.8905095"><ele>4119.6</ele></trkpt>
+      <trkpt lat="45.8552416" lon="6.8902415"><ele>4137.1</ele></trkpt>
+      <trkpt lat="45.8554364" lon="6.8899736"><ele>4153.1</ele></trkpt>
+      <trkpt lat="45.8556312" lon="6.8897056"><ele>4167.6</ele></trkpt>
+      <trkpt lat="45.8558169" lon="6.8897014"><ele>4181.9</ele></trkpt>
+      <trkpt lat="45.8560866" lon="6.8896952"><ele>4195.0</ele></trkpt>
+      <trkpt lat="45.8561557" lon="6.8896308"><ele>4206.6</ele></trkpt>
+      <trkpt lat="45.8563820" lon="6.8894197"><ele>4217.1</ele></trkpt>
+      <trkpt lat="45.8564453" lon="6.8892702"><ele>4224.0</ele></trkpt>
+      <trkpt lat="45.8565855" lon="6.8889392"><ele>4229.7</ele></trkpt>
+      <trkpt lat="45.8565880" lon="6.8888295"><ele>4232.0</ele></trkpt>
+      <trkpt lat="45.8565966" lon="6.8884424"><ele>4234.7</ele></trkpt>
+    </trkseg>
+  </trk>
+</gpx>

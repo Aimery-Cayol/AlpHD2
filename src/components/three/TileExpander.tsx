@@ -30,7 +30,7 @@ type ButtonData = {
 
 export default function TileExpander({ models }: { models: TileModel[] }) {
   const { collidersRef, version } = useColliders();
-  const { tilesData, setSelectedTiles } = useAppContext();
+  const { tilesData, setSelectedTiles, pendingLoads } = useAppContext();
   const [hoveredKey, setHoveredKey] = useState<string | null>(null);
   // Position 3D [x, y, z] par bouton, calculée par raycast
   const [buttonPositions, setButtonPositions] = useState<
@@ -131,7 +131,7 @@ export default function TileExpander({ models }: { models: TileModel[] }) {
     [collidersRef, version]
   );
 
-  if (models.length === 0) return null;
+  if (models.length === 0 || pendingLoads > 0) return null;
 
   return (
     <>
