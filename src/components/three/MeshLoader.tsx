@@ -255,6 +255,7 @@ export default function MeshLoader({
           setCacheStatus("cache");
           setGeometry(cachedGeometry);
           setLoading(false);
+          markLoaded();
           return;
         }
 

@@ -57,7 +57,7 @@ function computePoiHeights(pois: Poi[]): Map<string, number> {
 import type { TileModel } from "@/types/models";
 
 export default function PoiTool({ models }: { models: TileModel[] }) {
-  const { camera, gl } = useThree();
+  const { camera, gl, invalidate } = useThree();
   const { collidersRef, version } = useColliders();
   const { poiEnabled, poiPlacing, pois } = useAppContext();
   const raycaster = useRef(new THREE.Raycaster());
@@ -107,6 +107,9 @@ export default function PoiTool({ models }: { models: TileModel[] }) {
 
   // Hauteurs calculées pour chaque POI (anti-chevauchement)
   const poiHeights = useMemo(() => computePoiHeights(visiblePois), [visiblePois]);
+
+  // Forcer un rendu WebGL quand les POIs visibles changent (frameloop="demand")
+  useEffect(() => { invalidate(); }, [visiblePois, invalidate]);
 
   // Position du trait pointillé en attente
   const [pendingPosition, setPendingPosition] = useState<THREE.Vector3 | null>(null);
@@ -190,25 +193,34 @@ export default function PoiTool({ models }: { models: TileModel[] }) {
       {poiEnabled && visiblePois.map((poi) => {
         // Recalculer X/Z depuis les coordonnées Lambert absolues (lx/ly) pour corriger
         // le décalage quand la dalle de référence diffère de la session d'origine du POI.
-        const x = poi.lx != null ? poi.lx - refX : poi.position.x;
+        let x: number, z: number;
+        if (poi.lx != null && poi.ly != null) {
+          x = poi.lx - refX;
+          z = -(poi.ly - refY);
+        } else if (poi.tileIds?.length === 1) {
+          // Ancien POI sans lx/ly sur un sommet à dalle unique :
+          // la dalle du POI ÉTAIT la dalle de référence à la création.
+          // On recalcule lx/ly absolus puis on re-projette avec refX/refY courants.
+          const [tx, ty] = poi.tileIds[0].split("_").map(Number);
+          const lxEst = tx + poi.position.x;
+          const lyEst = ty - poi.position.z;
+          x = lxEst - refX;
+          z = -(lyEst - refY);
+        } else {
+          x = poi.position.x;
+          z = poi.position.z;
+        }
         const y = poi.position.y;
-        const z = poi.ly != null ? -(poi.ly - refY) : poi.position.z;
         const color = COLOR_BY_TYPE[poi.type as PoiType];
         const h = poiHeights.get(poi.id) ?? POI_LABEL_HEIGHT;
-        // Tableau de points pour la ligne — recréé uniquement si position/hauteur changent
-        const lineArray = new Float32Array([x, y, z, x, y + h, z]);
         return (
           <React.Fragment key={poi.id}>
-            {/* Ligne native WebGL : participe au z-buffer → occultée par le terrain */}
-            <line>
-              <bufferGeometry>
-                <bufferAttribute
-                  attach="attributes-position"
-                  args={[lineArray, 3]}
-                />
-              </bufferGeometry>
-              <lineBasicMaterial color={color} />
-            </line>
+            {/* Ligne drei/Line2 : fiable avec logarithmicDepthBuffer et frameloop="demand" */}
+            <Line
+              points={[[x, y, z], [x, y + h, z]]}
+              color={color}
+              lineWidth={1}
+            />
             <Html
               position={[x, y + h, z]}
               center

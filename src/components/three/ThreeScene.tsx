@@ -41,7 +41,6 @@ interface ThreeSceneProps {
   neighborCoords?: Set<string>;
   onNeighborHover?: (coord: string | null) => void;
   onNeighborClick?: (coord: string) => void;
-  showAvalanchePentes?: boolean;
 }
 
 /** Empêche la caméra de passer à travers le terrain (raycast multi-directionnel) */
@@ -197,7 +196,7 @@ function SceneContent({ models, neighborCoords, onNeighborHover, onNeighborClick
 /**
  * Composant principal de la scène 3D
  */
-export default function ThreeScene({ models, neighborCoords, onNeighborHover, onNeighborClick, showAvalanchePentes = false }: ThreeSceneProps) {
+export default function ThreeScene({ models, neighborCoords, onNeighborHover, onNeighborClick }: ThreeSceneProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const webglSupported = useWebGLDetection();
@@ -208,7 +207,7 @@ export default function ThreeScene({ models, neighborCoords, onNeighborHover, on
 
   return (
     <div ref={containerRef} className="relative w-full h-full">
-      <MyLevaUI showAvalanchePentes={showAvalanchePentes}>
+      <MyLevaUI>
         <Canvas
           className="w-full h-full"
           frameloop="demand"

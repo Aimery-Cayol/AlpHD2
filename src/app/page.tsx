@@ -43,6 +43,7 @@ import type { TileModel, TileData } from "@/types/models";
 import type { TileCoord } from "@/utils/fileUtils";
 import { CLIMBING_ROUTES, gradeToColor } from "@/data/climbingRoutes";
 import { useRouteStore } from "@/store/route-store";
+import { useParamsStore } from "@/store/params-store";
 import { wgs84ToLambert93Km } from "@/utils/coordinateUtils";
 
 const ThreeScene = dynamic(() => import("@/components/three/ThreeScene"), { ssr: false });
@@ -463,9 +464,9 @@ function HomePageContent() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showDataLayers, setShowDataLayers] = useState(false);
   const [showRouteLibrary, setShowRouteLibrary] = useState(false);
-  const [showAvalanchePentes, setShowAvalanchePentes] = useState(false);
   const [showParams, setShowParams] = useState(false);
   const [toolsPanelOpen, setToolsPanelOpen] = useState(false);
+  const { showAvalanchePentes, set: setSceneParams, material, snowColor, rockColor, slopeThreshold, smoothness, snowColorBM, rockColorBM, slopeThresholdBM, smoothnessBM, sunAzimuth, sunElevation, directionalIntensity, showBasemap, basemapLayer, basemapOpacity } = useParamsStore();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
 
@@ -1133,7 +1134,6 @@ function HomePageContent() {
                     setConfirmHdCoord(coord);
                     setConfirmPos(mousePos);
                   }}
-                  showAvalanchePentes={showAvalanchePentes}
                 />
               </div>
               {hoveredNeighbor && mousePos && !confirmHdCoord && (
@@ -1364,7 +1364,7 @@ function HomePageContent() {
 
                         {/* Pentes avalancheuses */}
                         <button
-                          onClick={() => setShowAvalanchePentes(!showAvalanchePentes)}
+                          onClick={() => setSceneParams({ showAvalanchePentes: !showAvalanchePentes })}
                           className={`flex items-center gap-2.5 px-3 py-2.5 w-full text-left transition-colors ${showAvalanchePentes ? "bg-red-50 text-red-700" : "text-slate-600 hover:bg-slate-50"}`}
                         >
                           <TbMountain className="h-4 w-4 flex-shrink-0" />
@@ -1398,17 +1398,76 @@ function HomePageContent() {
                         {/* Séparateur */}
                         <div className="h-px bg-slate-100 flex-shrink-0" />
 
-                        {/* Paramètres (ouvre le panneau Leva) */}
+                        {/* Paramètres — accordion */}
                         <button
-                          onClick={() => {
-                            setShowParams((s) => !s);
-                            window.dispatchEvent(new CustomEvent("alphd:toggle-params"));
-                          }}
+                          onClick={() => setShowParams((s) => !s)}
                           className={`flex items-center gap-2.5 px-3 py-2.5 w-full text-left transition-colors ${showParams ? "bg-slate-100 text-slate-800" : "text-slate-500 hover:bg-slate-50"}`}
                         >
                           <SlidersHorizontal className="h-4 w-4 flex-shrink-0" />
                           <span className="text-[11px] font-semibold whitespace-nowrap">Paramètres</span>
+                          <span className="ml-auto text-[9px] text-slate-400">{showParams ? "▴" : "▾"}</span>
                         </button>
+
+                        {/* Contenu inline des paramètres */}
+                        {showParams && (
+                          <div className="border-t border-slate-100 bg-slate-50/40 divide-y divide-slate-100" style={{ width: 200 }}>
+
+                            {/* Matériau */}
+                            <div className="px-3 py-2.5 flex flex-col gap-2">
+                              <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">Matériau</p>
+                              <select
+                                value={material}
+                                onChange={e => setSceneParams({ material: e.target.value as never })}
+                                className="w-full text-[10px] text-slate-700 bg-white border border-slate-200 rounded-md px-2 py-1 outline-none"
+                              >
+                                <option value="HauteMontagne">Haute montagne</option>
+                                <option value="BasseMontagne">Basse montagne</option>
+                                <option value="Standard">Standard</option>
+                                <option value="Normales">Normales</option>
+                              </select>
+                              {material === "HauteMontagne" && (
+                                <div className="flex flex-col gap-1.5">
+                                  <label className="flex items-center justify-between text-[9px] text-slate-500">Neige <input type="color" value={snowColor} onChange={e => setSceneParams({ snowColor: e.target.value })} className="w-6 h-4 rounded cursor-pointer border border-slate-200" /></label>
+                                  <label className="flex items-center justify-between text-[9px] text-slate-500">Roche <input type="color" value={rockColor} onChange={e => setSceneParams({ rockColor: e.target.value })} className="w-6 h-4 rounded cursor-pointer border border-slate-200" /></label>
+                                  <label className="flex flex-col gap-0.5 text-[9px] text-slate-500">Seuil de pente ({slopeThreshold}°) <input type="range" min={0} max={90} value={slopeThreshold} onChange={e => setSceneParams({ slopeThreshold: +e.target.value })} className="w-full h-1 accent-blue-500" /></label>
+                                  <label className="flex flex-col gap-0.5 text-[9px] text-slate-500">Transition ({smoothness}) <input type="range" min={0} max={0.5} step={0.01} value={smoothness} onChange={e => setSceneParams({ smoothness: +e.target.value })} className="w-full h-1 accent-blue-500" /></label>
+                                </div>
+                              )}
+                              {material === "BasseMontagne" && (
+                                <div className="flex flex-col gap-1.5">
+                                  <label className="flex items-center justify-between text-[9px] text-slate-500">Végétation <input type="color" value={snowColorBM} onChange={e => setSceneParams({ snowColorBM: e.target.value })} className="w-6 h-4 rounded cursor-pointer border border-slate-200" /></label>
+                                  <label className="flex items-center justify-between text-[9px] text-slate-500">Falaises <input type="color" value={rockColorBM} onChange={e => setSceneParams({ rockColorBM: e.target.value })} className="w-6 h-4 rounded cursor-pointer border border-slate-200" /></label>
+                                  <label className="flex flex-col gap-0.5 text-[9px] text-slate-500">Seuil de pente ({slopeThresholdBM}°) <input type="range" min={0} max={90} value={slopeThresholdBM} onChange={e => setSceneParams({ slopeThresholdBM: +e.target.value })} className="w-full h-1 accent-blue-500" /></label>
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Éclairage */}
+                            <div className="px-3 py-2.5 flex flex-col gap-1.5">
+                              <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">Éclairage</p>
+                              <label className="flex flex-col gap-0.5 text-[9px] text-slate-500">Azimuth ({sunAzimuth}°) <input type="range" min={0} max={360} value={sunAzimuth} onChange={e => setSceneParams({ sunAzimuth: +e.target.value })} className="w-full h-1 accent-blue-500" /></label>
+                              <label className="flex flex-col gap-0.5 text-[9px] text-slate-500">Élévation ({sunElevation}°) <input type="range" min={0} max={90} value={sunElevation} onChange={e => setSceneParams({ sunElevation: +e.target.value })} className="w-full h-1 accent-blue-500" /></label>
+                              <label className="flex flex-col gap-0.5 text-[9px] text-slate-500">Intensité ({directionalIntensity.toFixed(2)}) <input type="range" min={0} max={1.7} step={0.01} value={directionalIntensity} onChange={e => setSceneParams({ directionalIntensity: +e.target.value })} className="w-full h-1 accent-blue-500" /></label>
+                            </div>
+
+                            {/* Fond de carte */}
+                            <div className="px-3 py-2.5 flex flex-col gap-1.5">
+                              <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">Fond de carte</p>
+                              <label className="flex items-center justify-between text-[9px] text-slate-600">Carte IGN <input type="checkbox" checked={showBasemap} onChange={e => setSceneParams({ showBasemap: e.target.checked })} className="accent-blue-500" /></label>
+                              {showBasemap && (
+                                <>
+                                  <select value={basemapLayer} onChange={e => setSceneParams({ basemapLayer: e.target.value })} className="w-full text-[10px] text-slate-700 bg-white border border-slate-200 rounded-md px-2 py-1 outline-none">
+                                    <option value="PLANIGNV2">Plan IGN</option>
+                                    <option value="ORTHOPHOTOS">Orthophotos</option>
+                                    <option value="MAPS">Cartes</option>
+                                  </select>
+                                  <label className="flex flex-col gap-0.5 text-[9px] text-slate-500">Opacité ({Math.round(basemapOpacity * 100)}%) <input type="range" min={0} max={1} step={0.05} value={basemapOpacity} onChange={e => setSceneParams({ basemapOpacity: +e.target.value })} className="w-full h-1 accent-blue-500" /></label>
+                                </>
+                              )}
+                            </div>
+
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}

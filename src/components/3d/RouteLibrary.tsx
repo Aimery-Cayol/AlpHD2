@@ -258,7 +258,7 @@ function SummitGroup({
           textAlign: "left",
         }}
       >
-        <span>{SUMMIT_NAMES[summitId] ?? summitId}</span>
+        <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1, minWidth: 0 }}>{SUMMIT_NAMES[summitId] ?? summitId}</span>
         <span style={{ display: "flex", gap: 4, alignItems: "center" }}>
           {activeCount > 0 && (
             <span
@@ -373,6 +373,8 @@ export default function RouteLibrary({
         padding: "8px 12px",
         maxHeight: 300,
         overflowY: "auto",
+        overflowX: "hidden",
+        width: 200,
         fontFamily: "system-ui, sans-serif",
         color: "#334155",
         userSelect: "none",
