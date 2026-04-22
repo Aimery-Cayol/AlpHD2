@@ -19,6 +19,9 @@ import { useLayersStore } from "@/store/layers-store";
 import type { TileModel } from "@/types/models";
 import type { WeatherStation } from "@/types/data-layers";
 
+// Hauteur fixe au-dessus du terrain max pour les labels météo (en km)
+const LABEL_MARGIN_KM = 0.35;
+
 // Conversion direction string → degrés météo (d'où vient le vent)
 const WIND_DIR_DEG: Record<string, number> = {
   N: 0, NE: 45, E: 90, SE: 135, S: 180, SW: 225, W: 270, NW: 315,
@@ -310,10 +313,10 @@ function WindParticles({ stations, minAltitudeKm, opacity, fieldHalfKm }: WindPa
 interface StationLabelProps {
   station: WeatherStation;
   sceneX: number;
-  sceneY: number;
+  /** Y imposé depuis le composant parent — toujours au-dessus du terrain */
+  labelY: number;
   sceneZ: number;
   opacity: number;
-  colliderRefs: { current: THREE.Mesh }[];
 }
 
 const CONDITION_ICON: Record<string, string> = {
@@ -330,10 +333,9 @@ const CONDITION_ICON: Record<string, string> = {
 function StationLabel({
   station,
   sceneX,
-  sceneY,
+  labelY,
   sceneZ,
   opacity,
-  colliderRefs,
 }: StationLabelProps) {
   const icon =
     CONDITION_ICON[station.visibility < 1 ? "fog" : "default"] ??
@@ -348,11 +350,10 @@ function StationLabel({
 
   return (
     <Html
-      position={[sceneX, sceneY + 0.18, sceneZ]}
+      position={[sceneX, labelY, sceneZ]}
       center
       distanceFactor={3.5}
       zIndexRange={[20, 0]}
-      occlude={colliderRefs}
     >
       <div
         style={{
@@ -541,7 +542,7 @@ interface WeatherOverlayProps {
 }
 
 export default function WeatherOverlay({ models }: WeatherOverlayProps) {
-  const { scene } = useThree();
+  const { scene, invalidate } = useThree();
   const { collidersRef, version } = useColliders();
   const { layers } = useLayersStore();
   const layerCfg = layers.weather;
@@ -556,6 +557,9 @@ export default function WeatherOverlay({ models }: WeatherOverlayProps) {
     realTime: useLayersStore.getState().realTimeEnabled,
   });
 
+  // Forcer un rendu WebGL quand les données météo arrivent (frameloop="demand")
+  useEffect(() => { if (stations.length > 0) invalidate(); }, [stations, invalidate]);
+
   // Référence scène (même logique que ModelPositioner / PoiTool)
   const refX = models.length > 0 ? models[0].coordinates.x / 1000 : 0;
   const refY = models.length > 0 ? models[0].coordinates.y / 1000 : 0;
@@ -566,27 +570,28 @@ export default function WeatherOverlay({ models }: WeatherOverlayProps) {
     [models.length]
   );
 
-  // Altitude minimale du terrain pour les particules
-  const minAltitudeKm = useMemo(() => {
+  // Altitude min ET max du terrain pour positionner particules et labels
+  const { minAltitudeKm, maxAltitudeKm } = useMemo(() => {
     const colliders = collidersRef.current;
-    if (colliders.length === 0) return 0;
-    let minY = Infinity;
+    if (colliders.length === 0) return { minAltitudeKm: 0, maxAltitudeKm: 0 };
+    let minY = Infinity, maxY = -Infinity;
     for (const mesh of colliders) {
       if (!mesh.geometry.boundingBox) mesh.geometry.computeBoundingBox();
       const box = mesh.geometry.boundingBox;
       if (box) {
         const world = box.clone().applyMatrix4(mesh.matrixWorld);
         minY = Math.min(minY, world.min.y);
+        maxY = Math.max(maxY, world.max.y);
       }
     }
-    return isFinite(minY) ? minY : 0;
+    return {
+      minAltitudeKm: isFinite(minY) ? minY : 0,
+      maxAltitudeKm: isFinite(maxY) ? maxY : 0,
+    };
   }, [collidersRef, version]);
 
-  // Refs pour l'occluding der étiquettes
-  const colliderOccludeRefs = useMemo(
-    () => collidersRef.current.map((m) => ({ current: m })),
-    [collidersRef, version]
-  );
+  // Y fixe pour les labels météo — toujours au-dessus du sommet le plus haut
+  const labelBaseY = maxAltitudeKm + LABEL_MARGIN_KM;
 
   // --- Brouillard si visibilité très basse ---
   const avgVisibility = useMemo(() => {
@@ -627,18 +632,19 @@ export default function WeatherOverlay({ models }: WeatherOverlayProps) {
       )}
 
       {/* Labels des stations + petites flèches de vent — layer météo */}
-      {layerCfg.visible && stations.slice(0, 5).map((st) => {
+      {layerCfg.visible && stations.slice(0, 5).map((st, i) => {
         const [sx, sz] = toSceneXZ(st.position.lx, st.position.ly, refX, refY);
         const sy = st.position.altitude / 1000;
+        // Décaler légèrement chaque label en X pour éviter les chevauchements
+        const labelY = labelBaseY + i * 0.12;
         return (
           <React.Fragment key={st.stationId}>
             <StationLabel
               station={st}
               sceneX={sx}
-              sceneY={sy}
+              labelY={labelY}
               sceneZ={sz}
               opacity={layerCfg.opacity}
-              colliderRefs={colliderOccludeRefs}
             />
             <WindArrow
               windDirection={st.windDirection}

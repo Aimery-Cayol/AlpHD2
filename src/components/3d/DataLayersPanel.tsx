@@ -10,6 +10,7 @@
 import React, { useState } from "react";
 import { useLayersStore } from "@/store/layers-store";
 import { useDataStore } from "@/store/data-store";
+import { useParamsStore } from "@/store/params-store";
 import type { LayerKey } from "@/store/layers-store";
 
 // ---------------------------------------------------------------------------
@@ -48,13 +49,6 @@ const LAYERS: LayerMeta[] = [
     updateFreq: "temps réel",
   },
   {
-    key: "geological",
-    label: "Avalanches",
-    icon: "⚠️",
-    description: "Zones à risque, événements",
-    updateFreq: "3 h",
-  },
-  {
     key: "environment",
     label: "Environnement",
     icon: "❄️",
@@ -81,20 +75,18 @@ type DataStatusKey =
   | "environmentStatus"
   | "mediaStatus";
 
-const STATUS_KEY: Record<LayerKey, DataStatusKey> = {
+const STATUS_KEY: Partial<Record<LayerKey, DataStatusKey>> = {
   weather:     "weatherStatus",
   winds:       "weatherStatus",  // partage les données météo
   alpinists:   "humanActivityStatus",
-  geological:  "geologicalStatus",
   environment: "environmentStatus",
   media:       "mediaStatus",
 };
 
-const ERROR_KEY: Record<LayerKey, keyof ReturnType<typeof useDataStore.getState>> = {
+const ERROR_KEY: Partial<Record<LayerKey, keyof ReturnType<typeof useDataStore.getState>>> = {
   weather:     "weatherError",
   winds:       "weatherError",
   alpinists:   "humanActivityError",
-  geological:  "geologicalError",
   environment: "environmentError",
   media:       "mediaError",
 };
@@ -268,6 +260,7 @@ interface DataLayersPanelProps {
 export default function DataLayersPanel({ className, onHide }: DataLayersPanelProps) {
   const { layers, realTimeEnabled, toggleLayer, setLayerOpacity, setRealTimeEnabled, hideAll } =
     useLayersStore();
+  const { showAvalanchePentes, set: setSceneParams } = useParamsStore();
 
   // Statuts de chargement depuis le DataStore
   const dataStore = useDataStore();
@@ -342,8 +335,8 @@ export default function DataLayersPanel({ className, onHide }: DataLayersPanelPr
             const cfg = layers[meta.key];
             const statusKey = STATUS_KEY[meta.key];
             const errorKey  = ERROR_KEY[meta.key];
-            const status = dataStore[statusKey] as string;
-            const error  = dataStore[errorKey] as string | null;
+            const status = statusKey ? dataStore[statusKey] as string : "idle";
+            const error  = errorKey  ? dataStore[errorKey]  as string | null : null;
 
             return (
               <LayerRow
@@ -358,6 +351,35 @@ export default function DataLayersPanel({ className, onHide }: DataLayersPanelPr
               />
             );
           })}
+
+          {/* Pentes avalancheuses — colore le terrain par risque (shader local) */}
+          <div style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", paddingBottom: 6, marginBottom: 6 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <button
+                onClick={() => setSceneParams({ showAvalanchePentes: !showAvalanchePentes })}
+                style={{
+                  background: "none", border: "none",
+                  color: showAvalanchePentes ? "#fbbf24" : "#64748b",
+                  cursor: "pointer", display: "flex", alignItems: "center",
+                  gap: 6, flex: 1, padding: 0, textAlign: "left",
+                  fontSize: 11, fontFamily: "system-ui, sans-serif",
+                }}
+              >
+                <span style={{ fontSize: 14 }}>⛰️</span>
+                <span style={{ fontWeight: 600, color: showAvalanchePentes ? "#f1f5f9" : "#64748b" }}>
+                  Pentes avalancheuses
+                </span>
+              </button>
+              <Toggle on={showAvalanchePentes} onChange={(v) => setSceneParams({ showAvalanchePentes: v })} />
+            </div>
+            {showAvalanchePentes && (
+              <div style={{ marginTop: 6, paddingLeft: 22, color: "#94a3b8", fontSize: 10 }}>
+                Colore le terrain selon la pente : <span style={{ color: "#facc15" }}>▪ 30–35°</span>{" "}
+                <span style={{ color: "#f97316" }}>▪ 35–45°</span>{" "}
+                <span style={{ color: "#ef4444" }}>▪ &gt;45°</span>
+              </div>
+            )}
+          </div>
 
           {/* Bas du panneau */}
           <div

@@ -466,7 +466,7 @@ function HomePageContent() {
   const [showRouteLibrary, setShowRouteLibrary] = useState(false);
   const [showParams, setShowParams] = useState(false);
   const [toolsPanelOpen, setToolsPanelOpen] = useState(false);
-  const { showAvalanchePentes, set: setSceneParams, material, snowColor, rockColor, slopeThreshold, smoothness, snowColorBM, rockColorBM, slopeThresholdBM, smoothnessBM, sunAzimuth, sunElevation, directionalIntensity, showBasemap, basemapLayer, basemapOpacity } = useParamsStore();
+  const { set: setSceneParams, material, snowColor, rockColor, slopeThreshold, smoothness, snowColorBM, rockColorBM, slopeThresholdBM, smoothnessBM, sunAzimuth, sunElevation, directionalIntensity, showBasemap, basemapLayer, basemapOpacity } = useParamsStore();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
 
@@ -1360,39 +1360,6 @@ function HomePageContent() {
                             <Info className="h-4 w-4 flex-shrink-0" />
                             <span className="text-[11px] font-semibold whitespace-nowrap">Info dalles</span>
                           </button>
-                        )}
-
-                        {/* Pentes avalancheuses */}
-                        <button
-                          onClick={() => setSceneParams({ showAvalanchePentes: !showAvalanchePentes })}
-                          className={`flex items-center gap-2.5 px-3 py-2.5 w-full text-left transition-colors ${showAvalanchePentes ? "bg-red-50 text-red-700" : "text-slate-600 hover:bg-slate-50"}`}
-                        >
-                          <TbMountain className="h-4 w-4 flex-shrink-0" />
-                          <span className="text-[11px] font-semibold whitespace-nowrap">Avalanche</span>
-                          <span className="ml-auto text-[9px] text-slate-400">{showAvalanchePentes ? "▴" : "▾"}</span>
-                        </button>
-
-                        {/* Explication pentes avalancheuses */}
-                        {showAvalanchePentes && (
-                          <div className="border-t border-red-100 bg-red-50/40 px-3 py-2.5 flex flex-col gap-1.5">
-                            <p className="text-[10px] text-red-700/80 leading-[1.5]">
-                              Colore le terrain selon la pente&nbsp;:
-                            </p>
-                            <div className="flex flex-col gap-1">
-                              <div className="flex items-center gap-2">
-                                <span className="w-2.5 h-2.5 rounded-sm flex-shrink-0" style={{ background: "#facc15" }} />
-                                <span className="text-[9px] text-slate-500">30–35° — risque modéré</span>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <span className="w-2.5 h-2.5 rounded-sm flex-shrink-0" style={{ background: "#f97316" }} />
-                                <span className="text-[9px] text-slate-500">35–45° — risque élevé</span>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <span className="w-2.5 h-2.5 rounded-sm flex-shrink-0" style={{ background: "#ef4444" }} />
-                                <span className="text-[9px] text-slate-500">&gt;45° — risque très élevé</span>
-                              </div>
-                            </div>
-                          </div>
                         )}
 
                         {/* Séparateur */}
