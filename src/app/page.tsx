@@ -240,6 +240,14 @@ const MOUNTAIN_TREE = [
           { id: "muzelle", name: "La Muzelle (3465m)", altitude: "3465m", c2c: "https://www.camptocamp.org/waypoints/38957/fr/la-muzelle", firstAscent: "1878 — W. Coolidge avec les guides Christian et Rudolf Almer", description: "Belle pyramide rocheuse au-dessus du lac de la Muzelle, accessible depuis Les Deux Alpes par le GR 54. Course classique du secteur Vénéon alliant randonnée alpine et terrain rocheux avec une vue plongeante sur le lac turquoise en contrebas.", dalles: [{ path: "meshes/0955_6438_11.drc", x: 955, y: 6438 }, { path: "meshes/0955_6439_11.drc", x: 955, y: 6439 }] },
         ],
       },
+      {
+        id: "secteur-arve-epaisseur",
+        name: "6. Secteur Aiguilles d'Arve",
+        children: [
+          { id: "aiguilles-arve", name: "Aiguilles d'Arve (3514m)", altitude: "3514m", firstAscent: "Fin XIXe siècle", description: "Groupe d'aiguilles rocheuses dominant la vallée de l'Arc en Maurienne. Les Aiguilles d'Arve forment un ensemble dentelé caractéristique visible depuis Saint-Jean-de-Maurienne. Itinéraires variés sur rocher, accessibles depuis la vallée de l'Arc et les cols environnants.", dalles: [{ path: "meshes/0962_6453_11.drc", x: 962, y: 6453 }, { path: "meshes/0961_6453_11.drc", x: 961, y: 6453 }, { path: "meshes/0961_6454_11.drc", x: 961, y: 6454 }, { path: "meshes/0962_6454_11.drc", x: 962, y: 6454 }] },
+          { id: "aiguille-epaisseur", name: "Aiguille de l'Épaisseur (3119m)", altitude: "3119m", firstAscent: "Début XXe siècle", description: "Sommet rocheux voisin des Aiguilles d'Arve, dominant la Maurienne par son versant occidental. L'Aiguille de l'Épaisseur offre un beau point de vue sur la chaîne de Belledonne et les contreforts des Écrins septentrionaux.", dalles: [{ path: "meshes/0963_6454_11.drc", x: 963, y: 6454 }] },
+        ],
+      },
     ],
   },
   {
@@ -265,9 +273,10 @@ const MOUNTAIN_TREE = [
       },
       {
         id: "secteur-dent-parrachee",
-        name: "3. Secteur Dent Parrachée",
+        name: "3. Secteur Dent Parrachée - Arpont",
         children: [
           { id: "dent-parrachee", name: "Dent Parrachée (3697m)", altitude: "3697m", c2c: "https://www.camptocamp.org/waypoints/37070/fr/dent-parrachee", firstAscent: "1877 — R. Fowler avec les guides Devouassoux et P. Perren", description: "Puissant massif de la haute Maurienne dominant le lac du Mont-Cenis et la vallée d'Aussois. La Dent Parrachée est le sommet le plus élevé du secteur méridional de la Vanoise. Sa face nord, raide et glaciaire, contraste avec le versant sud plus accessible depuis Aussois par des arêtes rocheuses de caractère.", dalles: [{ path: "meshes/0994_6473_11.drc", x: 994, y: 6473 }, { path: "meshes/0993_6473_11.drc", x: 993, y: 6473 }, { path: "meshes/0994_6472_11.drc", x: 994, y: 6472 }, { path: "meshes/0995_6473_11.drc", x: 995, y: 6473 }, { path: "meshes/0994_6474_11.drc", x: 994, y: 6474 }] },
+          { id: "dome-arpont", name: "Dôme de l'Arpont (3599m)", altitude: "3599m", firstAscent: "Début XXe siècle", description: "Vaste dôme glaciaire dominant le refuge de l'Arpont et les lacs de la haute Maurienne. Le Dôme de l'Arpont est un itinéraire glaciaire classique de la Vanoise méridionale, avec un panorama étendu sur la Dent Parrachée, le massif du Mont-Blanc et les sommets frontaliers franco-italiens.", dalles: [{ path: "meshes/0993_6476_11.drc", x: 993, y: 6476 }, { path: "meshes/0992_6476_11.drc", x: 992, y: 6476 }, { path: "meshes/0992_6475_11.drc", x: 992, y: 6475 }, { path: "meshes/0993_6475_11.drc", x: 993, y: 6475 }] },
         ],
       },
     ],
