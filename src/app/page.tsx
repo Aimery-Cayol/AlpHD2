@@ -231,6 +231,7 @@ const MOUNTAIN_TREE = [
           { id: "boeufs-rouges", name: "Pointe des Bœufs Rouges (3517m)", altitude: "3517m", firstAscent: "Fin XIXe siècle", description: "Sommet entre le Valgaudemar et le Vénéon, aux pentes rocheuses teintées d'ocre caractéristiques des Écrins. Accessible depuis le refuge de la Pilatte, avec vue sur les grandes faces nord du secteur.", dalles: [{ path: "meshes/0955_6434_11.drc", x: 955, y: 6434 }] },
           { id: "cime-orgieres", name: "Cime d'Orgières (2755m)", altitude: "2755m", firstAscent: "XIXe siècle", description: "Sommet accessible en randonnée depuis le Valgaudemar. Belvédère remarquable sur le cirque de l'Olan et les hauts sommets environnants, idéal pour une première approche du massif sans équipement alpinistique.", dalles: [{ path: "meshes/0952_6423_11.drc", x: 952, y: 6423 }] },
           { id: "sirac", name: "Le Sirac (3441m)", altitude: "3441m", firstAscent: "1878 — T. Middlemore avec J. Jaun", description: "Sentinelle méridionale du Valgaudemar, visible depuis La Chapelle-en-Valgaudemar. Course rocheuse élégante sur crête avec quelques passages d'escalade ; vue plongeante sur les gorges du Valgaudemar et les villages en contrebas.", dalles: [{ path: "meshes/0948_6423_11.drc", x: 948, y: 6423 }] },
+          { id: "pic-souffles", name: "Pic des Souffles (3194m)", altitude: "3194m", firstAscent: "Fin XIXe siècle", description: "Sommet rocheux dominant le vallon de la Séveraisse et les gorges du Valgaudemar. Le Pic des Souffles est un objectif alpinistique isolé du secteur méridional des Écrins, avec des itinéraires sur rocher accessibles depuis La Chapelle-en-Valgaudemar. Vue étendue sur l'Olan et les hauts sommets du Valgaudemar.", dalles: [{ path: "meshes/0946_6424_11.drc", x: 946, y: 6424 }, { path: "meshes/0947_6424_11.drc", x: 947, y: 6424 }, { path: "meshes/0947_6423_11.drc", x: 947, y: 6423 }, { path: "meshes/0946_6423_11.drc", x: 946, y: 6423 }, { path: "meshes/0948_6423_11.drc", x: 948, y: 6423 }, { path: "meshes/0948_6424_11.drc", x: 948, y: 6424 }] },
         ],
       },
       {
@@ -238,6 +239,7 @@ const MOUNTAIN_TREE = [
         name: "5. Secteur Muzelle - Vénéon",
         children: [
           { id: "muzelle", name: "La Muzelle (3465m)", altitude: "3465m", c2c: "https://www.camptocamp.org/waypoints/38957/fr/la-muzelle", firstAscent: "1878 — W. Coolidge avec les guides Christian et Rudolf Almer", description: "Belle pyramide rocheuse au-dessus du lac de la Muzelle, accessible depuis Les Deux Alpes par le GR 54. Course classique du secteur Vénéon alliant randonnée alpine et terrain rocheux avec une vue plongeante sur le lac turquoise en contrebas.", dalles: [{ path: "meshes/0955_6438_11.drc", x: 955, y: 6438 }, { path: "meshes/0955_6439_11.drc", x: 955, y: 6439 }] },
+          { id: "roche-muzelle", name: "Roche de la Muzelle (3139m)", altitude: "3139m", firstAscent: "Fin XIXe siècle", description: "Sommet rocheux dominant les rives du lac de la Muzelle et les vallons sauvages du Vénéon. La Roche de la Muzelle est une course mixte classique du secteur, avec des passages rocheux et glaciaires au-dessus du refuge de la Muzelle. Panorama remarquable sur la chaîne des Grandes Rousses et les Écrins.", dalles: [{ path: "meshes/0945_6431_11.drc", x: 945, y: 6431 }, { path: "meshes/0944_6431_11.drc", x: 944, y: 6431 }, { path: "meshes/0945_6432_11.drc", x: 945, y: 6432 }, { path: "meshes/0944_6432_11.drc", x: 944, y: 6432 }] },
         ],
       },
       {
@@ -313,6 +315,28 @@ const MOUNTAIN_TREE = [
     ],
   },
   {
+    id: "massif-mercantour",
+    name: "Massif du Mercantour",
+    children: [
+      {
+        id: "secteur-casterino-lombarde",
+        name: "1. Secteur Casterino - Lombarde",
+        children: [
+          { id: "cime-tavels", name: "Cime de Tavels (2755m)", altitude: "2755m", firstAscent: "XIXe siècle", description: "Sommet dominant la haute vallée de la Tinée et les lacs de Vens, au cœur du Parc National du Mercantour. La Cime de Tavels est un objectif de randonnée alpine classique depuis Saint-Dalmas-le-Selvage, offrant un panorama sur les sommets frontraliers franco-italiens et les lacs d'altitude caractéristiques du secteur.", dalles: [{ path: "meshes/1035_6352_11.drc", x: 1035, y: 6352 }, { path: "meshes/1034_6352_11.drc", x: 1034, y: 6352 }, { path: "meshes/1034_6353_11.drc", x: 1034, y: 6353 }, { path: "meshes/1035_6353_11.drc", x: 1035, y: 6353 }] },
+          { id: "cime-lombarde", name: "Cime de la Lombarde (2800m)", altitude: "2800m", firstAscent: "XIXe siècle", description: "Sommet frontalier franco-italien dominant le col de la Lombarde et la station d'Isola 2000. La Cime de la Lombarde est un belvédère remarquable sur la vallée de la Tinée côté français et la Valle Stura di Demonte côté italien. Accessible depuis le col de la Lombarde par les crêtes frontière.", dalles: [{ path: "meshes/1032_6355_11.drc", x: 1032, y: 6355 }, { path: "meshes/1032_6354_11.drc", x: 1032, y: 6354 }] },
+        ],
+      },
+      {
+        id: "secteur-portettes-brocan",
+        name: "2. Secteur Portettes - Brocan",
+        children: [
+          { id: "tete-portettes", name: "Tête de Portettes (2724m)", altitude: "2724m", firstAscent: "XIXe siècle", description: "Sommet dominant les vallons sauvages du Mercantour méridional, au-dessus de la haute Tinée. La Tête de Portettes est caractéristique des paysages du Parc National : lacs d'altitude, pelouses rases et dalles rocheuses. Itinéraire de randonnée alpine depuis les hameaux de la vallée.", dalles: [{ path: "meshes/1036_6351_11.drc", x: 1036, y: 6351 }, { path: "meshes/1037_6351_11.drc", x: 1037, y: 6351 }, { path: "meshes/1036_6350_11.drc", x: 1036, y: 6350 }, { path: "meshes/1037_6350_11.drc", x: 1037, y: 6350 }] },
+          { id: "cima-brocan", name: "Cima du Brocan (2902m)", altitude: "2902m", firstAscent: "XIXe siècle", description: "Sommet frontalier du Mercantour oriental, dominant le lac du Brocan et la haute vallée de la Tinée. La Cima du Brocan est un des points hauts du secteur est du parc, accessible depuis Isola 2000 ou les refuges frontaliers. Panorama sur les Alpes maritimes françaises et italiennes.", dalles: [{ path: "meshes/1044_6349_11.drc", x: 1044, y: 6349 }] },
+        ],
+      },
+    ],
+  },
+  {
     id: "massif-sainte-victoire",
     name: "Montagne Sainte-Victoire",
     children: [
@@ -331,7 +355,7 @@ const MOUNTAIN_TREE = [
 ];
 
 // Identifie si c'est un massif racine (niveau 0)
-const ROOT_MASSIF_IDS = ["massif-mont-blanc", "massif-ecrins", "massif-vanoise", "massif-belledonne", "massif-sainte-victoire"];
+const ROOT_MASSIF_IDS = ["massif-mont-blanc", "massif-ecrins", "massif-vanoise", "massif-belledonne", "massif-mercantour", "massif-sainte-victoire"];
 
 // Composant pour le profil altimétrique détaillé avec ratio 1:1 (angles réels)
 function ElevationProfilePanel({ profile, userPoints }: {
