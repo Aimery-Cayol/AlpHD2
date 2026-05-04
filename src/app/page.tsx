@@ -282,6 +282,37 @@ const MOUNTAIN_TREE = [
     ],
   },
   {
+    id: "massif-belledonne",
+    name: "Chaîne de Belledonne",
+    children: [
+      {
+        id: "secteur-nord-belledonne",
+        name: "1. Nord Belledonne",
+        children: [
+          { id: "dent-pra", name: "Dent du Pra (2765m)", altitude: "2765m", firstAscent: "XIXe siècle", description: "Sommet emblématique du nord de la chaîne de Belledonne, visible depuis la vallée du Grésivaudan et les environs de Grenoble. La Dent du Pra se distingue par ses arêtes rocheuses effilées. Accessible depuis Domène ou Saint-Nazaire-les-Eymes, c'est un bel objectif de randonnée alpine.", dalles: [{ path: "meshes/0938_6465_11.drc", x: 938, y: 6465 }] },
+          { id: "ferrouillet", name: "Le Ferrouillet (2932m)", altitude: "2932m", firstAscent: "Fin XIXe siècle", description: "Sommet caractéristique du centre-nord de Belledonne, dominant les lacs Robert et les hauts plateaux du massif. Le Ferrouillet est un point de passage fréquenté sur les itinéraires de crête reliant le Grand Pic de Belledonne au secteur nord. Belle vue sur Grenoble et la plaine dauphinoise.", dalles: [{ path: "meshes/0935_6461_11.drc", x: 935, y: 6461 }, { path: "meshes/0934_6461_11.drc", x: 934, y: 6461 }] },
+          { id: "rocher-homme", name: "Rocher de l'Homme (2842m)", altitude: "2842m", firstAscent: "XIXe siècle", description: "Proéminence rocheuse au-dessus des lacs de Belledonne, nommée pour sa silhouette caractéristique. Le Rocher de l'Homme est un repère visuel depuis les hauts plateaux du massif et constitue une course rocheuse classique de la chaîne, accessible depuis les stations de Chamrousse et des Sept-Laux.", dalles: [{ path: "meshes/0934_6459_11.drc", x: 934, y: 6459 }] },
+        ],
+      },
+      {
+        id: "secteur-grand-pic",
+        name: "2. Grand Pic de Belledonne",
+        children: [
+          { id: "grand-pic-belledonne", name: "Grand Pic de Belledonne (2977m)", altitude: "2977m", firstAscent: "1839 — Henri Duhamel et J.-E. Mathon", description: "Point culminant de la chaîne de Belledonne et toit du massif dauphinois, le Grand Pic domine Grenoble de près de 2 600 m. Sa face ouest, abrupte et glaciaire, plonge sur les lacs de Belledonne. La voie normale par le glacier du Grand Pic est une grande classique de la région grenobloise, offrant un panorama exceptionnel des Alpes.", dalles: [{ path: "meshes/0935_6457_11.drc", x: 935, y: 6457 }, { path: "meshes/0934_6457_11.drc", x: 934, y: 6457 }, { path: "meshes/0934_6458_11.drc", x: 934, y: 6458 }, { path: "meshes/0935_6458_11.drc", x: 935, y: 6458 }] },
+        ],
+      },
+      {
+        id: "secteur-sud-belledonne",
+        name: "3. Sud Belledonne",
+        children: [
+          { id: "grande-lauziere", name: "Grande Lauzière (2829m)", altitude: "2829m", firstAscent: "XIXe siècle", description: "Sommet méridional de la chaîne de Belledonne, dominant la vallée du Bréda et le secteur de la Pra. La Grande Lauzière est un objectif de randonnée alpine depuis Fond-de-France ou le col des Sept-Laux, avec un large panorama sur le Taillefer, les Écrins et le Vercors.", dalles: [{ path: "meshes/0932_6456_11.drc", x: 932, y: 6456 }, { path: "meshes/0932_6455_11.drc", x: 932, y: 6455 }] },
+          { id: "grand-sorbier", name: "Le Grand Sorbier (2526m)", altitude: "2526m", firstAscent: "XIXe siècle", description: "Sommet du sud de la chaîne de Belledonne, au-dessus de l'Alpe du Grand Sorbier. Accessible en randonnée depuis Laval ou le plateau de l'Arselle, il offre un panorama dégagé sur le massif du Taillefer, la chaîne de Belledonne et la vallée de la Romanche.", dalles: [{ path: "meshes/0930_6453_11.drc", x: 930, y: 6453 }] },
+          { id: "grand-van", name: "Le Grand Van (2561m)", altitude: "2561m", firstAscent: "XIXe siècle", description: "Sommet voisin du Grand Sorbier, dans le secteur méridional de Belledonne. Beau point de vue sur les lacs du Lauzon et les alpages de la haute Romanche. Point de passage sur les itinéraires de crête du sud Belledonne.", dalles: [{ path: "meshes/0930_6453_11.drc", x: 930, y: 6453 }] },
+        ],
+      },
+    ],
+  },
+  {
     id: "massif-sainte-victoire",
     name: "Montagne Sainte-Victoire",
     children: [
@@ -300,7 +331,7 @@ const MOUNTAIN_TREE = [
 ];
 
 // Identifie si c'est un massif racine (niveau 0)
-const ROOT_MASSIF_IDS = ["massif-mont-blanc", "massif-ecrins", "massif-vanoise", "massif-sainte-victoire"];
+const ROOT_MASSIF_IDS = ["massif-mont-blanc", "massif-ecrins", "massif-vanoise", "massif-belledonne", "massif-sainte-victoire"];
 
 // Composant pour le profil altimétrique détaillé avec ratio 1:1 (angles réels)
 function ElevationProfilePanel({ profile, userPoints }: {
