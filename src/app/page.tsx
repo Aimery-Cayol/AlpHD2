@@ -243,6 +243,36 @@ const MOUNTAIN_TREE = [
     ],
   },
   {
+    id: "massif-vanoise",
+    name: "Massif de la Vanoise",
+    children: [
+      {
+        id: "secteur-grande-casse",
+        name: "1. Secteur Grande Casse",
+        children: [
+          { id: "grande-casse", name: "Grande Casse (3855m)", altitude: "3855m", c2c: "https://www.camptocamp.org/waypoints/36985/fr/grande-casse", firstAscent: "8 août 1860 — William Mathews et Rev. George Mathews avec les guides Pierre Perren et J.-M. Clet", description: "Point culminant du Parc National de la Vanoise et plus haut sommet de la Tarentaise, la Grande Casse est le toit des Alpes de Savoie. Sa voie normale par le glacier des Grands Couloirs est une grande classique glaciaire au départ de Pralognan-la-Vanoise, tandis que ses arêtes rocheuses attirent les alpinistes expérimentés.", dalles: [{ path: "meshes/1000_6486_11.drc", x: 1000, y: 6486 }, { path: "meshes/0999_6486_11.drc", x: 999, y: 6486 }, { path: "meshes/0999_6487_11.drc", x: 999, y: 6487 }, { path: "meshes/0998_6486_11.drc", x: 998, y: 6486 }, { path: "meshes/0999_6485_11.drc", x: 999, y: 6485 }, { path: "meshes/0998_6485_11.drc", x: 998, y: 6485 }] },
+          { id: "pointe-mathews", name: "Pointe Mathews (3783m)", altitude: "3783m", firstAscent: "Fin XIXe siècle", description: "Épaule glaciaire de la Grande Casse, nommée en l'honneur de William Mathews, l'un des premiers ascensionnistes du sommet principal. Sommet satellite visible depuis le glacier des Grands Couloirs, fréquemment inclus dans la course à la Grande Casse.", dalles: [{ path: "meshes/0998_6485_11.drc", x: 998, y: 6485 }, { path: "meshes/0999_6485_11.drc", x: 999, y: 6485 }, { path: "meshes/0998_6486_11.drc", x: 998, y: 6486 }] },
+          { id: "aiguille-vanoise", name: "Aiguille de la Vanoise (2796m)", altitude: "2796m", firstAscent: "XIXe siècle", description: "Aiguille rocheuse dominant le lac des Vaches et le refuge de la Vanoise, au cœur du parc national. Point de vue exceptionnel sur la Grande Casse et ses glaciers, accessible en randonnée alpine depuis le col de la Vanoise. Sommet emblématique des itinéraires de découverte de la haute Vanoise.", dalles: [{ path: "meshes/0995_6485_11.drc", x: 995, y: 6485 }, { path: "meshes/0996_6485_11.drc", x: 996, y: 6485 }] },
+        ],
+      },
+      {
+        id: "secteur-epena-gliere",
+        name: "2. Secteur Épéna - Grande Glière",
+        children: [
+          { id: "epena", name: "Pointes et Aiguille de l'Épéna (3323m)", altitude: "3323m", firstAscent: "Début XXe siècle", description: "Groupe de sommets rocheux dominant les glaciers du nord-ouest de la Grande Casse. Les Pointes de l'Épéna forment une crête dentelée caractéristique visible depuis la vallée de Champagny-en-Vanoise. Itinéraires mixtes engagés pour alpinistes confirmés.", dalles: [{ path: "meshes/0998_6487_11.drc", x: 998, y: 6487 }, { path: "meshes/0997_6487_11.drc", x: 997, y: 6487 }] },
+          { id: "grande-gliere", name: "Pointe de la Grande Glière (3396m)", altitude: "3396m", firstAscent: "Début XXe siècle", description: "Sommet glaciaire dominant le vallon de la Grande Glière et le glacier des Grands Couloirs. La Pointe de la Grande Glière offre un beau panorama sur la Grande Casse et l'ensemble du cirque glaciaire de la haute Vanoise. Accès depuis Champagny-en-Vanoise ou Pralognan par itinéraires glaciaires.", dalles: [{ path: "meshes/0996_6487_11.drc", x: 996, y: 6487 }, { path: "meshes/0996_6486_11.drc", x: 996, y: 6486 }, { path: "meshes/0997_6487_11.drc", x: 997, y: 6487 }, { path: "meshes/0997_6486_11.drc", x: 997, y: 6486 }] },
+        ],
+      },
+      {
+        id: "secteur-dent-parrachee",
+        name: "3. Secteur Dent Parrachée",
+        children: [
+          { id: "dent-parrachee", name: "Dent Parrachée (3697m)", altitude: "3697m", c2c: "https://www.camptocamp.org/waypoints/37070/fr/dent-parrachee", firstAscent: "1877 — R. Fowler avec les guides Devouassoux et P. Perren", description: "Puissant massif de la haute Maurienne dominant le lac du Mont-Cenis et la vallée d'Aussois. La Dent Parrachée est le sommet le plus élevé du secteur méridional de la Vanoise. Sa face nord, raide et glaciaire, contraste avec le versant sud plus accessible depuis Aussois par des arêtes rocheuses de caractère.", dalles: [{ path: "meshes/0993_6473_11.drc", x: 993, y: 6473 }, { path: "meshes/0994_6473_11.drc", x: 994, y: 6473 }, { path: "meshes/0995_6473_11.drc", x: 995, y: 6473 }, { path: "meshes/0994_6472_11.drc", x: 994, y: 6472 }, { path: "meshes/0993_6472_11.drc", x: 993, y: 6472 }, { path: "meshes/0995_6472_11.drc", x: 995, y: 6472 }, { path: "meshes/0995_6474_11.drc", x: 995, y: 6474 }, { path: "meshes/0994_6474_11.drc", x: 994, y: 6474 }] },
+        ],
+      },
+    ],
+  },
+  {
     id: "massif-sainte-victoire",
     name: "Montagne Sainte-Victoire",
     children: [
@@ -261,7 +291,7 @@ const MOUNTAIN_TREE = [
 ];
 
 // Identifie si c'est un massif racine (niveau 0)
-const ROOT_MASSIF_IDS = ["massif-mont-blanc", "massif-ecrins", "massif-sainte-victoire"];
+const ROOT_MASSIF_IDS = ["massif-mont-blanc", "massif-ecrins", "massif-vanoise", "massif-sainte-victoire"];
 
 // Composant pour le profil altimétrique détaillé avec ratio 1:1 (angles réels)
 function ElevationProfilePanel({ profile, userPoints }: {
