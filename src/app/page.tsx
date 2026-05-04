@@ -285,7 +285,7 @@ const MOUNTAIN_TREE = [
   },
   {
     id: "massif-belledonne",
-    name: "Chaîne de Belledonne",
+    name: "Massif de Belledonne",
     children: [
       {
         id: "secteur-nord-belledonne",
@@ -337,6 +337,34 @@ const MOUNTAIN_TREE = [
     ],
   },
   {
+    id: "massif-calanques",
+    name: "Calanques de Marseille",
+    children: [
+      {
+        id: "secteur-calanques-ouest",
+        name: "1. Calanques Ouest",
+        children: [
+          { id: "marseilleveyre", name: "Massif de Marseilleveyre (432m)", altitude: "432m", description: "Massif calcaire dominant la mer Méditerranée à l'ouest des Calanques, entre Marseille et la calanque de Marseilleveyre. Haut lieu de l'escalade marseillaise avec des voies sur les calcaires du Crétacé, vue panoramique sur les îles du Frioul et la baie de Marseille. Accès depuis le quartier de Mazargues.", dalles: [{ path: "meshes/0892_6239_11.drc", x: 892, y: 6239 }, { path: "meshes/0893_6239_11.drc", x: 893, y: 6239 }, { path: "meshes/0893_6240_11.drc", x: 893, y: 6240 }, { path: "meshes/0892_6240_11.drc", x: 892, y: 6240 }] },
+          { id: "les-goudes", name: "Les Goudes (80m)", altitude: "80m", description: "Village de pêcheurs et falaises calcaires à la pointe ouest des Calanques. Les Goudes offrent des voies d'escalade en bord de mer sur des calcaires compacts, avec vue directe sur l'archipel de Riou. Site mythique de l'escalade provençale, accessible depuis le bus 20 terminus de Marseille.", dalles: [{ path: "meshes/0891_6238_11.drc", x: 891, y: 6238 }, { path: "meshes/0890_6238_11.drc", x: 890, y: 6238 }, { path: "meshes/0890_6239_11.drc", x: 890, y: 6239 }, { path: "meshes/0891_6239_11.drc", x: 891, y: 6239 }, { path: "meshes/0892_6239_11.drc", x: 892, y: 6239 }, { path: "meshes/0892_6238_11.drc", x: 892, y: 6238 }] },
+          { id: "melette", name: "La Melette (221m)", altitude: "221m", description: "Secteur calcaire entre les Goudes et la calanque de Sormiou, caractérisé par ses dalles inclinées et ses falaises en bord de mer. La Melette est un site d'escalade reconnu pour la qualité de son calcaire et ses voies de difficulté variée, avec vue sur la mer de l'autre côté de la crête.", dalles: [{ path: "meshes/0894_6239_11.drc", x: 894, y: 6239 }, { path: "meshes/0894_6238_11.drc", x: 894, y: 6238 }, { path: "meshes/0893_6238_11.drc", x: 893, y: 6238 }, { path: "meshes/0893_6239_11.drc", x: 893, y: 6239 }] },
+          { id: "sormiou", name: "Sormiou (230m)", altitude: "230m", description: "L'une des plus grandes calanques du massif, dominée par des falaises calcaires plongeant dans une eau turquoise. Le secteur de Sormiou offre des voies d'escalade classiques sur les crêtes dominant la crique, avec une belle vue sur le cap Morgiou et l'archipel de Riou. Accès depuis Marseille par la route des Calanques.", dalles: [{ path: "meshes/0895_6238_11.drc", x: 895, y: 6238 }, { path: "meshes/0897_6238_11.drc", x: 897, y: 6238 }, { path: "meshes/0896_6238_11.drc", x: 896, y: 6238 }, { path: "meshes/0897_6237_11.drc", x: 897, y: 6237 }, { path: "meshes/0896_6239_11.drc", x: 896, y: 6239 }, { path: "meshes/0895_6239_11.drc", x: 895, y: 6239 }] },
+        ],
+      },
+      {
+        id: "secteur-calanques-est",
+        name: "2. Calanques Est",
+        children: [
+          { id: "morgiou", name: "Morgiou (260m)", altitude: "260m", description: "Calanque sauvage et encaissée, parmi les plus préservées du massif. Le cap Morgiou et les falaises environnantes offrent des voies d'escalade exceptionnelles sur des calcaires vertigineux plongeant dans la Méditerranée. L'accès par le sentier des Calanques depuis Luminy est une randonnée incontournable du Parc National.", dalles: [{ path: "meshes/0899_6237_11.drc", x: 899, y: 6237 }, { path: "meshes/0898_6237_11.drc", x: 898, y: 6237 }, { path: "meshes/0898_6238_11.drc", x: 898, y: 6238 }, { path: "meshes/0899_6238_11.drc", x: 899, y: 6238 }, { path: "meshes/0897_6238_11.drc", x: 897, y: 6238 }, { path: "meshes/0897_6239_11.drc", x: 897, y: 6239 }, { path: "meshes/0898_6239_11.drc", x: 898, y: 6239 }] },
+          { id: "sugiton", name: "Sugiton (270m)", altitude: "270m", description: "Calanque accessible depuis le campus de Luminy, réputée pour ses eaux cristallines et ses falaises calcaires. Le secteur de Sugiton est prisé des grimpeurs pour ses voies de toute difficulté et ses panoramas sur la côte calanquaise. Le Torpilleur et les rochers environnants offrent quelques-unes des plus belles voies du massif.", dalles: [{ path: "meshes/0899_6238_11.drc", x: 899, y: 6238 }, { path: "meshes/0900_6238_11.drc", x: 900, y: 6238 }, { path: "meshes/0900_6239_11.drc", x: 900, y: 6239 }, { path: "meshes/0899_6239_11.drc", x: 899, y: 6239 }] },
+          { id: "val-vierge", name: "Val Vierge - Concave (200m)", altitude: "200m", description: "Secteur de falaises entre Sugiton et Devenson, avec des voies d'escalade sur des calcaires compacts et des parois en dévers. Le Val Vierge est un site plus confidentiel, fréquenté par les grimpeurs confirmés cherchant des lignes engagées au-dessus de la mer.", dalles: [{ path: "meshes/0900_6238_11.drc", x: 900, y: 6238 }] },
+          { id: "devenson", name: "Devenson (350m)", altitude: "350m", description: "Secteur de falaises culminant parmi les plus hautes des Calanques, dominant la mer par des parois vertigineuses. Le Devenson est réputé pour ses grandes voies d'escalade et son caractère sauvage. Accessible uniquement à pied depuis Luminy ou par mer depuis Cassis, c'est un des sites les plus engagés du massif.", dalles: [{ path: "meshes/0901_6238_11.drc", x: 901, y: 6238 }, { path: "meshes/0902_6238_11.drc", x: 902, y: 6238 }] },
+          { id: "eissadon-oule", name: "Eïssadon / Oule (320m)", altitude: "320m", description: "Secteur calcaire entre Devenson et En-Vau, avec des calanques étroites et des parois à pic sur la mer. Eïssadon et l'Oule sont des sites d'escalade sauvages, accessibles uniquement à pied par les sentiers du Parc National ou par voie maritime. Calcaire de qualité sur des voies peu équipées.", dalles: [{ path: "meshes/0902_6237_11.drc", x: 902, y: 6237 }, { path: "meshes/0903_6237_11.drc", x: 903, y: 6237 }, { path: "meshes/0902_6238_11.drc", x: 902, y: 6238 }] },
+          { id: "castelvieil-en-vau", name: "Castelvieil / En-Vau (290m)", altitude: "290m", description: "En-Vau est considérée comme la plus belle calanque du massif : falaises à pic de 150 m encadrant un eau d'un bleu intense, accessible uniquement à pied ou par mer. Castelvieil domine ce site exceptionnel avec des voies d'escalade classiques. La randonnée depuis Cassis par le sentier des Crêtes est un incontournable des Calanques.", dalles: [{ path: "meshes/0903_6237_11.drc", x: 903, y: 6237 }] },
+        ],
+      },
+    ],
+  },
+  {
     id: "massif-sainte-victoire",
     name: "Montagne Sainte-Victoire",
     children: [
@@ -355,7 +383,7 @@ const MOUNTAIN_TREE = [
 ];
 
 // Identifie si c'est un massif racine (niveau 0)
-const ROOT_MASSIF_IDS = ["massif-mont-blanc", "massif-ecrins", "massif-vanoise", "massif-belledonne", "massif-mercantour", "massif-sainte-victoire"];
+const ROOT_MASSIF_IDS = ["massif-mont-blanc", "massif-ecrins", "massif-vanoise", "massif-belledonne", "massif-mercantour", "massif-calanques", "massif-sainte-victoire"];
 
 // Composant pour le profil altimétrique détaillé avec ratio 1:1 (angles réels)
 function ElevationProfilePanel({ profile, userPoints }: {
