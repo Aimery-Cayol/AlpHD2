@@ -365,6 +365,19 @@ const MOUNTAIN_TREE = [
     ],
   },
   {
+    id: "massif-vignemale",
+    name: "Massif du Vignemale",
+    children: [
+      {
+        id: "secteur-vignemale",
+        name: "Vignemale",
+        children: [
+          { id: "vignemale", name: "Vignemale (3298m)", altitude: "3298m", c2c: "https://www.camptocamp.org/waypoints/42265/fr/vignemale", firstAscent: "7 août 1838 — Anne Lister avec les guides Henry Cazaux et Bernard Guillembet", description: "Point culminant des Pyrénées françaises, le Vignemale (Pique Longue, 3 298 m) domine la frontière franco-espagnole au-dessus de la vallée de Gavarnie. Sa face nord, haute de 700 m, abrite le plus grand glacier des Pyrénées françaises — le glacier d'Ossoue. Grande classique pyrénéenne accessible depuis le refuge des Oulettes de Gaube ou le refuge de Baysselance.", dalles: [{ path: "meshes/0442_6192_11.drc", x: 442, y: 6192 }] },
+        ],
+      },
+    ],
+  },
+  {
     id: "massif-sainte-victoire",
     name: "Montagne Sainte-Victoire",
     children: [
@@ -383,7 +396,7 @@ const MOUNTAIN_TREE = [
 ];
 
 // Identifie si c'est un massif racine (niveau 0)
-const ROOT_MASSIF_IDS = ["massif-mont-blanc", "massif-ecrins", "massif-vanoise", "massif-belledonne", "massif-mercantour", "massif-calanques", "massif-sainte-victoire"];
+const ROOT_MASSIF_IDS = ["massif-mont-blanc", "massif-ecrins", "massif-vanoise", "massif-belledonne", "massif-mercantour", "massif-calanques", "massif-vignemale", "massif-sainte-victoire"];
 
 // Composant pour le profil altimétrique détaillé avec ratio 1:1 (angles réels)
 function ElevationProfilePanel({ profile, userPoints }: {
