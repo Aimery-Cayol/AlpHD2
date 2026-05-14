@@ -296,7 +296,7 @@ export default function MeasureTool() {
             key={idx}
             position={[pt.position.x, pt.position.y + 0.003, pt.position.z]}
           >
-            <sphereGeometry args={[0.003, 16, 16]} />
+            <sphereGeometry args={[0.0015, 10, 10]} />
             <meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.7} />
           </mesh>
         );
