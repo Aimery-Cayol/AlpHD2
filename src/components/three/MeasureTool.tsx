@@ -282,8 +282,8 @@ export default function MeasureTool() {
       )}
       {hoverPoint && points.length > 0 && (
         <mesh position={[hoverPoint.x, hoverPoint.y + 0.003, hoverPoint.z]}>
-          <sphereGeometry args={[0.003, 8, 8]} />
-          <meshStandardMaterial color="#94a3b8" transparent opacity={0.8} />
+          <sphereGeometry args={[0.001, 8, 8]} />
+          <meshStandardMaterial color="#94a3b8" transparent opacity={0.6} />
         </mesh>
       )}
 
