@@ -276,8 +276,8 @@ export default function MeasureTool() {
       {/* Hover cursor sphere — plus visible avant le premier point placé */}
       {hoverPoint && points.length === 0 && (
         <mesh position={[hoverPoint.x, hoverPoint.y + 0.003, hoverPoint.z]}>
-          <sphereGeometry args={[0.0015, 10, 10]} />
-          <meshStandardMaterial color="#22c55e" emissive="#22c55e" emissiveIntensity={1.2} />
+          <sphereGeometry args={[0.002, 10, 10]} />
+          <meshStandardMaterial color="#ef4444" emissive="#ef4444" emissiveIntensity={1.2} />
         </mesh>
       )}
       {hoverPoint && points.length > 0 && (
