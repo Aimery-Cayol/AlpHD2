@@ -289,17 +289,14 @@ export default function MeasureTool() {
 
       {/* Placed point spheres */}
       {points.map((pt, idx) => {
-        const isTerminal = idx === 0 || idx === points.length - 1;
         const color = idx === 0 ? "#22c55e" : idx === points.length - 1 ? "#ef4444" : "#3b82f6";
-        // Les points intermédiaires (jonction entre deux mesures) sont plus petits
-        const radius = isTerminal ? 0.001 : 0.00045;
         return (
           <mesh
             key={idx}
             position={[pt.position.x, pt.position.y + 0.003, pt.position.z]}
           >
-            <sphereGeometry args={[radius, 8, 8]} />
-            <meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.7} />
+            <sphereGeometry args={[0.0004, 6, 6]} />
+            <meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.9} />
           </mesh>
         );
       })}
